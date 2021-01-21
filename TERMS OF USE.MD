@@ -23,19 +23,24 @@ From time to time, we may provide you with links to third party websites or serv
 
 ## Your Content & Conduct
 
-####[Download services]
+#### [Download services]
+
+
 you are not allowed to upload this package and it's contents in any storage service, you *must* use the mediafire link provided in the file README.MD (if this file doesn't exist in the package you have downloaded please get it in [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") 
 
-####[redistribution]
+#### [redistribution]
+
 you're allowed to redistribute this package and all it's contents *ONLY* if you use the MediaFire Link provided in the file README.MD located at [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") 
 
 in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com) or any other website or social media webpage related to it.
 
 
-####[modification of this project]
+#### [modification of this project]
+
 you can modify funtuna and any of its components or dependencies as long as you provide a link to [the github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")
 
-###[liability]
+### [liability]
+
 by downloading and installing this software you accept that:
 Under no circumstances and under no legal theory,
 whether in tort (including negligence), contract, or otherwise, shall matias israelson be liable to anyone for any indirect, special, incidental, or
