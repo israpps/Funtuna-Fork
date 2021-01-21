@@ -13,7 +13,7 @@ If you download or use this software, it means you agree to be bound by all of t
 
 We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature or for some other reason.
 
-Whenever we make changes to these Terms, the changes are effective ** 24 hours** after we post such revised Terms (indicated by revising the date at the top of these Terms) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
+Whenever we make changes to these Terms, the changes are effective **24 hours** after we post such revised Terms (indicated by revising the date at the top of these Terms) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
 
 If you continue to use the Service after the revised Terms go into effect, then you have accepted the changes to these Terms.
 
