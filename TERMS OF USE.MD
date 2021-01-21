@@ -1,6 +1,6 @@
 #  TERMS OF SERVICE FOR FUNTUNA-FORK - by *matias israelson*
 
-Last Updated: [20/01/2021]
+Last Updated: [21/01/2021]
 
 These terms of service ("Terms") apply to your access and use of FunTuna-Fork (the "Service"). Please read them carefully.
 
