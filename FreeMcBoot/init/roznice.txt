@@ -1,0 +1,18 @@
+ró¿nice:
+
+Parametry do:
+sceCdBootCertify (0x1a)
+
+PAL (v10, v9, v12, v7, nie w v4 i v3, ale dzia³a):
+write 0x17: 0x01 1
+write 0x17: 0x5a 90
+write 0x17: 0x45 E
+write 0x17: 0x43 C
+
+NTSC v9:
+write 0x17: 0x01 1
+write 0x17: 0x46 70
+write 0x17: 0x41 A
+write 0x17: 0x43 C
+
+romver pierwsze dwa z ascii na char, ostatnie z nastêpnych pozycji.
