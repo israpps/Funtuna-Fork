@@ -1,6 +1,6 @@
 #  TERMS OF SERVICE FOR FUNTUNA-FORK - by *matias israelson*
 
-Last Updated: [20/01/2021]
+Last Updated: [21/01/2021]
 
 These terms of service ("Terms") apply to your access and use of FunTuna-Fork (the "Service"). Please read them carefully.
 
@@ -13,7 +13,7 @@ If you download or use this software, it means you agree to be bound by all of t
 
 We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature or for some other reason.
 
-Whenever we make changes to these Terms, the changes are effective ** 24 hours** after we post such revised Terms (indicated by revising the date at the top of these Terms) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
+Whenever we make changes to these Terms, the changes are effective **24 hours** after we post such revised Terms (indicated by revising the date at the top of these Terms) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
 
 If you continue to use the Service after the revised Terms go into effect, then you have accepted the changes to these Terms.
 
@@ -23,14 +23,9 @@ From time to time, we may provide you with links to third party websites or serv
 
 ## Your Content & Conduct
 
-#### [Download services]
-
-
-you are not allowed to upload this package and it's contents in any storage service, you *must* use the mediafire link provided in the file README.MD (if this file doesn't exist in the package you have downloaded please get it in [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") 
-
 #### [redistribution]
 
-you're allowed to redistribute this package and all it's contents *ONLY* if you use the MediaFire Link provided in the file README.MD located at [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") 
+you're allowed to redistribute this package and all it's contents *ONLY* if you use the MediaFire Link provided in the file README.MD located at [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") as the download service of this project
 
 in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com) or any other website or social media webpage related to it.
 
@@ -40,8 +35,6 @@ in addition to the term refered before, you're not allowed to upload this projec
 you can modify funtuna and any of its components or dependencies as long as you provide a link to [the github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")
 
 ### [liability]
-
-by downloading and installing this software you accept that:
 Under no circumstances and under no legal theory,
 whether in tort (including negligence), contract, or otherwise, shall matias israelson be liable to anyone for any indirect, special, incidental, or
 consequential damages of any character arising as a result of the usage, manipulation or download of this software and all the contents bundled with it.
