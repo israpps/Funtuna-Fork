@@ -29,7 +29,7 @@ you are not allowed to upload this package and it's contents in any storage serv
 [redistribution]
 you're allowed to redistribute this package and all it's contents *ONLY* if you use the MediaFire Link provided in the file README.MD located at [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium") 
 
-in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com or any other website or social media webpage related to it.
+in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com) or any other website or social media webpage related to it.
 
 
 [modification of this project]
