@@ -5,10 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Zip on Ubuntu
-      uses: nguyenquyhy/zip-release@v0.3.0
-      with:
-          filename: FunTuna.zip
-          path: ./__Dependencies/BOOT
+      run: zip -r FunTuna.zip . -i ./__Dependencies/BOOT 
         
         
     - name: Upload artifacts
