@@ -2,106 +2,101 @@
 //File name:   draw.c
 //--------------------------------------------------------------
 //LANG TABLE
-#define LANG_VERSION" ÿ4 isra fork V1.0.0 ÿ4"
-
-
-
-
+#define LANG_VERSION " ÿ4 isra fork V1.0.0 ÿ4"
 
 
 
 #include "launchelf.h"
 
-GSGLOBAL  *gsGlobal;
+GSGLOBAL *gsGlobal;
 GSTEXTURE TexSkin, TexPreview, TexPicture, TexThumb[MAX_ENTRY], TexIcon[2];
-int				testskin, testsetskin, testjpg, testthumb;
-int				SCREEN_WIDTH	= 640;
-int				SCREEN_HEIGHT = 448;
-int				SCREEN_X			= 632;
-int				SCREEN_Y			= 50;
+int testskin, testsetskin, testjpg, testthumb;
+int SCREEN_WIDTH = 640;
+int SCREEN_HEIGHT = 448;
+int SCREEN_X = 632;
+int SCREEN_Y = 50;
 //dlanor: values shown above are defaults for NTSC mode
-u64       BrightColor;
-u8        *FontBuffer;
+u64 BrightColor;
+u8 *FontBuffer;
 
-int updateScr_1;     //dlanor: flags screen updates for drawScr()
-int updateScr_2;     //dlanor: used for anti-flicker delay in drawScr()
-u64 updateScr_t = 0; //dlanor: exit time of last drawScr()
-int  Old_Interlace;
+int updateScr_1;      //dlanor: flags screen updates for drawScr()
+int updateScr_2;      //dlanor: used for anti-flicker delay in drawScr()
+u64 updateScr_t = 0;  //dlanor: exit time of last drawScr()
+int Old_Interlace;
 
-char LastMessage[MAX_TEXT_LINE+2];
+char LastMessage[MAX_TEXT_LINE + 2];
 
-int Menu_start_x   = SCREEN_MARGIN + LINE_THICKNESS + FONT_WIDTH;
-int Menu_title_y   = SCREEN_MARGIN;
+int Menu_start_x = SCREEN_MARGIN + LINE_THICKNESS + FONT_WIDTH;
+int Menu_title_y = SCREEN_MARGIN;
 int Menu_message_y = SCREEN_MARGIN + FONT_HEIGHT;
-int Frame_start_y  = SCREEN_MARGIN + 2*FONT_HEIGHT + 2;  //First line of menu frame
-int Menu_start_y   = SCREEN_MARGIN + 2*FONT_HEIGHT + LINE_THICKNESS + 5;
+int Frame_start_y = SCREEN_MARGIN + 2 * FONT_HEIGHT + 2;  //First line of menu frame
+int Menu_start_y = SCREEN_MARGIN + 2 * FONT_HEIGHT + LINE_THICKNESS + 5;
 //dlanor: Menu_start_y is the 1st pixel line that may be used for main content of a menu
 //dlanor: values below are only calculated when a rez is activated
-int Menu_end_y;     //Normal menu display should not use pixels at this line or beyond
-int Frame_end_y;    //first line of frame bottom
-int Menu_tooltip_y; //Menus may also use this row for tooltips
+int Menu_end_y;      //Normal menu display should not use pixels at this line or beyond
+int Frame_end_y;     //first line of frame bottom
+int Menu_tooltip_y;  //Menus may also use this row for tooltips
 
 
 //The font file ELISA100.FNT is needed to display MC save titles in japanese
 //and the arrays defined here are needed to find correct data in that file
 const u16 font404[] = {
-	0xA2AF, 11,
-	0xA2C2, 8,
-	0xA2D1, 11,
-	0xA2EB, 7,
-	0xA2FA, 4,
-	0xA3A1, 15,
-	0xA3BA, 7,
-	0xA3DB, 6,
-	0xA3FB, 4,
-	0xA4F4, 11,
-	0xA5F7, 8,
-	0xA6B9, 8,
-	0xA6D9, 38,
-	0xA7C2, 15,
-	0xA7F2, 13,
-	0xA8C1, 720,
-	0xCFD4, 43,
-	0xF4A5, 1030,
-	0,0
-};
+    0xA2AF, 11,
+    0xA2C2, 8,
+    0xA2D1, 11,
+    0xA2EB, 7,
+    0xA2FA, 4,
+    0xA3A1, 15,
+    0xA3BA, 7,
+    0xA3DB, 6,
+    0xA3FB, 4,
+    0xA4F4, 11,
+    0xA5F7, 8,
+    0xA6B9, 8,
+    0xA6D9, 38,
+    0xA7C2, 15,
+    0xA7F2, 13,
+    0xA8C1, 720,
+    0xCFD4, 43,
+    0xF4A5, 1030,
+    0, 0};
 
 // ASCII‚ÆSJIS‚Ì•ÏŠ·—p”z—ñ
 const unsigned char sjis_lookup_81[256] = {
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x00
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x10
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x20
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x30
-  ' ', ',', '.', ',', '.', 0xFF,':', ';', '?', '!', 0xFF,0xFF,'´', '`', 0xFF,'^',   // 0x40
-  0xFF,'_', 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'0', 0xFF,'-', '-', 0xFF,0xFF,  // 0x50
-  0xFF,0xFF,0xFF,0xFF,0xFF,'\'','\'','"', '"', '(', ')', 0xFF,0xFF,'[', ']', '{',   // 0x60
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'+', '-', 0xFF,'*', 0xFF,  // 0x70
-  '/', '=', 0xFF,'<', '>', 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'°', 0xFF,0xFF,'°', 0xFF,  // 0x80
-  '$', 0xFF,0xFF,'%', '#', '&', '*', '@', 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x90
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xA0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xB0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'&', '|', '!', 0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xC0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xD0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xE0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xF0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x00
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x10
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x20
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x30
+    ' ', ',', '.', ',', '.', 0xFF, ':', ';', '?', '!', 0xFF, 0xFF, '´', '`', 0xFF, '^',              // 0x40
+    0xFF, '_', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '0', 0xFF, '-', '-', 0xFF, 0xFF,      // 0x50
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '\'', '\'', '"', '"', '(', ')', 0xFF, 0xFF, '[', ']', '{',         // 0x60
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '+', '-', 0xFF, '*', 0xFF,     // 0x70
+    '/', '=', 0xFF, '<', '>', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '°', 0xFF, 0xFF, '°', 0xFF,        // 0x80
+    '$', 0xFF, 0xFF, '%', '#', '&', '*', '@', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,        // 0x90
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xA0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xB0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '&', '|', '!', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,     // 0xC0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xD0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xE0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xF0
 };
 const unsigned char sjis_lookup_82[256] = {
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x00
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x10
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x20
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x30
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'0',   // 0x40
-  '1', '2', '3', '4', '5', '6', '7', '8', '9', 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x50
-  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',   // 0x60
-  'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x70
-  0xFF,'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',   // 0x80
-  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0xFF,0xFF,0xFF,0xFF,0xFF,  // 0x90
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xA0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xB0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xC0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xD0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xE0
-  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,  // 0xF0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x00
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x10
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x20
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0x30
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, '0',   // 0x40
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,           // 0x50
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',                  // 0x60
+    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,            // 0x70
+    0xFF, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',                 // 0x80
+    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,             // 0x90
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xA0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xB0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xC0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xD0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xE0
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // 0xF0
 };
 //--------------------------------------------------------------
 /*int *CreateCoeffInt( int nLen, int nNewLen, int bShrink ) {
@@ -439,50 +434,54 @@ const unsigned char sjis_lookup_82[256] = {
 void setScrTmp(const char *msg0, const char *msg1)
 {
 	int x, y;
-	
+
 	x = SCREEN_MARGIN;
 	y = Menu_title_y;
 	printXY(setting->Menu_Title, x, y, setting->color[2], TRUE, 0);
 	printXY(LANG_VERSION,
-		SCREEN_WIDTH-SCREEN_MARGIN-FONT_WIDTH*22, y, setting->color[1], TRUE, 0);
-	
+	        SCREEN_WIDTH - SCREEN_MARGIN - FONT_WIDTH * 22, y, setting->color[1], TRUE, 0);
+
 	strncpy(LastMessage, msg0, MAX_TEXT_LINE);
 	LastMessage[MAX_TEXT_LINE] = '\0';
 	printXY(msg0, x, Menu_message_y, setting->color[4], TRUE, 0);
 
-	if(setting->Menu_Frame)
+	if (setting->Menu_Frame)
 		drawFrame(SCREEN_MARGIN, Frame_start_y,
-			SCREEN_WIDTH-SCREEN_MARGIN, Frame_end_y, setting->color[1]);
-	
+		          SCREEN_WIDTH - SCREEN_MARGIN, Frame_end_y, setting->color[1]);
+
 	printXY(msg1, x, Menu_tooltip_y, setting->color[2], TRUE, 0);
 }
 //--------------------------------------------------------------
-void drawSprite( u64 color, int x1, int y1, int x2, int y2 ){
-	int	y_off = (setting->interlace) ? 0 : (y1 & 1);
+void drawSprite(u64 color, int x1, int y1, int x2, int y2)
+{
+	int y_off = (setting->interlace) ? 0 : (y1 & 1);
 	y1 -= y_off;
 	y2 -= y_off;
 
-/*	if ( testskin == 1 ) {
+	/*	if ( testskin == 1 ) {
 		setBrightness(setting->Brightness);
 		gsKit_prim_sprite_texture(gsGlobal, &TexSkin, x1, y1, x1, y1, x2, y2, x2, y2, 0, BrightColor);
 		setBrightness(50);
 	} else {
-*/		gsKit_prim_sprite(gsGlobal, x1, y1, x2, y2, 0, color);
-//	}
+*/
+	gsKit_prim_sprite(gsGlobal, x1, y1, x2, y2, 0, color);
+	//	}
 }
 //--------------------------------------------------------------
-void drawPopSprite( u64 color, int x1, int y1, int x2, int y2 ){
-	int	y_off = (setting->interlace) ? 0 : (y1 & 1);
+void drawPopSprite(u64 color, int x1, int y1, int x2, int y2)
+{
+	int y_off = (setting->interlace) ? 0 : (y1 & 1);
 	y1 -= y_off;
 	y2 -= y_off;
 
-/*	if ( testskin == 1 && !setting->Popup_Opaque) {
+	/*	if ( testskin == 1 && !setting->Popup_Opaque) {
 		setBrightness(setting->Brightness);
 		gsKit_prim_sprite_texture(gsGlobal, &TexSkin, x1, y1, x1, y1, x2, y2, x2, y2, 0, BrightColor);
 		setBrightness(50);
 	} else {
-*/		gsKit_prim_sprite(gsGlobal, x1, y1, x2, y2, 0, color);
-//	}
+*/
+	gsKit_prim_sprite(gsGlobal, x1, y1, x2, y2, 0, color);
+	//	}
 }
 //--------------------------------------------------------------
 //drawOpSprite exists only to eliminate the use of primitive sprite functions
@@ -491,8 +490,9 @@ void drawPopSprite( u64 color, int x1, int y1, int x2, int y2 ){
 //that it will also perform any coordinate adjustments (if any)implemented for
 //the functions drawSprite and drawPopSprite, to keep all of them compatible.
 //
-void drawOpSprite( u64 color, int x1, int y1, int x2, int y2 ){
-	int	y_off = (setting->interlace) ? 0 : (y1 & 1);
+void drawOpSprite(u64 color, int x1, int y1, int x2, int y2)
+{
+	int y_off = (setting->interlace) ? 0 : (y1 & 1);
 	y1 -= y_off;
 	y2 -= y_off;
 
@@ -522,33 +522,33 @@ void drawOpSprite( u64 color, int x1, int y1, int x2, int y2 ){
 void setupGS(int gs_vmode)
 {
 	// GS Init
-	gsGlobal = gsKit_init_global_custom(GS_RENDER_QUEUE_OS_POOLSIZE+GS_RENDER_QUEUE_OS_POOLSIZE/2, //eliminates overflow
-		GS_RENDER_QUEUE_PER_POOLSIZE);
+	gsGlobal = gsKit_init_global_custom(GS_RENDER_QUEUE_OS_POOLSIZE + GS_RENDER_QUEUE_OS_POOLSIZE / 2,  //eliminates overflow
+	                                    GS_RENDER_QUEUE_PER_POOLSIZE);
 
 	// Clear Screen
-	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00,0x00,0x00,0x00,0x00));
+	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
 
 	// Screen Position Init
-	gsGlobal->StartX = setting->screen_x; 
+	gsGlobal->StartX = setting->screen_x;
 	gsGlobal->StartY = setting->screen_y;
 
 	// Buffer Init
 	gsGlobal->PrimAAEnable = GS_SETTING_ON;
 	gsGlobal->DoubleBuffering = GS_SETTING_OFF;
-	gsGlobal->ZBuffering      = GS_SETTING_OFF;
+	gsGlobal->ZBuffering = GS_SETTING_OFF;
 
 	// Interlace Init
-	if(setting->interlace){
+	if (setting->interlace) {
 		gsGlobal->Interlace = GS_INTERLACED;
-		gsGlobal->Field     = GS_FIELD;
-	}else{
+		gsGlobal->Field = GS_FIELD;
+	} else {
 		gsGlobal->Interlace = GS_NONINTERLACED;
-		gsGlobal->Field     = GS_FRAME;
+		gsGlobal->Field = GS_FRAME;
 	}
 	Old_Interlace = setting->interlace;
 
 	// DMAC Init
-	dmaKit_init(D_CTRL_RELE_OFF,D_CTRL_MFD_OFF, D_CTRL_STS_UNSPEC, D_CTRL_STD_OFF, D_CTRL_RCYC_8, 1 << DMA_CHANNEL_GIF);
+	dmaKit_init(D_CTRL_RELE_OFF, D_CTRL_MFD_OFF, D_CTRL_STS_UNSPEC, D_CTRL_STD_OFF, D_CTRL_RCYC_8, 1 << DMA_CHANNEL_GIF);
 	dmaKit_chan_init(DMA_CHANNEL_GIF);
 	dmaKit_chan_init(DMA_CHANNEL_FROMSPR);
 	dmaKit_chan_init(DMA_CHANNEL_TOSPR);
@@ -556,7 +556,7 @@ void setupGS(int gs_vmode)
 	// Screen Init
 	gsKit_init_screen(gsGlobal);
 	gsKit_mode_switch(gsGlobal, GS_ONESHOT);
-	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00,0x00,0x00,0x00,0x00));
+	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
 }
 //--------------------------------------------------------------
 /*void updateScreenMode(int adapt_XY)
@@ -850,7 +850,7 @@ int loadFont(char *path_arg)
 {
 	//int fd;
 
-/*	if(strlen(path_arg) != 0 ){
+	/*	if(strlen(path_arg) != 0 ){
 	char FntPath[MAX_PATH];
 	genFixPath(path_arg, FntPath);
 	fd = genOpen( FntPath, O_RDONLY );
@@ -886,11 +886,11 @@ int loadFont(char *path_arg)
 		} // end else bad fnt file
 	}else{ // end if external font file
 use_default:*/
-		if(FontBuffer)
-			free(FontBuffer);
-		FontBuffer = malloc( 4096 + 1 );
-		memcpy( FontBuffer, &font_uLE, 4096 );
-//	} // end else build-in font
+	if (FontBuffer)
+		free(FontBuffer);
+	FontBuffer = malloc(4096 + 1);
+	memcpy(FontBuffer, &font_uLE, 4096);
+	//	} // end else build-in font
 	return 0;
 }
 //--------------------------------------------------------------
@@ -911,7 +911,7 @@ use_default:*/
 //--------------------------------------------------------------
 void clrScr(u64 color)
 {
-/*	if ( testskin == 1 ) {
+	/*	if ( testskin == 1 ) {
 		setBrightness(setting->Brightness);
 		gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00,0x00,0x00,0x00,0x00));
 		gsKit_prim_sprite_texture(gsGlobal,
@@ -920,42 +920,43 @@ void clrScr(u64 color)
 		 0, BrightColor);
 		setBrightness(50);
 	} else {*/
-		gsKit_prim_sprite(gsGlobal, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, color);
-//	} /* end else */
+	gsKit_prim_sprite(gsGlobal, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, color);
+	//	} /* end else */
 }
 
 //--------------------------------------------------------------
 void drawScr(void)
 {
-	if(updateScr_2){            //Did we render anything last time
-		while(Timer() < updateScr_t+5);  //if so, delay to complete rendering
+	if (updateScr_2) {  //Did we render anything last time
+		while (Timer() < updateScr_t + 5)
+			;  //if so, delay to complete rendering
 	}
-	gsKit_sync_flip(gsGlobal);  //Await sync and flip buffers
-	gsKit_queue_exec(gsGlobal); //Start rendering recent transfers for NEXT time
-	updateScr_t = Timer();      //Note the time when the rendering started
-	updateScr_2 = updateScr_1;  //Note if this rendering had expected updates
-	updateScr_1 = 0;            //Note that we've nothing expected for next time
-} //NB: Apparently the GS keeps rendering while we continue with other work
+	gsKit_sync_flip(gsGlobal);   //Await sync and flip buffers
+	gsKit_queue_exec(gsGlobal);  //Start rendering recent transfers for NEXT time
+	updateScr_t = Timer();       //Note the time when the rendering started
+	updateScr_2 = updateScr_1;   //Note if this rendering had expected updates
+	updateScr_1 = 0;             //Note that we've nothing expected for next time
+}  //NB: Apparently the GS keeps rendering while we continue with other work
 //--------------------------------------------------------------
 void drawFrame(int x1, int y1, int x2, int y2, u64 color)
 {
-	int	y_off = (setting->interlace) ? 0 : (y1 & 1);
+	int y_off = (setting->interlace) ? 0 : (y1 & 1);
 	y1 -= y_off;
 	y2 -= y_off;
 
 	updateScr_1 = 1;
 
 	//Top horizontal edge
-	gsKit_prim_sprite(gsGlobal, x1, y1, x2, y1+LINE_THICKNESS-1, 1, color);
+	gsKit_prim_sprite(gsGlobal, x1, y1, x2, y1 + LINE_THICKNESS - 1, 1, color);
 
 	//Bottom horizontal
-	gsKit_prim_sprite(gsGlobal, x1, y2-LINE_THICKNESS+1, x2, y2, 1, color);
+	gsKit_prim_sprite(gsGlobal, x1, y2 - LINE_THICKNESS + 1, x2, y2, 1, color);
 
 	//Left vertical edge
-	gsKit_prim_sprite(gsGlobal, x1, y1, x1+LINE_THICKNESS-1, y2, 1, color);
+	gsKit_prim_sprite(gsGlobal, x1, y1, x1 + LINE_THICKNESS - 1, y2, 1, color);
 
 	//Right vertical edge
-	gsKit_prim_sprite(gsGlobal, x2-LINE_THICKNESS+1, y1, x2, y2, 1, color);
+	gsKit_prim_sprite(gsGlobal, x2 - LINE_THICKNESS + 1, y1, x2, y2, 1, color);
 }
 
 //--------------------------------------------------------------
@@ -963,35 +964,36 @@ void drawFrame(int x1, int y1, int x2, int y2, u64 color)
 void drawChar(unsigned int c, int x, int y, u64 colour)
 {
 	int i, j, pixBase, pixMask;
-	u8  *cm;
+	u8 *cm;
 
 	updateScr_1 = 1;
 
-	if(!setting->interlace){
+	if (!setting->interlace) {
 		y = y & -2;
 	}
 
-	if(c >= FONT_COUNT) c = '_';
-	if(c > 0xFF)              //if char is beyond normal ascii range
-		cm = &font_uLE[c*16];   //  cm points to special char def in default font
-	else                      //else char is inside normal ascii range
-		cm = &FontBuffer[c*16]; //  cm points to normal char def in active font
+	if (c >= FONT_COUNT)
+		c = '_';
+	if (c > 0xFF)                  //if char is beyond normal ascii range
+		cm = &font_uLE[c * 16];    //  cm points to special char def in default font
+	else                           //else char is inside normal ascii range
+		cm = &FontBuffer[c * 16];  //  cm points to normal char def in active font
 
 	pixMask = 0x80;
-	for(i=0; i<8; i++){	//for i == each pixel column
+	for (i = 0; i < 8; i++) {  //for i == each pixel column
 		pixBase = -1;
-		for(j=0; j<16; j++){ //for j == each pixel row
-			if((pixBase < 0) && (cm[j] & pixMask)){ //if start of sequence
+		for (j = 0; j < 16; j++) {                     //for j == each pixel row
+			if ((pixBase < 0) && (cm[j] & pixMask)) {  //if start of sequence
 				pixBase = j;
-			} else if((pixBase > -1) && !(cm[j] & pixMask)){ //if end of sequence
-				gsKit_prim_sprite(gsGlobal, x+i, y+pixBase-1, x+i+1, y+j-1, 1, colour);
+			} else if ((pixBase > -1) && !(cm[j] & pixMask)) {  //if end of sequence
+				gsKit_prim_sprite(gsGlobal, x + i, y + pixBase - 1, x + i + 1, y + j - 1, 1, colour);
 				pixBase = -1;
 			}
-		}//ends for j == each pixel row
-		if(pixBase > -1) //if end of sequence including final row
-			gsKit_prim_sprite(gsGlobal, x+i, y+pixBase-1, x+i+1, y+j-1, 1, colour);
+		}                  //ends for j == each pixel row
+		if (pixBase > -1)  //if end of sequence including final row
+			gsKit_prim_sprite(gsGlobal, x + i, y + pixBase - 1, x + i + 1, y + j - 1, 1, colour);
 		pixMask >>= 1;
-	}//ends for i == each pixel column
+	}  //ends for i == each pixel column
 }
 //------------------------------
 //endfunc drawChar
@@ -1028,43 +1030,44 @@ int printXY(const unsigned char *s, int x, int y, u64 colour, int draw, int spac
 {
 	unsigned int c1, c2;
 	int i;
-	int text_spacing=8;
-	
-	if(space>0){
-		while((strlen(s)*text_spacing) > space)
-			if(--text_spacing<=5)
+	int text_spacing = 8;
+
+	if (space > 0) {
+		while ((strlen(s) * text_spacing) > space)
+			if (--text_spacing <= 5)
 				break;
-	}else{
-		while((strlen(s)*text_spacing) > SCREEN_WIDTH-SCREEN_MARGIN-FONT_WIDTH*2)
-			if(--text_spacing<=5)
+	} else {
+		while ((strlen(s) * text_spacing) > SCREEN_WIDTH - SCREEN_MARGIN - FONT_WIDTH * 2)
+			if (--text_spacing <= 5)
 				break;
 	}
 
-	i=0;
-	while((c1=s[i++])!=0) {
-		if(c1 != 0xFF) { // Normal character
-			if(draw) drawChar(c1, x, y, colour);
+	i = 0;
+	while ((c1 = s[i++]) != 0) {
+		if (c1 != 0xFF) {  // Normal character
+			if (draw)
+				drawChar(c1, x, y, colour);
 			x += text_spacing;
-			if(x > SCREEN_WIDTH-SCREEN_MARGIN-FONT_WIDTH)
+			if (x > SCREEN_WIDTH - SCREEN_MARGIN - FONT_WIDTH)
 				break;
 			continue;
 		}  //End if for normal character
 		// Here we got a sequence starting with 0xFF ('ÿ')
-		if((c2=s[i++])==0)
+		if ((c2 = s[i++]) == 0)
 			break;
-		if((c2 < '0') || (c2 > '='))
+		if ((c2 < '0') || (c2 > '='))
 			continue;
-		c1=(c2-'0')*2+0x100;
-		if(draw) {
+		c1 = (c2 - '0') * 2 + 0x100;
+		if (draw) {
 			//expand sequence ÿ0=Circle  ÿ1=Cross  ÿ2=Square  ÿ3=Triangle  ÿ4=FilledBox
 			//"ÿ:"=Pad_Right  "ÿ;"=Pad_Down  "ÿ<"=Pad_Left  "ÿ="=Pad_Up
 			drawChar(c1, x, y, colour);
 			x += 8;
-			if(x > SCREEN_WIDTH-SCREEN_MARGIN-FONT_WIDTH)
+			if (x > SCREEN_WIDTH - SCREEN_MARGIN - FONT_WIDTH)
 				break;
-			drawChar(c1+1, x, y, colour);
+			drawChar(c1 + 1, x, y, colour);
 			x += 8;
-			if(x > SCREEN_WIDTH-SCREEN_MARGIN-FONT_WIDTH)
+			if (x > SCREEN_WIDTH - SCREEN_MARGIN - FONT_WIDTH)
 				break;
 		}
 	}  // ends while(1)

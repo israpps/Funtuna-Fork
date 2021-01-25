@@ -52,12 +52,15 @@ extern int  size_hdl_info_irx;
 #define dbgprintf(args...) scr_printf(args)
 #define dbginit_scr() init_scr()
 #else
-#define dbgprintf(args...) do { } while(0)
-#define dbginit_scr() do { } while(0)
+#define dbgprintf(args...) \
+	do {                   \
+	} while (0)
+#define dbginit_scr() \
+	do {              \
+	} while (0)
 #endif
 
-enum
-{
+enum {
 	BUTTON,
 	DPAD
 };
@@ -65,31 +68,31 @@ enum
 void Reset();
 
 int TV_mode;
-int trayopen=FALSE;
-int selected=0;
-int timeout=0;
-int init_delay=0;
-int poweroff_delay=0; //Set only when calling hddPowerOff
-int mode=BUTTON;
-int user_acted = 0;  /* Set when commands given, to break timeout */
+int trayopen = FALSE;
+int selected = 0;
+int timeout = 0;
+int init_delay = 0;
+int poweroff_delay = 0;  //Set only when calling hddPowerOff
+int mode = BUTTON;
+int user_acted = 0; /* Set when commands given, to break timeout */
 char LaunchElfDir[MAX_PATH], mainMsg[MAX_PATH];
 char CNF[MAX_NAME];
-int numCNF=0;
+int numCNF = 0;
 int maxCNF;
 int swapKeys;
 int GUI_active;
 
 u64 WaitTime;
 
-#define IPCONF_MAX_LEN  (3*16)
+#define IPCONF_MAX_LEN (3 * 16)
 char if_conf[IPCONF_MAX_LEN];
 int if_conf_len;
 
-char ip[16]      = "192.168.0.10";
+char ip[16] = "192.168.0.10";
 char netmask[16] = "255.255.255.0";
-char gw[16]      = "192.168.0.1";
+char gw[16] = "192.168.0.1";
 
-char netConfig[IPCONF_MAX_LEN+64];	//Adjust size as needed
+char netConfig[IPCONF_MAX_LEN + 64];  //Adjust size as needed
 
 //State of module collections
 int have_NetModules = 0;
@@ -97,47 +100,47 @@ int have_HDD_modules = 0;
 //State of sbv_patches
 int have_sbv_patches = 0;
 //Old State of Checkable Modules (valid header)
-int	old_sio2man  = 0;
-int	old_mcman    = 0;
-int	old_mcserv   = 0;
-int	old_padman   = 0;
+int old_sio2man = 0;
+int old_mcman = 0;
+int old_mcserv = 0;
+int old_padman = 0;
 int old_fakehost = 0;
 int old_poweroff = 0;
-int	old_iomanx   = 0;
-int	old_filexio  = 0;
-int	old_ps2dev9  = 0;
-int	old_ps2ip    = 0;
-int	old_ps2atad  = 0;
-int old_ps2hdd   = 0;
-int old_ps2fs    = 0;
+int old_iomanx = 0;
+int old_filexio = 0;
+int old_ps2dev9 = 0;
+int old_ps2ip = 0;
+int old_ps2atad = 0;
+int old_ps2hdd = 0;
+int old_ps2fs = 0;
 int old_ps2netfs = 0;
 //State of Uncheckable Modules (invalid header)
-int	have_cdvd     = 0;
-int	have_usbd     = 0;
-int	have_usb_mass = 0;
-int	have_ps2smap  = 0;
-int	have_ps2host  = 0;
-int	have_ps2ftpd  = 0;
-int	have_ps2kbd   = 0;
-int	have_hdl_info = 0;
+int have_cdvd = 0;
+int have_usbd = 0;
+int have_usb_mass = 0;
+int have_ps2smap = 0;
+int have_ps2host = 0;
+int have_ps2ftpd = 0;
+int have_ps2kbd = 0;
+int have_hdl_info = 0;
 //State of Checkable Modules (valid header)
-int have_urgent   = 0;	//flags presence of urgently needed modules
-int	have_sio2man  = 0;
-int	have_mcman    = 0;
-int	have_mcserv   = 0;
-int	have_padman   = 0;
+int have_urgent = 0;  //flags presence of urgently needed modules
+int have_sio2man = 0;
+int have_mcman = 0;
+int have_mcserv = 0;
+int have_padman = 0;
 int have_fakehost = 0;
 int have_poweroff = 0;
-int	have_iomanx   = 0;
-int	have_filexio  = 0;
-int	have_ps2dev9  = 0;
-int	have_ps2ip    = 0;
-int	have_ps2atad  = 0;
-int have_ps2hdd   = 0;
-int have_ps2fs    = 0;
+int have_iomanx = 0;
+int have_filexio = 0;
+int have_ps2dev9 = 0;
+int have_ps2ip = 0;
+int have_ps2atad = 0;
+int have_ps2hdd = 0;
+int have_ps2fs = 0;
 int have_ps2netfs = 0;
 
-int force_IOP = 0; //flags presence of incompatible drivers, so we must reset IOP
+int force_IOP = 0;  //flags presence of incompatible drivers, so we must reset IOP
 
 int done_setupPowerOff = 0;
 int ps2kbd_opened = 0;
@@ -160,7 +163,7 @@ char boot_path[MAX_PATH];
 	y = (Menu_start_y + FONT_HEIGHT*row++);
 	printXY(text_p, x, y, setting->color[3], TRUE, 0);
 	return row;
-} */ 
+} */
 //------------------------------
 //endfunc PrintRow
 //--------------------------------------------------------------
@@ -213,14 +216,15 @@ char boot_path[MAX_PATH];
 //--------------------------------------------------------------
 //Function to check for presence of key modules
 //------------------------------
-void	CheckModules(void)
-{	smod_mod_info_t	mod_t;
+void CheckModules(void)
+{
+	smod_mod_info_t mod_t;
 
-	old_sio2man  = (have_sio2man = smod_get_mod_by_name(IOPMOD_NAME_SIO2MAN, &mod_t));
-	old_mcman    = (have_mcman = smod_get_mod_by_name(IOPMOD_NAME_MCMAN, &mod_t));
-	old_mcserv   = (have_mcserv = smod_get_mod_by_name(IOPMOD_NAME_MCSERV, &mod_t));
-	old_padman   = (have_padman = smod_get_mod_by_name(IOPMOD_NAME_PADMAN, &mod_t));
-/*	old_fakehost = (have_fakehost = smod_get_mod_by_name(IOPMOD_NAME_FAKEHOST, &mod_t));
+	old_sio2man = (have_sio2man = smod_get_mod_by_name(IOPMOD_NAME_SIO2MAN, &mod_t));
+	old_mcman = (have_mcman = smod_get_mod_by_name(IOPMOD_NAME_MCMAN, &mod_t));
+	old_mcserv = (have_mcserv = smod_get_mod_by_name(IOPMOD_NAME_MCSERV, &mod_t));
+	old_padman = (have_padman = smod_get_mod_by_name(IOPMOD_NAME_PADMAN, &mod_t));
+	/*	old_fakehost = (have_fakehost = smod_get_mod_by_name(IOPMOD_NAME_FAKEHOST, &mod_t));
 	old_poweroff = (have_poweroff = smod_get_mod_by_name(IOPMOD_NAME_POWEROFF, &mod_t));
 	old_iomanx   = (have_iomanx = smod_get_mod_by_name(IOPMOD_NAME_IOMANX, &mod_t));
 	old_filexio  = (have_filexio = smod_get_mod_by_name(IOPMOD_NAME_FILEXIO, &mod_t));
@@ -230,7 +234,7 @@ void	CheckModules(void)
 	old_ps2hdd   = (have_ps2hdd = smod_get_mod_by_name(IOPMOD_NAME_PS2HDD, &mod_t));
 	old_ps2fs    = (have_ps2fs = smod_get_mod_by_name(IOPMOD_NAME_PS2FS, &mod_t));
 	old_ps2netfs = (have_ps2netfs= smod_get_mod_by_name(IOPMOD_NAME_PS2NETFS, &mod_t));
-*/	
+*/
 }
 //------------------------------
 //endfunc CheckModules
@@ -565,9 +569,10 @@ void delay(int count)
 {
 	int i;
 	int ret;
-	for (i  = 0; i < count; i++) {
-	        ret = 0x01000000;
-		while(ret--) asm("nop\nnop\nnop\nnop");
+	for (i = 0; i < count; i++) {
+		ret = 0x01000000;
+		while (ret--)
+			asm("nop\nnop\nnop\nnop");
 	}
 }
 //------------------------------
@@ -575,8 +580,8 @@ void delay(int count)
 //--------------------------------------------------------------
 void initsbv_patches(void)
 {
-	if(!have_sbv_patches)
-	{	dbgprintf("Init MrBrown sbv_patches\n");
+	if (!have_sbv_patches) {
+		dbgprintf("Init MrBrown sbv_patches\n");
 		sbv_patch_enable_lmb();
 		sbv_patch_disable_prefix_check();
 		have_sbv_patches = 1;
@@ -710,19 +715,19 @@ void initsbv_patches(void)
 //--------------------------------------------------------------
 void loadBasicModules(void)
 {
-	if	(!have_sio2man) {
+	if (!have_sio2man) {
 		SifLoadModule("rom0:SIO2MAN", 0, NULL);
 		have_sio2man = 1;
 	}
-	if	(!have_mcman) {
+	if (!have_mcman) {
 		SifLoadModule("rom0:MCMAN", 0, NULL);
 		have_mcman = 1;
 	}
-	if	(!have_mcserv) {
+	if (!have_mcserv) {
 		SifLoadModule("rom0:MCSERV", 0, NULL);
 		have_mcserv = 1;
 	}
-	if	(!have_padman) {
+	if (!have_padman) {
 		SifLoadModule("rom0:PADMAN", 0, NULL);
 		have_padman = 1;
 	}
@@ -877,56 +882,57 @@ void loadBasicModules(void)
 		have_usb_mass = 1;
 	}*/
 //}
-int loadUsbModules(void){//function used for loading usb modules from fmcb default install path
+int loadUsbModules(void)
+{  //function used for loading usb modules from fmcb default install path
 	char filePath[MAX_PATH];
 	void *fileBase;
-	int fileSize,dummy,error=0,i;
-	FILE*	File;
-	
+	int fileSize, dummy, error = 0, i;
+	FILE *File;
+
 	fileBase = NULL;
 	fileSize = 0;
-	
+
 	if (have_usbd && have_usb_mass)
 		return 3;
 
-for(i=1; i<3; i++){
-	if (i==1)
-		strcpy(filePath, "mc0:/BOOT/USBD.IRX");
-	else if (i==2)
-		strcpy(filePath, "mc0:/BOOT/USBHDFSD.IRX");
-	if (!exists(filePath))
-		filePath[2] ^= 1;
-	if (!exists(filePath)){
-		error = i;// 1 = error usbd, 2 = error usbhdfsd
-		break;
-	}
-
-	File = fopen( filePath, "r" );
- 	if( File != NULL ) {
-		fseek(File, 0, SEEK_END);
-		fileSize = ftell(File);
-		fseek(File, 0, SEEK_SET);
-		if(fileSize) {
-			if((fileBase = malloc(fileSize)) > 0 ) {
-				fread(fileBase, 1, fileSize, File );
-			} else
-				fileSize =0;
+	for (i = 1; i < 3; i++) {
+		if (i == 1)
+			strcpy(filePath, "mc0:/BOOT/USBD.IRX");
+		else if (i == 2)
+			strcpy(filePath, "mc0:/BOOT/USBHDFSD.IRX");
+		if (!exists(filePath))
+			filePath[2] ^= 1;
+		if (!exists(filePath)) {
+			error = i;  // 1 = error usbd, 2 = error usbhdfsd
+			break;
 		}
-		fclose(File);
-	}
-	if ((SifExecModuleBuffer(fileBase, fileSize, 0, NULL, &dummy)) < 0){
-		error = -i;// -1 = error usbd, -2 = error usbhdfsd
-		break;
+
+		File = fopen(filePath, "r");
+		if (File != NULL) {
+			fseek(File, 0, SEEK_END);
+			fileSize = ftell(File);
+			fseek(File, 0, SEEK_SET);
+			if (fileSize) {
+				if ((fileBase = malloc(fileSize)) > 0) {
+					fread(fileBase, 1, fileSize, File);
+				} else
+					fileSize = 0;
+			}
+			fclose(File);
+		}
+		if ((SifExecModuleBuffer(fileBase, fileSize, 0, NULL, &dummy)) < 0) {
+			error = -i;  // -1 = error usbd, -2 = error usbhdfsd
+			break;
+		}
+		free(fileBase);
 	}
 	free(fileBase);
-}
-free(fileBase);
-if (!error){
-	have_usbd = 1;
-	have_usb_mass = 1;
-}
+	if (!error) {
+		have_usbd = 1;
+		have_usb_mass = 1;
+	}
 
-return error;
+	return error;
 }
 //------------------------------
 //endfunc loadUsbModules
@@ -1059,7 +1065,7 @@ return error;
 	int i;
 	
 	loadCdModules();*/
-	/*
+/*
 	CDVD_FlushCache();
 	CDVD_DiskReady(0);
 	*/
@@ -1129,7 +1135,8 @@ return error;
 		//Display section
 		if(event||post_event) { //NB: We need to update two frame buffers per event
 			drawOpSprite(col_0, mat_x, mat_y, mat_x+mat_w-1, mat_y+mat_h-1);
-		*/	//Here the background rectangle has been prepared
+		*/
+//Here the background rectangle has been prepared
 /* //Start of commented out section //Move this line as needed for tests
 			//Start of gsKit test section
 			if(test_type > 1) goto done_test;
@@ -1156,9 +1163,10 @@ return error;
 			goto end_display;
 done_test:
 			//End of gsKit test section
-*/ //End of commented out section  //Move this line as needed for tests
-			//Start of font display section
-			//Now we start to draw all vertical frame lines
+*/
+//End of commented out section  //Move this line as needed for tests
+//Start of font display section
+//Now we start to draw all vertical frame lines
 /*			px=mat_x;
 			drawOpSprite(col_1, px, mat_y, px+LINE_THICKNESS-1, mat_y+mat_h-1);
 			for(j=0; j<17; j++) { //for each font column, plus the row_index column
@@ -1335,7 +1343,7 @@ int exists(char *path)
 	int fd;
 
 	fd = genOpen(path, O_RDONLY);
-	if( fd < 0 )
+	if (fd < 0)
 		return 0;
 	genClose(fd);
 	return 1;
@@ -1383,71 +1391,72 @@ void RunElf(char *fmcbMsg, char *pathin)
 	static char fullpath[MAX_PATH];
 	static char party[40];
 	//char *p;
-	
-	if(pathin[0]==0) return;
-	
+
+	if (pathin[0] == 0)
+		return;
+
 	//if( !uLE_related(path, pathin) ) //1==uLE_rel 0==missing, -1==other dev
 	//	return;
-	
+
 	strcpy(path, pathin);
 	if (!strncmp(path, "OSDSYS", 6) || !strncmp(path, "FASTBOOT", 8) || !strncmp(path, "OSDMENU", 7))
 		goto ELFnotFound;
 
-	if (!strncmp(path+5, "B?DATA", 6))
+	if (!strncmp(path + 5, "B?DATA", 6))
 		goto Brdata;
-	
 
-	if (!strncmp(path, "Loader", 6)){
-			strcpy(path, "mass:/BOOT/BOOT.ELF");
+
+	if (!strncmp(path, "Loader", 6)) {
+		strcpy(path, "mass:/BOOT/BOOT.ELF");
+		if (exists(path))
+			goto finish;
+		strcpy(path, "mc0:/BOOT/BOOT.ELF");
+		if (!exists(path)) {
+			path[2] = '1';
 			if (exists(path))
 				goto finish;
-			strcpy(path, "mc0:/BOOT/BOOT.ELF");
-				if (!exists(path)){
-					path[2] = '1';
-					if (exists(path))
-						goto finish;
-				}else
-					goto finish;
-Brdata:
-			strcpy(path, "mc0:/BEDATA-SYSTEM/BOOT.ELF");
-				if (!exists(path)){
-					path[2] = '1';
-					if (exists(path))
-						goto finish;					
-				}else
-					goto finish;
-			strcpy(path, "mc0:/BADATA-SYSTEM/BOOT.ELF");
-				if (!exists(path)){
-					path[2] = '1';
-					if (exists(path))
-						goto finish;					
-				}else
-					goto finish;
-			strcpy(path, "mc0:/BIDATA-SYSTEM/BOOT.ELF");
-				if (!exists(path)){
-					path[2] = '1';
-					if (exists(path))
-						goto finish;					
-				}else
-					goto finish;
-				
-			goto ELFnotFound;//comming here means no-one of loader files was found
-	}
-finish:	
-	if (!strncmp(path, "mc", 2)){
-		if (!strncmp(path, "mc?", 3)){
-		path[2] = '0';
-		if (!exists(path))
+		} else
+			goto finish;
+	Brdata:
+		strcpy(path, "mc0:/BEDATA-SYSTEM/BOOT.ELF");
+		if (!exists(path)) {
 			path[2] = '1';
+			if (exists(path))
+				goto finish;
+		} else
+			goto finish;
+		strcpy(path, "mc0:/BADATA-SYSTEM/BOOT.ELF");
+		if (!exists(path)) {
+			path[2] = '1';
+			if (exists(path))
+				goto finish;
+		} else
+			goto finish;
+		strcpy(path, "mc0:/BIDATA-SYSTEM/BOOT.ELF");
+		if (!exists(path)) {
+			path[2] = '1';
+			if (exists(path))
+				goto finish;
+		} else
+			goto finish;
+
+		goto ELFnotFound;  //comming here means no-one of loader files was found
+	}
+finish:
+	if (!strncmp(path, "mc", 2)) {
+		if (!strncmp(path, "mc?", 3)) {
+			path[2] = '0';
+			if (!exists(path))
+				path[2] = '1';
 		}
 		strcpy(fullpath, path);
-		if(checkELFheader(fullpath)<=0){
-ELFnotFound:
+		if (checkELFheader(fullpath) <= 0) {
+		ELFnotFound:
 			sprintf(fmcbMsg, "%s %s.", path, "Elf file not found");
 			return;
 		}
 	}
-/*	if(!strncmp(path, "mc", 2)){
+	/*	if(!strncmp(path, "mc", 2)){
 		party[0] = 0;
 		if(path[2]==':'){
 			strcpy(fullpath, "mc0:");
@@ -1474,18 +1483,19 @@ ELFnotFound:
 		p = strchr(party, '/');
 		sprintf(fullpath, "pfs0:%s", p);
 		*p = 0;
-	}*/else if(!strncmp(path, "mass:", 5)){
+	}*/
+	else if (!strncmp(path, "mass:", 5)) {
 		loadUsbModules();
-		if(checkELFheader(path)<=0)
+		if (checkELFheader(path) <= 0)
 			goto ELFnotFound;
 		//coming here means the ELF is fine
 		party[0] = 0;
 		strcpy(fullpath, "mass:");
-		if(path[5] == '/')
-			strcat(fullpath, path+6);
+		if (path[5] == '/')
+			strcat(fullpath, path + 6);
 		else
-			strcat(fullpath, path+5);
-	}/*else if(!strncmp(path, "host:", 5)){
+			strcat(fullpath, path + 5);
+	} /*else if(!strncmp(path, "host:", 5)){
 		initHOST();
 		party[0] = 0;
 		strcpy(fullpath, "host:");
@@ -1595,11 +1605,12 @@ ELFnotFound:
 		CDVD_DiskReady(0);
 		party[0] = 0;
 		strcpy(fullpath, path);
-	}*/else if(!strncmp(path, "rom", 3)){
+	}*/
+	else if (!strncmp(path, "rom", 3)) {
 		party[0] = 0;
 		strcpy(fullpath, path);
 	}
-	
+
 	clrScr(GS_SETREG_RGBA(0x00, 0x00, 0x00, 0));
 	drawScr();
 	clrScr(GS_SETREG_RGBA(0x00, 0x00, 0x00, 0));
@@ -1608,8 +1619,8 @@ ELFnotFound:
 	free(elisaFnt);
 	//free(External_Lang_Buffer);
 	free(FontBuffer);
-	padPortClose(1,0);
-	padPortClose(0,0);
+	padPortClose(1, 0);
+	padPortClose(0, 0);
 	//if(ps2kbd_opened) PS2KbdClose();
 	TimerEnd();
 	RunLoaderElf(fullpath, party);
@@ -1636,8 +1647,9 @@ ELFnotFound:
 // dlanor: but changed now, as the original was badly bugged
 void Reset()
 {
-	SifIopReset("rom0:UDNL rom0:EELOADCNF",0);
-	while(!SifIopSync());
+	SifIopReset("rom0:UDNL rom0:EELOADCNF", 0);
+	while (!SifIopSync())
+		;
 	fioExit();
 	SifExitIopHeap();
 	SifLoadFileExit();
@@ -1648,13 +1660,13 @@ void Reset()
 	FlushCache(0);
 	FlushCache(2);
 
-	have_cdvd     = 0;
-	have_usbd     = 0;
+	have_cdvd = 0;
+	have_usbd = 0;
 	have_usb_mass = 0;
-	have_ps2smap  = 0;
-	have_ps2host  = 0;
-	have_ps2ftpd  = 0;
-	have_ps2kbd   = 0;
+	have_ps2smap = 0;
+	have_ps2host = 0;
+	have_ps2ftpd = 0;
+	have_ps2kbd = 0;
 	have_NetModules = 0;
 	have_HDD_modules = 0;
 	have_sbv_patches = 0;
@@ -1663,8 +1675,8 @@ void Reset()
 	loadBasicModules();
 	mcReset();
 	mcInit(MC_TYPE_MC);
-//	padReset();
-//	setupPad();
+	//	padReset();
+	//	setupPad();
 }
 //------------------------------
 //endfunc Reset
@@ -1672,39 +1684,39 @@ void Reset()
 int uLE_detect_TV_mode()
 {
 	int ROMVER_fd;
-	char ROMVER_file[20]; //16 byte file
+	char ROMVER_file[20];  //16 byte file
 
 	ROMVER_fd = genOpen("rom0:ROMVER", O_RDONLY);
-	if(ROMVER_fd < 0)
-		return TV_mode_NTSC; //NTSC is default mode for unidentified console
+	if (ROMVER_fd < 0)
+		return TV_mode_NTSC;  //NTSC is default mode for unidentified console
 	genRead(ROMVER_fd, ROMVER_file, 16);
 	genClose(ROMVER_fd);
-	if(ROMVER_file[4] == 'E')
-		return TV_mode_PAL; //PAL mode is identified by 'E' for Europe
-	return TV_mode_NTSC;  //All other cases need NTSC
+	if (ROMVER_file[4] == 'E')
+		return TV_mode_PAL;  //PAL mode is identified by 'E' for Europe
+	return TV_mode_NTSC;     //All other cases need NTSC
 }
 //------------------------------
 //endfunc uLE_detect_TV_mode
 //--------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-	char *p;//, CNF_pathname[MAX_PATH];
+	char *p;  //, CNF_pathname[MAX_PATH];
 	//int event, post_event=0;
 	//int RunELF_index, nElfs=0;
 	//CdvdDiscType_t cdmode, old_cdmode;  //used for disc change detection
 	//int hdd_booted = 0;
 	//int host_or_hdd_booted = 0;
-	int mass_booted = 0; //flags boot made with compatible mass drivers
-	int mass_needed = 0; //flags need to load compatible mass drivers
+	int mass_booted = 0;  //flags boot made with compatible mass drivers
+	int mass_needed = 0;  //flags need to load compatible mass drivers
 	int mc_booted = 0;
 	//int cdvd_booted = 0;
 	//int	host_booted = 0;
 	int gs_vmode;
-	int CNF_error = -1; //assume error until CNF correctly loaded
+	int CNF_error = -1;  //assume error until CNF correctly loaded
 	int i;
 
 	boot_argc = argc;
-	for(i=0; (i<argc)&&(i<8); i++)
+	for (i = 0; (i < argc) && (i < 8); i++)
 		boot_argv[i] = argv[i];
 
 	SifInitRpc(0);
@@ -1716,24 +1728,23 @@ int main(int argc, char *argv[])
 
 	force_IOP = 0;
 	LaunchElfDir[0] = 0;
-	if	((argc > 0) && argv[0]){
+	if ((argc > 0) && argv[0]) {
 		strcpy(LaunchElfDir, argv[0]);
-		if	(!strncmp(argv[0], "mass", 4)){
-			if(!strncmp(argv[0], "mass0:\\", 7)){  //SwapMagic boot path for usb_mass
+		if (!strncmp(argv[0], "mass", 4)) {
+			if (!strncmp(argv[0], "mass0:\\", 7)) {  //SwapMagic boot path for usb_mass
 				//Transform the boot path to homebrew standards
-				LaunchElfDir[4]=':';
+				LaunchElfDir[4] = ':';
 				strcpy(&LaunchElfDir[5], &LaunchElfDir[7]);
-				for(i=0; LaunchElfDir[i]!=0; i++){
-					if(LaunchElfDir[i] == '\\')
+				for (i = 0; LaunchElfDir[i] != 0; i++) {
+					if (LaunchElfDir[i] == '\\')
 						LaunchElfDir[i] = '/';
 				}
-				force_IOP = 1;   //Note incompatible drivers present (as yet ignored)
-				mass_needed = 1; //Note need to load compatible mass: drivers
-			} else {  //else we booted with normal homebrew mass: drivers
-				mass_booted = 1; //Note presence of compatible mass: drivers
+				force_IOP = 1;    //Note incompatible drivers present (as yet ignored)
+				mass_needed = 1;  //Note need to load compatible mass: drivers
+			} else {              //else we booted with normal homebrew mass: drivers
+				mass_booted = 1;  //Note presence of compatible mass: drivers
 			}
-		}
-		else if	(!strncmp(argv[0], "mc", 2))
+		} else if (!strncmp(argv[0], "mc", 2))
 			mc_booted = 1;
 		/*else if	(!strncmp(argv[0], "cd", 2))
 			cdvd_booted = 1;
@@ -1743,7 +1754,7 @@ int main(int argc, char *argv[])
 	}
 	strcpy(boot_path, LaunchElfDir);
 
-/*
+	/*
 	if(!strncmp(LaunchElfDir, "host",4)) {
 		host_or_hdd_booted = 1;
 		if	(have_fakehost)
@@ -1758,16 +1769,16 @@ int main(int argc, char *argv[])
 	}
 */
 
-	if	(mass_booted)	//Fix untestable module for USB_mass booting
-	{	have_usbd = 1;
+	if (mass_booted)  //Fix untestable module for USB_mass booting
+	{
+		have_usbd = 1;
 		have_usb_mass = 1;
 	}
 
-	if	(	((p=strrchr(LaunchElfDir, '/'))==NULL)
-			&&((p=strrchr(LaunchElfDir, '\\'))==NULL)
-			)	p=strrchr(LaunchElfDir, ':');
-	if	(p!=NULL)
-		*(p+1)=0;
+	if (((p = strrchr(LaunchElfDir, '/')) == NULL) && ((p = strrchr(LaunchElfDir, '\\')) == NULL))
+		p = strrchr(LaunchElfDir, ':');
+	if (p != NULL)
+		*(p + 1) = 0;
 	//The above cuts away the ELF filename from LaunchElfDir, leaving a pure path
 
 	/*if(hdd_booted && !strncmp(LaunchElfDir, "hdd", 3)){;
@@ -1778,12 +1789,12 @@ int main(int argc, char *argv[])
 
 	LastDir[0] = 0;
 
-	if(uLE_detect_TV_mode() == TV_mode_PAL) {  //Test console TV mode
-		SCREEN_X			= 652;
-		SCREEN_Y			= 72;
+	if (uLE_detect_TV_mode() == TV_mode_PAL) {  //Test console TV mode
+		SCREEN_X = 652;
+		SCREEN_Y = 72;
 	} else {
-		SCREEN_X			= 632;
-		SCREEN_Y			= 50;
+		SCREEN_X = 632;
+		SCREEN_Y = 50;
 	}
 
 	//RA NB: loadConfig needs  SCREEN_X and SCREEN_Y to be defaults matching TV mode
@@ -1798,33 +1809,33 @@ int main(int argc, char *argv[])
 
 	//TV_mode = setting->TV_mode;
 	//if((TV_mode!=TV_mode_NTSC)&&(TV_mode!=TV_mode_PAL)){ //If no forced request
-		TV_mode = uLE_detect_TV_mode();  //Let console region decide TV_mode
+	TV_mode = uLE_detect_TV_mode();  //Let console region decide TV_mode
 	//}
 
-	if(TV_mode == TV_mode_PAL){ //Use PAL mode if chosen (forced or auto)
+	if (TV_mode == TV_mode_PAL) {  //Use PAL mode if chosen (forced or auto)
 		gs_vmode = GS_MODE_PAL;
-		SCREEN_WIDTH	= 640;
+		SCREEN_WIDTH = 640;
 		SCREEN_HEIGHT = 512;
-		SCREEN_X			= 652;
-		SCREEN_Y			= 72;
-		Menu_end_y			= Menu_start_y + 26*FONT_HEIGHT;
-	}else{                      //else use NTSC mode (forced or auto)
+		SCREEN_X = 652;
+		SCREEN_Y = 72;
+		Menu_end_y = Menu_start_y + 26 * FONT_HEIGHT;
+	} else {  //else use NTSC mode (forced or auto)
 		gs_vmode = GS_MODE_NTSC;
-		SCREEN_WIDTH	= 640;
+		SCREEN_WIDTH = 640;
 		SCREEN_HEIGHT = 448;
-		SCREEN_X			= 632;
-		SCREEN_Y			= 50;
-		Menu_end_y		 = Menu_start_y + 22*FONT_HEIGHT;
+		SCREEN_X = 632;
+		SCREEN_Y = 50;
+		Menu_end_y = Menu_start_y + 22 * FONT_HEIGHT;
 	} /* end else */
-	Frame_end_y			= Menu_end_y + 4;
-	Menu_tooltip_y	= Frame_end_y + LINE_THICKNESS + 2;
+	Frame_end_y = Menu_end_y + 4;
+	Menu_tooltip_y = Frame_end_y + LINE_THICKNESS + 2;
 
 	//maxCNF = setting->numCNF;
 	swapKeys = setting->swapKeys;
-	if(setting->resetIOP)
-	{	Reset();
-		if(!strncmp(LaunchElfDir, "mass:", 5))
-		{	initsbv_patches();
+	if (setting->resetIOP) {
+		Reset();
+		if (!strncmp(LaunchElfDir, "mass:", 5)) {
+			initsbv_patches();
 			loadUsbModules();
 		}
 		/*else if(!strncmp(LaunchElfDir, "host:", 5))
@@ -1835,14 +1846,14 @@ int main(int argc, char *argv[])
 	}
 	//Here IOP reset (if done) has been completed, so it's time to load and init drivers
 	//getIpConfig();
-	setupPad(); //Comment out this line when using early setupPad above
+	setupPad();  //Comment out this line when using early setupPad above
 	initsbv_patches();
 
 	//if(setting->discControl)
 	//	loadCdModules();
 
-//Last chance to look at bootup screen, so allow braking here
-/*
+	//Last chance to look at bootup screen, so allow braking here
+	/*
 	if(readpad() && (new_pad && PAD_UP))
 	{ scr_printf("________ Boot paused. Press 'Circle' to continue.\n");
 		while(1)
@@ -1853,45 +1864,45 @@ int main(int argc, char *argv[])
 	}
 */
 	setupGS(gs_vmode);
-	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00,0x00,0x00,0x00,0x00));
+	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
 
-//	startKbd();
+	//	startKbd();
 	TimerInit();
-//	WaitTime=Timer();
+	//	WaitTime=Timer();
 
-//	loadFont("");  //Some font must be loaded before loading some device modules
-//	Load_External_Language();
-//	loadFont(setting->font_file);
+	//	loadFont("");  //Some font must be loaded before loading some device modules
+	//	Load_External_Language();
+	//	loadFont(setting->font_file);
 	loadFont(0);
-//	if (setting->GUI_skin[0]) {GUI_active = 1;}
-//	loadSkin(BACKGROUND_PIC, 0, 0);
+	//	if (setting->GUI_skin[0]) {GUI_active = 1;}
+	//	loadSkin(BACKGROUND_PIC, 0, 0);
 
-	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00,0x00,0x00,0x00,0x00));
+	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
 
-/*	if(CNF_error<0)
+	/*	if(CNF_error<0)
 		sprintf(mainMsg, "%s%s", LNG(Failed_To_Load), CNF_pathname);
 	else
 		sprintf(mainMsg, "%s%s", LNG(Loaded_Config), CNF_pathname);
 */
 	//Here nearly everything is ready for the main menu event loop
 	//But before we start that, we need to validate CNF_Path
-//	Validate_CNF_Path();
+	//	Validate_CNF_Path();
 
-//	timeout = (setting->timeout+1)*SCANRATE;
-//	cdmode = -1; //flag unchecked cdmode state
-//	event = 1;   //event = initial entry
+	//	timeout = (setting->timeout+1)*SCANRATE;
+	//	cdmode = -1; //flag unchecked cdmode state
+	//	event = 1;   //event = initial entry
 	//----- Start of main menu event loop -----
 
-	CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb3);//check mass
-	if (CNF_error < 0){
-		CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb);//check mc0
-		if (CNF_error < 0){
-			CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb2);//check mc1
+	CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb3);  //check mass
+	if (CNF_error < 0) {
+		CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb);  //check mc0
+		if (CNF_error < 0) {
+			CNF_error = loadConfig_fmcb(fmcbMsg, cnf_path_fmcb2);  //check mc1
 			if (CNF_error < 0)
 				strcpy(fmcbMsg, "Failed to load configuration file");
-		}		
+		}
 	}
-		
+
 	Config_fmcb(fmcbMsg);
 
 	/*while(1){

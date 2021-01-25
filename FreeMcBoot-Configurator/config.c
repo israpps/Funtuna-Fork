@@ -6,47 +6,35 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 #include "launchelf.h"
 #include <stdbool.h>
 #include <libmc.h>
 //#include "libmc-common.h"
-enum
-{
-//	DEF_TIMEOUT = 10,
-//	DEF_HIDE_PATHS = TRUE,
-/**********************DEFAULT COLORS**********************//**
+enum {
+	//	DEF_TIMEOUT = 10,
+	//	DEF_HIDE_PATHS = TRUE,
+	/**********************DEFAULT COLORS**********************/ /**
    *DEF_COLOR1 = GS_SETREG_RGBA(128,128,128,0), //Backgr 
    *DEF_COLOR2 = GS_SETREG_RGBA(64,64,64,0),    //Frame
    *DEF_COLOR3 = GS_SETREG_RGBA(96,0,0,0),      //Select
    *DEF_COLOR4 = GS_SETREG_RGBA(0,0,0,0),       //Text
    */
-	DEF_COLOR1 = GS_SETREG_RGBA(0,0,0,0), //Backgr 
-	DEF_COLOR2 = GS_SETREG_RGBA(160,160,160,0),    //Frame
-	DEF_COLOR3 = GS_SETREG_RGBA(255,0,0,0),      //Select
-	DEF_COLOR4 = GS_SETREG_RGBA(255,255,255,0),       //Text
-	DEF_COLOR5 = GS_SETREG_RGBA(102,0,255,0),   //Messages
-//	DEF_COLOR6 = GS_SETREG_RGBA(0,0,255,0),     //Graph2
-//	DEF_COLOR7 = GS_SETREG_RGBA(0,0,0,0),       //Graph3
-//	DEF_COLOR8 = GS_SETREG_RGBA(0,0,0,0),       //Graph4
-//	DEF_DISCCONTROL = FALSE,
+	DEF_COLOR1 = GS_SETREG_RGBA(0, 0, 0, 0),                     //Backgr
+	DEF_COLOR2 = GS_SETREG_RGBA(160, 160, 160, 0),               //Frame
+	DEF_COLOR3 = GS_SETREG_RGBA(255, 0, 0, 0),                   //Select
+	DEF_COLOR4 = GS_SETREG_RGBA(255, 255, 255, 0),               //Text
+	DEF_COLOR5 = GS_SETREG_RGBA(102, 0, 255, 0),                 //Messages
+	                                                             //	DEF_COLOR6 = GS_SETREG_RGBA(0,0,255,0),     //Graph2
+	                                                             //	DEF_COLOR7 = GS_SETREG_RGBA(0,0,0,0),       //Graph3
+	                                                             //	DEF_COLOR8 = GS_SETREG_RGBA(0,0,0,0),       //Graph4
+	                                                             //	DEF_DISCCONTROL = FALSE,
 	DEF_INTERLACE = TRUE,
 	DEF_MENU_FRAME = TRUE,
-//	DEF_MENU = TRUE,
+	//	DEF_MENU = TRUE,
 	DEF_RESETIOP = TRUE,
-//	DEF_NUMCNF = 1,
+	//	DEF_NUMCNF = 1,
 	DEF_SWAPKEYS = FALSE,
-/*	DEF_HOSTWRITE = FALSE,
+	/*	DEF_HOSTWRITE = FALSE,
 	DEF_BRIGHT = 50,
 	DEF_POPUP_OPAQUE = FALSE,
 	DEF_INIT_DELAY = 0,
@@ -59,8 +47,8 @@ enum
 	DEF_PSU_HUGENAMES = 0,
 	DEF_PSU_DATENAMES = 0,
 	DEF_PSU_NOOVERWRITE = 0,
-*/	
-/*	DEFAULT=0,
+*/
+	/*	DEFAULT=0,
 	SHOW_TITLES=12,
 	DISCCONTROL,
 	FILENAME,
@@ -103,60 +91,73 @@ SETTING *tmpsetting;
 // CNF file. Input and output data is handled via its pointer parameters.
 // The return value flags 'false' when no variable is found. (normal at EOF)
 //---------------------------------------------------------------------------
-int	get_CNF_string(unsigned char **CNF_p_p,
+int get_CNF_string(unsigned char **CNF_p_p,
                    unsigned char **name_p_p,
                    unsigned char **value_p_p)
 {
 	unsigned char *np, *vp, *tp = *CNF_p_p;
 
 start_line:
-	while((*tp<=' ') && (*tp>'\0')) tp+=1;  //Skip leading whitespace, if any
-	if(*tp=='\0') return 0;            		//but exit at EOF
-	np = tp;                                //Current pos is potential name
-	if(*tp<'A')                             //but may be a comment line
-	{                                       //We must skip a comment line
-		while((*tp!='\r')&&(*tp!='\n')&&(*tp>'\0')) tp+=1;  //Seek line end
-		goto start_line;                    //Go back to try next line
+	while ((*tp <= ' ') && (*tp > '\0'))
+		tp += 1;  //Skip leading whitespace, if any
+	if (*tp == '\0')
+		return 0;   //but exit at EOF
+	np = tp;        //Current pos is potential name
+	if (*tp < 'A')  //but may be a comment line
+	{               //We must skip a comment line
+		while ((*tp != '\r') && (*tp != '\n') && (*tp > '\0'))
+			tp += 1;      //Seek line end
+		goto start_line;  //Go back to try next line
 	}
 
-	while((*tp>='A')||((*tp>='0')&&(*tp<='9'))) tp+=1;  //Seek name end
-	if(*tp=='\0') return 0;          		//but exit at EOF
+	while ((*tp >= 'A') || ((*tp >= '0') && (*tp <= '9')))
+		tp += 1;  //Seek name end
+	if (*tp == '\0')
+		return 0;  //but exit at EOF
 
-	while((*tp<=' ') && (*tp>'\0'))
-		*tp++ = '\0';                       //zero&skip post-name whitespace
-	if(*tp!='=') return 0;	                //exit (syntax error) if '=' missing
-	*tp++ = '\0';                           //zero '=' (possibly terminating name)
+	while ((*tp <= ' ') && (*tp > '\0'))
+		*tp++ = '\0';  //zero&skip post-name whitespace
+	if (*tp != '=')
+		return 0;  //exit (syntax error) if '=' missing
+	*tp++ = '\0';  //zero '=' (possibly terminating name)
 
-	while((*tp<=' ') && (*tp>'\0')          //Skip pre-value whitespace, if any
-		&& (*tp!='\r') && (*tp!='\n')		//but do not pass the end of the line
-		&& (*tp!='\7')     					//allow ctrl-G (BEL) in value
-		)tp+=1;								
-	if(*tp=='\0') return 0;          		//but exit at EOF
-	vp = tp;                                //Current pos is potential value
+	while ((*tp <= ' ') && (*tp > '\0')       //Skip pre-value whitespace, if any
+	       && (*tp != '\r') && (*tp != '\n')  //but do not pass the end of the line
+	       && (*tp != '\7')                   //allow ctrl-G (BEL) in value
+	)
+		tp += 1;
+	if (*tp == '\0')
+		return 0;  //but exit at EOF
+	vp = tp;       //Current pos is potential value
 
-	while((*tp!='\r')&&(*tp!='\n')&&(*tp!='\0')) tp+=1;  //Seek line end
-	if(*tp!='\0') *tp++ = '\0';             //terminate value (passing if not EOF)
-	while((*tp<=' ') && (*tp>'\0')) tp+=1;  //Skip following whitespace, if any
+	while ((*tp != '\r') && (*tp != '\n') && (*tp != '\0'))
+		tp += 1;  //Seek line end
+	if (*tp != '\0')
+		*tp++ = '\0';  //terminate value (passing if not EOF)
+	while ((*tp <= ' ') && (*tp > '\0'))
+		tp += 1;  //Skip following whitespace, if any
 
-	*CNF_p_p = tp;                          //return new CNF file position
-	*name_p_p = np;                         //return found variable name
-	*value_p_p = vp;                        //return found variable value
-	return 1;                           	//return control to caller
-}	//Ends get_CNF_string
+	*CNF_p_p = tp;    //return new CNF file position
+	*name_p_p = np;   //return found variable name
+	*value_p_p = vp;  //return found variable value
+	return 1;         //return control to caller
+}  //Ends get_CNF_string
 //---------------------------------------------------------------------------
 int CheckMC(void)
 {
 	int dummy, ret;
-	
+
 	mcGetInfo(0, 0, &dummy, &dummy, &dummy);
 	mcSync(0, NULL, &ret);
 
-	if( -1 == ret || 0 == ret) return 0;
+	if (-1 == ret || 0 == ret)
+		return 0;
 
 	mcGetInfo(1, 0, &dummy, &dummy, &dummy);
 	mcSync(0, NULL, &ret);
 
-	if( -1 == ret || 0 == ret ) return 1;
+	if (-1 == ret || 0 == ret)
+		return 1;
 
 	return -11;
 }
@@ -602,12 +603,12 @@ void loadSkinBrowser(void)
 void initConfig(void)
 {
 	//int i;
-	
-	if(setting!=NULL)
-		free(setting);
-	setting = (SETTING*)malloc(sizeof(SETTING));
 
-/*	sprintf(setting->Misc, "%s/", LNG_DEF(MISC));
+	if (setting != NULL)
+		free(setting);
+	setting = (SETTING *)malloc(sizeof(SETTING));
+
+	/*	sprintf(setting->Misc, "%s/", LNG_DEF(MISC));
 	sprintf(setting->Misc_PS2Disc, "%s/%s", LNG_DEF(MISC), LNG_DEF(PS2Disc));
 	sprintf(setting->Misc_FileBrowser, "%s/%s", LNG_DEF(MISC), LNG_DEF(FileBrowser));
 	sprintf(setting->Misc_PS2Browser, "%s/%s", LNG_DEF(MISC), LNG_DEF(PS2Browser));
@@ -645,26 +646,28 @@ void initConfig(void)
 	setting->font_file[0] = '\0';
 	setting->timeout = DEF_TIMEOUT;
 	setting->Hide_Paths = DEF_HIDE_PATHS;
-*/	setting->color[0] = DEF_COLOR1;//background
-	setting->color[1] = DEF_COLOR2;//frame
-	setting->color[2] = DEF_COLOR3;//selected
-	setting->color[3] = DEF_COLOR4;//common text
-	setting->color[4] = DEF_COLOR5;//messages
-	strcpy(setting->Menu_Title, LANG_MENU_TITLE); //LANG_MENU_TITLE
-/*	setting->color[4] = DEF_COLOR5;
+*/
+	setting->color[0] = DEF_COLOR1;                //background
+	setting->color[1] = DEF_COLOR2;                //frame
+	setting->color[2] = DEF_COLOR3;                //selected
+	setting->color[3] = DEF_COLOR4;                //common text
+	setting->color[4] = DEF_COLOR5;                //messages
+	strcpy(setting->Menu_Title, LANG_MENU_TITLE);  //LANG_MENU_TITLE
+	                                               /*	setting->color[4] = DEF_COLOR5;
 	setting->color[5] = DEF_COLOR6;
 	setting->color[6] = DEF_COLOR7;
 	setting->color[7] = DEF_COLOR8;
-*/	setting->screen_x = SCREEN_X;
+*/
+	setting->screen_x = SCREEN_X;
 	setting->screen_y = SCREEN_Y;
-//	setting->discControl = DEF_DISCCONTROL;
+	//	setting->discControl = DEF_DISCCONTROL;
 	setting->interlace = DEF_INTERLACE;
 	setting->Menu_Frame = DEF_MENU_FRAME;
-//	setting->Show_Menu = DEF_MENU;
+	//	setting->Show_Menu = DEF_MENU;
 	setting->resetIOP = DEF_RESETIOP;
-//	setting->numCNF = DEF_NUMCNF;
+	//	setting->numCNF = DEF_NUMCNF;
 	setting->swapKeys = DEF_SWAPKEYS;
-/*	setting->HOSTwrite = DEF_HOSTWRITE;
+	/*	setting->HOSTwrite = DEF_HOSTWRITE;
 	setting->Brightness = DEF_BRIGHT;
 	setting->TV_mode = TV_mode_AUTO; //0==Console_auto, 1==NTSC, 2==PAL
 	setting->Popup_Opaque = DEF_POPUP_OPAQUE;
@@ -678,7 +681,7 @@ void initConfig(void)
 	setting->PSU_HugeNames = DEF_PSU_HUGENAMES;
 	setting->PSU_DateNames = DEF_PSU_DATENAMES;
 	setting->PSU_NoOverwrite = DEF_PSU_NOOVERWRITE;
-*/	
+*/
 }
 //------------------------------
 //endfunc initConfig
@@ -2003,9 +2006,9 @@ failed_load:
 //---------------------------------------------------------------------------
 
 extern void icon_sys;
-extern int  size_icon_sys;
+extern int size_icon_sys;
 extern void icon_icn;
-extern int  size_icon_icn;
+extern int size_icon_icn;
 
 //Define Free McBoot paths where CNF is looked for
 char cnf_path_fmcb[MAX_PATH] = "mc0:/BOOT/FUNTUNA.CNF";
@@ -2032,15 +2035,15 @@ typedef struct
 	int OSD_scroll;
 	int OSD_mvelocity;
 	int OSD_accel;
-	char OSD_cursor[2][11];// 0 left, 1 right
-	char OSD_delimiter[2][81];// 0 top, 1 bottom
+	char OSD_cursor[2][11];     // 0 left, 1 right
+	char OSD_delimiter[2][81];  // 0 top, 1 bottom
 	int OSD_displayitems;
 	char OSD_tvmode[5];
 	int Debug;
 	int Fastboot;
 	float pad_delay;
-//	char selected_color[MAX_PATH];
-//	char unselected_color[MAX_PATH];
+	//	char selected_color[MAX_PATH];
+	//	char unselected_color[MAX_PATH];
 	char LK_E1_Path[17][MAX_PATH];
 	char LK_E2_Path[17][MAX_PATH];
 	char LK_E3_Path[17][MAX_PATH];
@@ -2059,24 +2062,23 @@ FMCB *tmpfmcb;
 
 //Launch Keys identifiers
 char LK_ID_fmcb[17][10] = {
-	"Auto",
-	"Circle",
-	"Cross",
-	"Square",
-	"Triangle",
-	"L1",
-	"R1",
-	"L2",
-	"R2",
-	"L3",
-	"R3",
-	"Up",
-	"Down",
-	"Left",
-	"Right",
-	"Start",
-	"Select"
-};
+    "Auto",
+    "Circle",
+    "Cross",
+    "Square",
+    "Triangle",
+    "L1",
+    "R1",
+    "L2",
+    "R2",
+    "L3",
+    "R3",
+    "Up",
+    "Down",
+    "Left",
+    "Right",
+    "Start",
+    "Select"};
 //---------------------------------------------------------------------------
 //storeFmcbCNF will save Free McBoot settings to a RAM area
 //------------------------------
@@ -2085,193 +2087,193 @@ size_t storeFmcbCNF(char *cnf_buf)
 	size_t CNF_size, CNF_step;
 	int i;
 
-	sprintf(cnf_buf, "CNF_version = 1\r\n%n", &CNF_size); //Start CNF with version header
+	sprintf(cnf_buf, "CNF_version = 1\r\n%n", &CNF_size);  //Start CNF with version header
 
-//fmcb core options
-	sprintf(cnf_buf+CNF_size,
+	//fmcb core options
+	sprintf(cnf_buf + CNF_size,
 
-		"Debug_Screen = %d\r\n"
-		"FastBoot = %d\r\n"
-		"ESR_Path_E1 = %s\r\n"
-		"ESR_Path_E2 = %s\r\n"
-		"ESR_Path_E3 = %s\r\n"
-		"pad_delay = %.0f\r\n"
+	        "Debug_Screen = %d\r\n"
+	        "FastBoot = %d\r\n"
+	        "ESR_Path_E1 = %s\r\n"
+	        "ESR_Path_E2 = %s\r\n"
+	        "ESR_Path_E3 = %s\r\n"
+	        "pad_delay = %.0f\r\n"
 
-		"%n",           // %n causes NO output, but only a measurement
-		fmcb->Debug,   //Debug Screen
-		fmcb->Fastboot,   //Fastboot disc
-		fmcb->ESR_Path[0],
-		fmcb->ESR_Path[1],
-		fmcb->ESR_Path[2],
-		fmcb->pad_delay,
+	        "%n",            // %n causes NO output, but only a measurement
+	        fmcb->Debug,     //Debug Screen
+	        fmcb->Fastboot,  //Fastboot disc
+	        fmcb->ESR_Path[0],
+	        fmcb->ESR_Path[1],
+	        fmcb->ESR_Path[2],
+	        fmcb->pad_delay,
 
-		&CNF_step       // This variable measures the size of sprintf data
+	        &CNF_step  // This variable measures the size of sprintf data
 	);
-  CNF_size += CNF_step;
+	CNF_size += CNF_step;
 
-//Launch keys
-	for(i=0; i<17; i++){	//Loop to save the ELF paths for launch keys
-		if (fmcb->LK_E1_Path[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"LK_%s_E1 = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				LK_ID_fmcb[i], fmcb->LK_E1_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
-			);
-					
-			CNF_size += CNF_step;
-		}
-		
-		if (fmcb->LK_E2_Path[i][0] != 0){	
-			sprintf(cnf_buf+CNF_size,
-				"LK_%s_E2 = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				LK_ID_fmcb[i], fmcb->LK_E2_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
+	//Launch keys
+	for (i = 0; i < 17; i++) {  //Loop to save the ELF paths for launch keys
+		if (fmcb->LK_E1_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "LK_%s_E1 = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        LK_ID_fmcb[i], fmcb->LK_E1_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
 			);
 
 			CNF_size += CNF_step;
 		}
-		
-		if (fmcb->LK_E2_Path[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"LK_%s_E3 = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				LK_ID_fmcb[i], fmcb->LK_E3_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
+
+		if (fmcb->LK_E2_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "LK_%s_E2 = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        LK_ID_fmcb[i], fmcb->LK_E2_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
 			);
 
 			CNF_size += CNF_step;
 		}
-	}//ends for*/
 
-//Hacked OSDSYS options
-	sprintf(cnf_buf+CNF_size,
-		"hacked_OSDSYS = %d\r\n"
-		"OSDSYS_video_mode = %s\r\n"
-		"OSDSYS_Skip_Disc = %d\r\n"
-		"OSDSYS_Skip_Logo = %d\r\n"
-		"OSDSYS_Inner_Browser = %d\r\n"
-		"OSDSYS_selected_color = 0x%02X,0x%02X,0x%02X,0x%02X\r\n"
-		"OSDSYS_unselected_color = 0x%02X,0x%02X,0x%02X,0x%02X\r\n"
-		"OSDSYS_scroll_menu = %d\r\n"
-		"OSDSYS_menu_x = %d\r\n"
-		"OSDSYS_menu_y = %d\r\n"
-		"OSDSYS_enter_x = %d\r\n"
-		"OSDSYS_enter_y = %d\r\n"
-		"OSDSYS_version_x = %d\r\n"
-		"OSDSYS_version_y = %d\r\n"
-		"OSDSYS_cursor_max_velocity = %d\r\n"
-		"OSDSYS_cursor_acceleration = %d\r\n"
-		"OSDSYS_left_cursor = %s\r\n"
-		"OSDSYS_right_cursor = %s\r\n"
-		"OSDSYS_menu_top_delimiter = %s\r\n"
-		"OSDSYS_menu_bottom_delimiter = %s\r\n"
-		"OSDSYS_num_displayed_items = %d\r\n"
-		"OSDSYS_Skip_MC = %d\r\n"
-		"OSDSYS_Skip_HDD = %d\r\n"
-		
-		"%n",           // %n causes NO output, but only a measurement
-		fmcb->hacked_OSDSYS,
-		fmcb->OSD_tvmode,
-		fmcb->Skip_Disc,
-		fmcb->Skip_Logo,
-		fmcb->Inner_Browser,
-		OSDSYS_selected_color[0],
-		OSDSYS_selected_color[1],
-		OSDSYS_selected_color[2],
-		OSDSYS_selected_color[3],
-		OSDSYS_unselected_color[0],
-		OSDSYS_unselected_color[1],
-		OSDSYS_unselected_color[2],
-		OSDSYS_unselected_color[3],
-		fmcb->OSD_scroll,
-		fmcb->OSDSYS_menu_x,
-		fmcb->OSDSYS_menu_y,
-		fmcb->OSDSYS_enter_x,
-		fmcb->OSDSYS_enter_y,
-		fmcb->OSDSYS_version_x,
-		fmcb->OSDSYS_version_y,
-		fmcb->OSD_mvelocity,
-		fmcb->OSD_accel,
-		fmcb->OSD_cursor[0],
-		fmcb->OSD_cursor[1],
-		fmcb->OSD_delimiter[0],
-		fmcb->OSD_delimiter[1],
-		fmcb->OSD_displayitems,
-		fmcb->Skip_MC,
-		fmcb->Skip_HDD,
+		if (fmcb->LK_E2_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "LK_%s_E3 = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        LK_ID_fmcb[i], fmcb->LK_E3_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
+			);
 
-		&CNF_step       // This variable measures the size of sprintf data
+			CNF_size += CNF_step;
+		}
+	}  //ends for*/
+
+	//Hacked OSDSYS options
+	sprintf(cnf_buf + CNF_size,
+	        "hacked_OSDSYS = %d\r\n"
+	        "OSDSYS_video_mode = %s\r\n"
+	        "OSDSYS_Skip_Disc = %d\r\n"
+	        "OSDSYS_Skip_Logo = %d\r\n"
+	        "OSDSYS_Inner_Browser = %d\r\n"
+	        "OSDSYS_selected_color = 0x%02X,0x%02X,0x%02X,0x%02X\r\n"
+	        "OSDSYS_unselected_color = 0x%02X,0x%02X,0x%02X,0x%02X\r\n"
+	        "OSDSYS_scroll_menu = %d\r\n"
+	        "OSDSYS_menu_x = %d\r\n"
+	        "OSDSYS_menu_y = %d\r\n"
+	        "OSDSYS_enter_x = %d\r\n"
+	        "OSDSYS_enter_y = %d\r\n"
+	        "OSDSYS_version_x = %d\r\n"
+	        "OSDSYS_version_y = %d\r\n"
+	        "OSDSYS_cursor_max_velocity = %d\r\n"
+	        "OSDSYS_cursor_acceleration = %d\r\n"
+	        "OSDSYS_left_cursor = %s\r\n"
+	        "OSDSYS_right_cursor = %s\r\n"
+	        "OSDSYS_menu_top_delimiter = %s\r\n"
+	        "OSDSYS_menu_bottom_delimiter = %s\r\n"
+	        "OSDSYS_num_displayed_items = %d\r\n"
+	        "OSDSYS_Skip_MC = %d\r\n"
+	        "OSDSYS_Skip_HDD = %d\r\n"
+
+	        "%n",  // %n causes NO output, but only a measurement
+	        fmcb->hacked_OSDSYS,
+	        fmcb->OSD_tvmode,
+	        fmcb->Skip_Disc,
+	        fmcb->Skip_Logo,
+	        fmcb->Inner_Browser,
+	        OSDSYS_selected_color[0],
+	        OSDSYS_selected_color[1],
+	        OSDSYS_selected_color[2],
+	        OSDSYS_selected_color[3],
+	        OSDSYS_unselected_color[0],
+	        OSDSYS_unselected_color[1],
+	        OSDSYS_unselected_color[2],
+	        OSDSYS_unselected_color[3],
+	        fmcb->OSD_scroll,
+	        fmcb->OSDSYS_menu_x,
+	        fmcb->OSDSYS_menu_y,
+	        fmcb->OSDSYS_enter_x,
+	        fmcb->OSDSYS_enter_y,
+	        fmcb->OSDSYS_version_x,
+	        fmcb->OSDSYS_version_y,
+	        fmcb->OSD_mvelocity,
+	        fmcb->OSD_accel,
+	        fmcb->OSD_cursor[0],
+	        fmcb->OSD_cursor[1],
+	        fmcb->OSD_delimiter[0],
+	        fmcb->OSD_delimiter[1],
+	        fmcb->OSD_displayitems,
+	        fmcb->Skip_MC,
+	        fmcb->Skip_HDD,
+
+	        &CNF_step  // This variable measures the size of sprintf data
 	);
-  CNF_size += CNF_step;
+	CNF_size += CNF_step;
 
-//OSD names and keys
-	for(i=0; i<100; i++){	//Loop to save the OSD names
-		if (fmcb->OSD_Name[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"name_OSDSYS_ITEM_%d = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				i+1, fmcb->OSD_Name[i],
-				&CNF_step       // This variable measures the size of sprintf data
-			);
-			
-			CNF_size += CNF_step;
-		}
-
-		if (fmcb->OSD_E1_Path[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"path1_OSDSYS_ITEM_%d = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				i+1, fmcb->OSD_E1_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
-			);
-			
-			CNF_size += CNF_step;
-		}
-			
-		if (fmcb->OSD_E2_Path[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"path2_OSDSYS_ITEM_%d = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				i+1, fmcb->OSD_E2_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
+	//OSD names and keys
+	for (i = 0; i < 100; i++) {  //Loop to save the OSD names
+		if (fmcb->OSD_Name[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "name_OSDSYS_ITEM_%d = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        i + 1, fmcb->OSD_Name[i],
+			        &CNF_step  // This variable measures the size of sprintf data
 			);
 
 			CNF_size += CNF_step;
 		}
-		
-		if (fmcb->OSD_E3_Path[i][0] != 0){
-			sprintf(cnf_buf+CNF_size,
-				"path3_OSDSYS_ITEM_%d = %s\r\n"
-				"%n",           // %n causes NO output, but only a measurement
-				i+1, fmcb->OSD_E3_Path[i],
-				&CNF_step       // This variable measures the size of sprintf data
+
+		if (fmcb->OSD_E1_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "path1_OSDSYS_ITEM_%d = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        i + 1, fmcb->OSD_E1_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
 			);
 
 			CNF_size += CNF_step;
 		}
-	}//ends for*/
 
-  return CNF_size;
-}//endfunc storeFmcbCNF
+		if (fmcb->OSD_E2_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "path2_OSDSYS_ITEM_%d = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        i + 1, fmcb->OSD_E2_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
+			);
+
+			CNF_size += CNF_step;
+		}
+
+		if (fmcb->OSD_E3_Path[i][0] != 0) {
+			sprintf(cnf_buf + CNF_size,
+			        "path3_OSDSYS_ITEM_%d = %s\r\n"
+			        "%n",  // %n causes NO output, but only a measurement
+			        i + 1, fmcb->OSD_E3_Path[i],
+			        &CNF_step  // This variable measures the size of sprintf data
+			);
+
+			CNF_size += CNF_step;
+		}
+	}  //ends for*/
+
+	return CNF_size;
+}  //endfunc storeFmcbCNF
 //---------------------------------------------------------------------------
 //saveFmcbCNF will save Free McBoot settings to a CNF file
 //------------------------------
 int saveFmcbCNF(char *fmcbMsg, char *CNF)
 {
-	int ret=0, fd;
-	char tmp[26*MAX_PATH + 30*MAX_PATH];
+	int ret = 0, fd;
+	char tmp[26 * MAX_PATH + 30 * MAX_PATH];
 	char cnf_path[MAX_PATH], icon_path[MAX_PATH];
 	size_t CNF_size;
 
 	CNF_size = storeFmcbCNF(tmp);
-if (strncmp(CNF,"mass:", 5)){//if not the mass device
-	mcSync(0,NULL,NULL);
-	//mcMkDir(CNF[2]-'0', 0, "FMCB-CNF");
-	mcMkDir(CNF[2]-'0', 0, "BOOT");
-	mcSync(0, NULL, &ret);
-	/*
+	if (strncmp(CNF, "mass:", 5)) {  //if not the mass device
+		mcSync(0, NULL, NULL);
+		//mcMkDir(CNF[2]-'0', 0, "FMCB-CNF");
+		mcMkDir(CNF[2] - '0', 0, "BOOT");
+		mcSync(0, NULL, &ret);
+		/*
 	//icon.sys
 	icon_path[0]=0;
 	strncat(icon_path, CNF, 14);
@@ -2307,26 +2309,26 @@ if (strncmp(CNF,"mass:", 5)){//if not the mass device
 		}
 	
 	}*/
-}	
+	}
 	//FREEMCB.CNF
 	ret = genFixPath(CNF, cnf_path);
-	if((ret < 0) || ((fd=genOpen(cnf_path,O_CREAT|O_WRONLY|O_TRUNC)) < 0)){
-		sprintf(fmcbMsg, "Failed to open %s", cnf_path); 
-		return -1; //Failed open
+	if ((ret < 0) || ((fd = genOpen(cnf_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0)) {
+		sprintf(fmcbMsg, "Failed to open %s", cnf_path);
+		return -1;  //Failed open
 	}
-	ret = genWrite(fd,&tmp,CNF_size);
-	if(ret!=CNF_size){
+	ret = genWrite(fd, &tmp, CNF_size);
+	if (ret != CNF_size) {
 		sprintf(fmcbMsg, "Failed to write %s", cnf_path);
-		ret = -2; //Failed writing
+		ret = -2;  //Failed writing
 	}
 	genClose(fd);
-	
-	//------------------------------------------------------------------------------------------------------------------------------------------
-#define ARRAY_ENTRIES	64
 
-///timestamp
-static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
-	static sceMcStDateTime new_timestamp; //Maxium Timestamp
+	//------------------------------------------------------------------------------------------------------------------------------------------
+#define ARRAY_ENTRIES 64
+
+	///timestamp
+	static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
+	static sceMcStDateTime new_timestamp;  //Maxium Timestamp
 	new_timestamp.Resv2 = 0;
 	new_timestamp.Sec = 59;
 	new_timestamp.Min = 59;
@@ -2338,34 +2340,31 @@ static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
 	mcDirAAA->_Create = new_timestamp;
 	mcSetFileInfo(0, 0, "BXEXEC-FUNTUNA", mcDirAAA, 0x02);
 	mcSync(0, NULL, NULL);
-///\timestamp
+	///\timestamp
 
 
 
-
-
-
-//------------------------------------------------------------------------------------------------------------------------------------------*/
-//*/
+	//------------------------------------------------------------------------------------------------------------------------------------------*/
+	//*/
 	sprintf(fmcbMsg, "Saved %s", CNF);
 	return ret;
-}//endfunc saveFmcbCNF
+}  //endfunc saveFmcbCNF
 //----------------------------------------------------------------
 // Initialize Free McBoot CNF configuration
 //----------------------------------------------------------------
-void initConfig_fmcb(int mode)//mode 0 = failed init, mode 1 = succesful init
+void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 {
 	int i;
-	
-	if(fmcb!=NULL)
+
+	if (fmcb != NULL)
 		free(fmcb);
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 
 	fmcb->Fastboot = 1;
 	fmcb->Debug = 0;
 	fmcb->pad_delay = 0;
 
-//OSDSYS settings
+	//OSDSYS settings
 	fmcb->hacked_OSDSYS = 1;
 	strcpy(fmcb->OSD_tvmode, "AUTO");
 	fmcb->Skip_MC = 1;
@@ -2387,58 +2386,58 @@ void initConfig_fmcb(int mode)//mode 0 = failed init, mode 1 = succesful init
 	strcpy(fmcb->OSD_cursor[1], "o008");
 	strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60 v1.0.0r0.60]y-00");
 	strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99 based on FreeMcBoot 1.0 y-00r0.00");
-//selected color
-	OSDSYS_selected_color[0]=strtol("0x10", NULL, 16); // hex base
-	OSDSYS_selected_color[1]=strtol("0x80", NULL, 16); // hex base
-	OSDSYS_selected_color[2]=strtol("0xE0", NULL, 16); // hex base
-	OSDSYS_selected_color[3]=strtol("0x80", NULL, 16); // hex base
-//selected color
-	OSDSYS_unselected_color[0]=strtol("0x33", NULL, 16); // hex base
-	OSDSYS_unselected_color[1]=strtol("0x33", NULL, 16); // hex base
-	OSDSYS_unselected_color[2]=strtol("0x33", NULL, 16); // hex base
-	OSDSYS_unselected_color[3]=strtol("0x80", NULL, 16); // hex base
+	//selected color
+	OSDSYS_selected_color[0] = strtol("0x10", NULL, 16);    // hex base
+	OSDSYS_selected_color[1] = strtol("0x80", NULL, 16);    // hex base
+	OSDSYS_selected_color[2] = strtol("0xE0", NULL, 16);    // hex base
+	OSDSYS_selected_color[3] = strtol("0x80", NULL, 16);    // hex base
+	                                                        //selected color
+	OSDSYS_unselected_color[0] = strtol("0x33", NULL, 16);  // hex base
+	OSDSYS_unselected_color[1] = strtol("0x33", NULL, 16);  // hex base
+	OSDSYS_unselected_color[2] = strtol("0x33", NULL, 16);  // hex base
+	OSDSYS_unselected_color[3] = strtol("0x80", NULL, 16);  // hex base
 
-//OSD names and keys
-	for(i=0; i<100; i++){	//all clean by default
+	//OSD names and keys
+	for (i = 0; i < 100; i++) {  //all clean by default
 		fmcb->OSD_Name[i][0] = 0;
 		fmcb->OSD_E1_Path[i][0] = 0;
 		fmcb->OSD_E3_Path[i][0] = 0;
 		fmcb->OSD_E2_Path[i][0] = 0;
-	}//ends for*/	
-if (!mode){
-	strcpy(fmcb->OSD_Name[0], "uLaunchELF");//Menu names
-	strcpy(fmcb->OSD_Name[1], "ESR");
-	strcpy(fmcb->OSD_Name[2], "OpenPS2Loader");
-	strcpy(fmcb->OSD_Name[3], "Simple Media System");
-	strcpy(fmcb->OSD_Name[99], "Free McBoot Configurator");
-	
-	strcpy(fmcb->OSD_E1_Path[0], "mass:/BOOT/ULE.ELF");//Item 1
-	strcpy(fmcb->OSD_E2_Path[0], "mc?:/BOOT/ULE.ELF");
-	strcpy(fmcb->OSD_E3_Path[0], "mc?:/B?DATA-SYSTEM/ULE.ELF");
-	
-	strcpy(fmcb->OSD_E1_Path[1], "mass:/BOOT/ESR.ELF");//Item 2
-	strcpy(fmcb->OSD_E2_Path[1], "mc?:/BOOT/ESR.ELF");
-	strcpy(fmcb->OSD_E3_Path[1], "mc?:/B?DATA-SYSTEM/ESR.ELF");
-	
-	strcpy(fmcb->OSD_E1_Path[2], "mass:/BOOT/OPNPS2LD.ELF");//Item 3
-	strcpy(fmcb->OSD_E2_Path[2], "mc?:/BOOT/OPNPS2LD.ELF");
-	strcpy(fmcb->OSD_E3_Path[2], "mc?:/B?DATA-SYSTEM/OPNPS2LD.ELF");
-	
-	strcpy(fmcb->OSD_E1_Path[3], "mass:/BOOT/SMS.ELF");//Item 4
-	strcpy(fmcb->OSD_E2_Path[3], "mc?:/BOOT/SMS.ELF");
-	strcpy(fmcb->OSD_E3_Path[3], "mc?:/B?DATA-SYSTEM/SMS.ELF");
-	
-	strcpy(fmcb->OSD_E1_Path[99], "mc?:/BOOT/FMCB_CFG.ELF");//Item 5
-	//strcpy(fmcb->OSD_E2_Path[99], "mc?:/BOOT/BOOT.ELF");
-	//strcpy(fmcb->OSD_E3_Path[99], "mc?:/B?DATA-SYSTEM/BOOT.ELF");
+	}  //ends for*/
+	if (!mode) {
+		strcpy(fmcb->OSD_Name[0], "uLaunchELF");  //Menu names
+		strcpy(fmcb->OSD_Name[1], "ESR");
+		strcpy(fmcb->OSD_Name[2], "OpenPS2Loader");
+		strcpy(fmcb->OSD_Name[3], "Simple Media System");
+		strcpy(fmcb->OSD_Name[99], "Free McBoot Configurator");
 
-	for(i=0; i<17; i++){
-		strcpy(fmcb->LK_E1_Path[i], "OSDSYS");//By default any non L-R button press launches browser
-		fmcb->LK_E2_Path[i][0]  = 0;
-		fmcb->LK_E3_Path[i][0]  = 0;
-	}
-	//Auto
-/*	strcpy(fmcb->LK_E1_Path[0], "mass:/BOOT/BOOT.ELF");
+		strcpy(fmcb->OSD_E1_Path[0], "mass:/BOOT/ULE.ELF");  //Item 1
+		strcpy(fmcb->OSD_E2_Path[0], "mc?:/BOOT/ULE.ELF");
+		strcpy(fmcb->OSD_E3_Path[0], "mc?:/B?DATA-SYSTEM/ULE.ELF");
+
+		strcpy(fmcb->OSD_E1_Path[1], "mass:/BOOT/ESR.ELF");  //Item 2
+		strcpy(fmcb->OSD_E2_Path[1], "mc?:/BOOT/ESR.ELF");
+		strcpy(fmcb->OSD_E3_Path[1], "mc?:/B?DATA-SYSTEM/ESR.ELF");
+
+		strcpy(fmcb->OSD_E1_Path[2], "mass:/BOOT/OPNPS2LD.ELF");  //Item 3
+		strcpy(fmcb->OSD_E2_Path[2], "mc?:/BOOT/OPNPS2LD.ELF");
+		strcpy(fmcb->OSD_E3_Path[2], "mc?:/B?DATA-SYSTEM/OPNPS2LD.ELF");
+
+		strcpy(fmcb->OSD_E1_Path[3], "mass:/BOOT/SMS.ELF");  //Item 4
+		strcpy(fmcb->OSD_E2_Path[3], "mc?:/BOOT/SMS.ELF");
+		strcpy(fmcb->OSD_E3_Path[3], "mc?:/B?DATA-SYSTEM/SMS.ELF");
+
+		strcpy(fmcb->OSD_E1_Path[99], "mc?:/BOOT/FMCB_CFG.ELF");  //Item 5
+		//strcpy(fmcb->OSD_E2_Path[99], "mc?:/BOOT/BOOT.ELF");
+		//strcpy(fmcb->OSD_E3_Path[99], "mc?:/B?DATA-SYSTEM/BOOT.ELF");
+
+		for (i = 0; i < 17; i++) {
+			strcpy(fmcb->LK_E1_Path[i], "OSDSYS");  //By default any non L-R button press launches browser
+			fmcb->LK_E2_Path[i][0] = 0;
+			fmcb->LK_E3_Path[i][0] = 0;
+		}
+		//Auto
+		/*	strcpy(fmcb->LK_E1_Path[0], "mass:/BOOT/BOOT.ELF");
 	strcpy(fmcb->LK_E2_Path[0], "mc?:/BOOT/BOOT.ELF");
 	strcpy(fmcb->LK_E3_Path[0], "mc?:/B?DATA-SYSTEM/BOOT.ELF");
 
@@ -2456,36 +2455,36 @@ if (!mode){
 	strcpy(fmcb->LK_E3_Path[6], "mc?:/B?DATA-SYSTEM/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E3_Path[7], "mc?:/B?DATA-SYSTEM/BOOT4.ELF");//L2
 	strcpy(fmcb->LK_E3_Path[8], "mc?:/B?DATA-SYSTEM/BOOT2.ELF");//R2
-*/	
-	strcpy(fmcb->LK_E2_Path[0], "OSDSYS");
-	strcpy(fmcb->LK_E3_Path[0], "OSDSYS");
+*/
+		strcpy(fmcb->LK_E2_Path[0], "OSDSYS");
+		strcpy(fmcb->LK_E3_Path[0], "OSDSYS");
 
-	strcpy(fmcb->LK_E1_Path[5], "OSDSYS");//L1
-	strcpy(fmcb->LK_E1_Path[6], "OSDSYS");//R1
-	strcpy(fmcb->LK_E1_Path[7], "OSDSYS");//L2
-	strcpy(fmcb->LK_E1_Path[8], "OSDSYS");//R2
-	
-	strcpy(fmcb->LK_E2_Path[5], "OSDSYS");//L1
-	strcpy(fmcb->LK_E2_Path[6], "OSDSYS");//R1
-	strcpy(fmcb->LK_E2_Path[7], "OSDSYS");//L2
-	strcpy(fmcb->LK_E2_Path[8], "OSDSYS");//R2
-	
-	strcpy(fmcb->LK_E3_Path[5], "OSDSYS");//L1
-	strcpy(fmcb->LK_E3_Path[6], "OSDSYS");//R1
-	strcpy(fmcb->LK_E3_Path[7], "OSDSYS");//L2
-	strcpy(fmcb->LK_E3_Path[8], "OSDSYS");//R2
-//start	
-	strcpy(fmcb->LK_E1_Path[15], "mc?:/BOOT/FMCB_CFG.ELF");
-	strcpy(fmcb->LK_E2_Path[15], "OSDSYS");
-}
-	
-//ESR paths
+		strcpy(fmcb->LK_E1_Path[5], "OSDSYS");  //L1
+		strcpy(fmcb->LK_E1_Path[6], "OSDSYS");  //R1
+		strcpy(fmcb->LK_E1_Path[7], "OSDSYS");  //L2
+		strcpy(fmcb->LK_E1_Path[8], "OSDSYS");  //R2
+
+		strcpy(fmcb->LK_E2_Path[5], "OSDSYS");  //L1
+		strcpy(fmcb->LK_E2_Path[6], "OSDSYS");  //R1
+		strcpy(fmcb->LK_E2_Path[7], "OSDSYS");  //L2
+		strcpy(fmcb->LK_E2_Path[8], "OSDSYS");  //R2
+
+		strcpy(fmcb->LK_E3_Path[5], "OSDSYS");  //L1
+		strcpy(fmcb->LK_E3_Path[6], "OSDSYS");  //R1
+		strcpy(fmcb->LK_E3_Path[7], "OSDSYS");  //L2
+		strcpy(fmcb->LK_E3_Path[8], "OSDSYS");  //R2
+		                                        //start
+		strcpy(fmcb->LK_E1_Path[15], "mc?:/BOOT/FMCB_CFG.ELF");
+		strcpy(fmcb->LK_E2_Path[15], "OSDSYS");
+	}
+
+	//ESR paths
 
 	strcpy(fmcb->ESR_Path[0], "mass:/BOOT/ESR.ELF");
 	strcpy(fmcb->ESR_Path[1], "mc?:/BOOT/ESR.ELF");
 	strcpy(fmcb->ESR_Path[2], "mc?:/B?DATA-SYSTEM/ESR.ELF");
 
-}// ends initConfig_fmcb
+}  // ends initConfig_fmcb
 //----------------------------------------------------------------
 // Load Free McBoot's CNF
 //----------------------------------------------------------------
@@ -2496,11 +2495,11 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 	char tsts[20];
 	char hexvalue_buf[20];
 	unsigned char *RAM_p, *CNF_p, *name, *value;
-	
+
 	//int test;//enable to test usbmodule loading
 
 	initConfig_fmcb(1);
-	if(!strncmp(path, "mass:", 5))
+	if (!strncmp(path, "mass:", 5))
 		//test = loadUsbModules();
 		loadUsbModules();
 
@@ -2511,181 +2510,181 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		fd = open(path, O_RDONLY);
 	}*/
 	if (fd < 0) {
-failed_load:
+	failed_load:
 		close(fd);
 		initConfig_fmcb(0);
 		//sprintf(fmcbMsg, "Failed to load %s %d", path, test);
 		sprintf(fmcbMsg, "Failed to load %s", path);
 		return -1;
-	} // This point is only reached after succefully opening CNF
+	}  // This point is only reached after succefully opening CNF
 
 	CNF_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
-	RAM_p = (char*)malloc(CNF_size);
+	RAM_p = (char *)malloc(CNF_size);
 	CNF_p = RAM_p;
 	if (CNF_p == NULL) {
 		goto failed_load;
 	}
-	read(fd, CNF_p, CNF_size); // Read CNF as one long string
+	read(fd, CNF_p, CNF_size);  // Read CNF as one long string
 	close(fd);
-	CNF_p[CNF_size] = '\0'; // Terminate the CNF string
+	CNF_p[CNF_size] = '\0';  // Terminate the CNF string
 
-	CNF_version = 0; // The CNF version is still unidentified
+	CNF_version = 0;  // The CNF version is still unidentified
 	for (var_cnt = 0; get_CNF_string(&CNF_p, &name, &value); var_cnt++) {
 		// A variable was found, now we dispose of its value.
-		if (!strcmp(name,"CNF_version")) {
+		if (!strcmp(name, "CNF_version")) {
 			CNF_version = atoi(value);
 			continue;
 		} else if (CNF_version == 0) {
-			goto failed_load; // Refuse unidentified CNF
+			goto failed_load;  // Refuse unidentified CNF
 		}
-		if (!strcmp(name,"Debug_Screen")) {
+		if (!strcmp(name, "Debug_Screen")) {
 			fmcb->Debug = atoi(value);
 			continue;
-		}			
-		if (!strcmp(name,"FastBoot")) {
+		}
+		if (!strcmp(name, "FastBoot")) {
 			fmcb->Fastboot = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"pad_delay")) {
+		if (!strcmp(name, "pad_delay")) {
 			fmcb->pad_delay = atoi(value);
 			continue;
 		}
-//OSD settings
-		if (!strcmp(name,"hacked_OSDSYS")) {
+		//OSD settings
+		if (!strcmp(name, "hacked_OSDSYS")) {
 			fmcb->hacked_OSDSYS = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_video_mode")) {
+		if (!strcmp(name, "OSDSYS_video_mode")) {
 			strcpy(fmcb->OSD_tvmode, value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_Skip_Disc")) {
+		if (!strcmp(name, "OSDSYS_Skip_Disc")) {
 			fmcb->Skip_Disc = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_Skip_Logo")) {
+		if (!strcmp(name, "OSDSYS_Skip_Logo")) {
 			fmcb->Skip_Logo = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_Inner_Browser")) {
+		if (!strcmp(name, "OSDSYS_Inner_Browser")) {
 			fmcb->Inner_Browser = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_selected_color")) {
-			for (i=0; i<4; i++) {
-				for (j=0; j<4; j++) {
+		if (!strcmp(name, "OSDSYS_selected_color")) {
+			for (i = 0; i < 4; i++) {
+				for (j = 0; j < 4; j++) {
 					hexvalue_buf[j] = value[j];
 				}
-				OSDSYS_selected_color[i] = strtol(hexvalue_buf, NULL, 16); // hex base
-				value+=5;				
+				OSDSYS_selected_color[i] = strtol(hexvalue_buf, NULL, 16);  // hex base
+				value += 5;
 			}
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_unselected_color")) {
-			for (i=0; i<4; i++) {
-				for (j=0; j<4; j++) {
+		if (!strcmp(name, "OSDSYS_unselected_color")) {
+			for (i = 0; i < 4; i++) {
+				for (j = 0; j < 4; j++) {
 					hexvalue_buf[j] = value[j];
 				}
-				OSDSYS_unselected_color[i] = strtol(hexvalue_buf, NULL, 16); // hex base
-				value+=5;				
+				OSDSYS_unselected_color[i] = strtol(hexvalue_buf, NULL, 16);  // hex base
+				value += 5;
 			}
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_scroll_menu")) {
+		if (!strcmp(name, "OSDSYS_scroll_menu")) {
 			fmcb->OSD_scroll = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_menu_x")) {
+		if (!strcmp(name, "OSDSYS_menu_x")) {
 			fmcb->OSDSYS_menu_x = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_menu_y")) {
+		if (!strcmp(name, "OSDSYS_menu_y")) {
 			fmcb->OSDSYS_menu_y = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_enter_x")) {
+		if (!strcmp(name, "OSDSYS_enter_x")) {
 			fmcb->OSDSYS_enter_x = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_enter_y")) {
+		if (!strcmp(name, "OSDSYS_enter_y")) {
 			fmcb->OSDSYS_enter_y = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_version_x")) {
+		if (!strcmp(name, "OSDSYS_version_x")) {
 			fmcb->OSDSYS_version_x = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_version_y")) {
+		if (!strcmp(name, "OSDSYS_version_y")) {
 			fmcb->OSDSYS_version_y = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_cursor_max_velocity")) {
+		if (!strcmp(name, "OSDSYS_cursor_max_velocity")) {
 			fmcb->OSD_mvelocity = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_cursor_acceleration")) {
+		if (!strcmp(name, "OSDSYS_cursor_acceleration")) {
 			fmcb->OSD_accel = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_left_cursor")) {
+		if (!strcmp(name, "OSDSYS_left_cursor")) {
 			strcpy(fmcb->OSD_cursor[0], value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_right_cursor")) {
+		if (!strcmp(name, "OSDSYS_right_cursor")) {
 			strcpy(fmcb->OSD_cursor[1], value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_menu_top_delimiter")) {
+		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
 			strcpy(fmcb->OSD_delimiter[0], value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_menu_bottom_delimiter")) {
+		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
 			strcpy(fmcb->OSD_delimiter[1], value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_num_displayed_items")) {
+		if (!strcmp(name, "OSDSYS_num_displayed_items")) {
 			fmcb->OSD_displayitems = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_Skip_MC")) {
+		if (!strcmp(name, "OSDSYS_Skip_MC")) {
 			fmcb->Skip_MC = atoi(value);
 			continue;
 		}
-		if (!strcmp(name,"OSDSYS_Skip_HDD")) {
+		if (!strcmp(name, "OSDSYS_Skip_HDD")) {
 			fmcb->Skip_HDD = atoi(value);
 			continue;
 		}
-//OSD names
-		for (i=0; i<100; i++) {
-			sprintf(tsts, "name_OSDSYS_ITEM_%d", i+1);
+		//OSD names
+		for (i = 0; i < 100; i++) {
+			sprintf(tsts, "name_OSDSYS_ITEM_%d", i + 1);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->OSD_Name[i], value);
 				//scr_printf("%s\n", LK_E1_Path[i]);
 				break;
 			}
 		}
-//OSD item path1
-		for (i=0; i<100; i++) {
-			sprintf(tsts, "path1_OSDSYS_ITEM_%d", i+1);
+		//OSD item path1
+		for (i = 0; i < 100; i++) {
+			sprintf(tsts, "path1_OSDSYS_ITEM_%d", i + 1);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->OSD_E1_Path[i], value);
 				//scr_printf("%s\n", LK_E1_Path[i]);
 				break;
 			}
 		}
-//OSD item path2
-		for (i=0; i<100; i++) {
-			sprintf(tsts, "path2_OSDSYS_ITEM_%d", i+1);
+		//OSD item path2
+		for (i = 0; i < 100; i++) {
+			sprintf(tsts, "path2_OSDSYS_ITEM_%d", i + 1);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->OSD_E2_Path[i], value);
 				//scr_printf("%s\n", LK_E1_Path[i]);
 				break;
 			}
 		}
-//OSD item path3
-		for (i=0; i<100; i++) {
-			sprintf(tsts, "path3_OSDSYS_ITEM_%d", i+1);
+		//OSD item path3
+		for (i = 0; i < 100; i++) {
+			sprintf(tsts, "path3_OSDSYS_ITEM_%d", i + 1);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->OSD_E3_Path[i], value);
 				//scr_printf("%s\n", LK_E1_Path[i]);
@@ -2693,8 +2692,8 @@ failed_load:
 			}
 		}
 
-//first launch key
-		for (i=0; i<17; i++) {
+		//first launch key
+		for (i = 0; i < 17; i++) {
 			sprintf(tsts, "LK_%s_E1", LK_ID_fmcb[i]);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->LK_E1_Path[i], value);
@@ -2702,8 +2701,8 @@ failed_load:
 				break;
 			}
 		}
-//second launch key
-		for (i=0; i<17; i++) {
+		//second launch key
+		for (i = 0; i < 17; i++) {
 			sprintf(tsts, "LK_%s_E2", LK_ID_fmcb[i]);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->LK_E2_Path[i], value);
@@ -2711,8 +2710,8 @@ failed_load:
 				break;
 			}
 		}
-//third launch key		
-		for (i=0; i<17; i++) {
+		//third launch key
+		for (i = 0; i < 17; i++) {
 			sprintf(tsts, "LK_%s_E3", LK_ID_fmcb[i]);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->LK_E3_Path[i], value);
@@ -2720,30 +2719,31 @@ failed_load:
 				break;
 			}
 		}
-//ESR paths
-		for (i=0; i<3; i++) {
-			sprintf(tsts, "ESR_Path_E%d", i+1);
+		//ESR paths
+		for (i = 0; i < 3; i++) {
+			sprintf(tsts, "ESR_Path_E%d", i + 1);
 			if (!strcmp(name, tsts)) {
 				strcpy(fmcb->ESR_Path[i], value);
 				//scr_printf("%s\n", LK_E1_Path[i]);
 				break;
 			}
-		}		
-	} // ends for
+		}
+	}  // ends for
 	free(RAM_p);
 	sprintf(fmcbMsg, "Loaded %s", path);
 	return 0;
-}//ends loadConfig_fmcb
-void setLK(int LKN, int mode, int s){//mode 1-> map file to mc? instead of mc0/1
+}  //ends loadConfig_fmcb
+void setLK(int LKN, int mode, int s)
+{  //mode 1-> map file to mc? instead of mc0/1
 
 	char c[MAX_PATH];
 
-	if (LKN == 1){
+	if (LKN == 1) {
 		getFilePath(fmcb->LK_E1_Path[s], TRUE);
-		if(!strncmp(fmcb->LK_E1_Path[s], "mc", 2)){
-			if (!strncmp(fmcb->LK_E1_Path[s]+7, "DATA-SYSTEM", 11))
+		if (!strncmp(fmcb->LK_E1_Path[s], "mc", 2)) {
+			if (!strncmp(fmcb->LK_E1_Path[s] + 7, "DATA-SYSTEM", 11))
 				fmcb->LK_E1_Path[s][6] = '?';
-			if (mode == 1){
+			if (mode == 1) {
 				sprintf(c, "mc?%s", &fmcb->LK_E1_Path[s][3]);
 				strcpy(fmcb->LK_E1_Path[s], c);
 			}
@@ -2756,15 +2756,15 @@ void setLK(int LKN, int mode, int s){//mode 1-> map file to mc? instead of mc0/1
 			}
 */	}
 	else if (LKN == 2){
-		getFilePath(fmcb->LK_E2_Path[s], TRUE);
-		if(!strncmp(fmcb->LK_E2_Path[s], "mc", 2)){
-			if (!strncmp(fmcb->LK_E2_Path[s]+7, "DATA-SYSTEM", 11))
-				fmcb->LK_E2_Path[s][6] = '?';
-			if (mode == 1){
-				sprintf(c, "mc?%s", &fmcb->LK_E2_Path[s][3]);
-				strcpy(fmcb->LK_E2_Path[s], c);
-			}
+	getFilePath(fmcb->LK_E2_Path[s], TRUE);
+	if (!strncmp(fmcb->LK_E2_Path[s], "mc", 2)) {
+		if (!strncmp(fmcb->LK_E2_Path[s] + 7, "DATA-SYSTEM", 11))
+			fmcb->LK_E2_Path[s][6] = '?';
+		if (mode == 1) {
+			sprintf(c, "mc?%s", &fmcb->LK_E2_Path[s][3]);
+			strcpy(fmcb->LK_E2_Path[s], c);
 		}
+	}
 /*			else if (strncmp(fmcb->LK_E2_Path[s], "mass", 4) != 0){
 				if (strlen(fmcb->LK_E2_Path[s]) > 0){//if cancelled browsing, do not print the message
 					sprintf(fmcbMsg, "Incompatible path selected");
@@ -2773,27 +2773,28 @@ void setLK(int LKN, int mode, int s){//mode 1-> map file to mc? instead of mc0/1
 			}
 */	}
 	else{
-		getFilePath(fmcb->LK_E3_Path[s], TRUE);
-		if(!strncmp(fmcb->LK_E3_Path[s], "mc", 2)){
-			if (!strncmp(fmcb->LK_E3_Path[s]+7, "DATA-SYSTEM", 11))
-				fmcb->LK_E3_Path[s][6] = '?';
-			if (mode == 1){
-				sprintf(c, "mc?%s", &fmcb->LK_E3_Path[s][3]);
-				strcpy(fmcb->LK_E3_Path[s], c);
-			}
+	getFilePath(fmcb->LK_E3_Path[s], TRUE);
+	if (!strncmp(fmcb->LK_E3_Path[s], "mc", 2)) {
+		if (!strncmp(fmcb->LK_E3_Path[s] + 7, "DATA-SYSTEM", 11))
+			fmcb->LK_E3_Path[s][6] = '?';
+		if (mode == 1) {
+			sprintf(c, "mc?%s", &fmcb->LK_E3_Path[s][3]);
+			strcpy(fmcb->LK_E3_Path[s], c);
 		}
+	}
 /*			else if (strncmp(fmcb->LK_E3_Path[s], "mass", 4) != 0){
 				if (strlen(fmcb->LK_E3_Path[s]) > 0){//if cancelled browsing, do not print the message
 					sprintf(fmcbMsg, "Incompatible path selected");
 					fmcb->LK_E3_Path[s][0]=0;
 				}
 			}
-*/	}	
+*/	}
 }
 //---------------------------------------------------------------------------
 // Configuration menu for Free McBoot launch keys
 //---------------------------------------------------------------------------
-void Config_fmcb_key(int LKN){
+void Config_fmcb_key(int LKN)
+{
 
 	char c[MAX_PATH];
 	//char fmcbMsg[MAX_PATH] = "";
@@ -2801,89 +2802,70 @@ void Config_fmcb_key(int LKN){
 	int s;
 	int MAX_S = 17;
 	int x, y;
-	int event, post_event=0;
-	
+	int event, post_event = 0;
+
 	tmpfmcb = fmcb;
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 	*fmcb = *tmpfmcb;
-	
-	event = 1;	//event = initial entry
-	s=0;
-	while(1)
-	{
+
+	event = 1;  //event = initial entry
+	s = 0;
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
 				event |= 2;  //event |= valid pad command
-				if(s!=0)
+				if (s != 0)
 					s--;
 				else
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+					s = MAX_S;
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s!=MAX_S)
+				if (s != MAX_S)
 					s++;
 				else
-					s=0;
-			}
-			else if(new_pad & PAD_LEFT)
-			{
+					s = 0;
+			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
-				s = s-5;
-				if(s<=0)
-					s=0;
-			}
-			else if(new_pad & PAD_RIGHT)
-			{
+				s = s - 5;
+				if (s <= 0)
+					s = 0;
+			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
-				s = s+5;
-				if(s>=MAX_S)
-					s=MAX_S;
-			}
-			else if((new_pad & PAD_SQUARE) && (s<17)){
+				s = s + 5;
+				if (s >= MAX_S)
+					s = MAX_S;
+			} else if ((new_pad & PAD_SQUARE) && (s < 17)) {
 				event |= 2;  //event |= valid pad command
-				if(s<17)
-				{
+				if (s < 17) {
 					sprintf(fmcbMsg, " ");
 					setLK(LKN, 1, s);
 				}
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s<17){
+				if (s < 17) {
 					if (LKN == 1)
-						fmcb->LK_E1_Path[s][0]=0;
+						fmcb->LK_E1_Path[s][0] = 0;
 					else if (LKN == 2)
-						fmcb->LK_E2_Path[s][0]=0;
+						fmcb->LK_E2_Path[s][0] = 0;
 					else
-						fmcb->LK_E3_Path[s][0]=0;	
+						fmcb->LK_E3_Path[s][0] = 0;
 				}
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s<17)
-				{
+				if (s < 17) {
 					setLK(LKN, 0, s);
-				}
-				else if(s==MAX_S)
-					goto return_fmcb;				
+				} else if (s == MAX_S)
+					goto return_fmcb;
 
-			}
-			else if(new_pad & PAD_TRIANGLE) {
-return_fmcb:
+			} else if (new_pad & PAD_TRIANGLE) {
+			return_fmcb:
 				free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
-			}
-			else if(new_pad & PAD_START) {
+			} else if (new_pad & PAD_START) {
 				event |= 2;  //event |= valid pad command
 				if (LKN == 1)
 					RunElf(fmcbMsg, fmcb->LK_E1_Path[s]);
@@ -2891,34 +2873,32 @@ return_fmcb:
 					RunElf(fmcbMsg, fmcb->LK_E2_Path[s]);
 				else
 					RunElf(fmcbMsg, fmcb->LK_E3_Path[s]);
-			}
-			else if(new_pad & PAD_SELECT) {
+			} else if (new_pad & PAD_SELECT) {
 				event |= 2;  //event |= valid pad command
-				if (LKN == 1){
+				if (LKN == 1) {
 					if (!strcmp(fmcb->LK_E1_Path[s], "OSDSYS"))
-							sprintf(fmcb->LK_E1_Path[s], "FASTBOOT");
+						sprintf(fmcb->LK_E1_Path[s], "FASTBOOT");
 					else if (!strcmp(fmcb->LK_E1_Path[s], "FASTBOOT"))
 						sprintf(fmcb->LK_E1_Path[s], "OSDMENU");
 					else
-					sprintf(fmcb->LK_E1_Path[s], "OSDSYS");
-				} else if (LKN == 2){
+						sprintf(fmcb->LK_E1_Path[s], "OSDSYS");
+				} else if (LKN == 2) {
 					if (!strcmp(fmcb->LK_E2_Path[s], "OSDSYS"))
-							sprintf(fmcb->LK_E2_Path[s], "FASTBOOT");
+						sprintf(fmcb->LK_E2_Path[s], "FASTBOOT");
 					else if (!strcmp(fmcb->LK_E2_Path[s], "FASTBOOT"))
-						sprintf(fmcb->LK_E2_Path[s], "OSDMENU");							
+						sprintf(fmcb->LK_E2_Path[s], "OSDMENU");
 					else
-					sprintf(fmcb->LK_E2_Path[s], "OSDSYS");
-				} else
-					if (!strcmp(fmcb->LK_E3_Path[s], "OSDSYS"))
-							sprintf(fmcb->LK_E3_Path[s], "FASTBOOT");
-					else if (!strcmp(fmcb->LK_E3_Path[s], "FASTBOOT"))
-						sprintf(fmcb->LK_E3_Path[s], "OSDMENU");							
-					else
+						sprintf(fmcb->LK_E2_Path[s], "OSDSYS");
+				} else if (!strcmp(fmcb->LK_E3_Path[s], "OSDSYS"))
+					sprintf(fmcb->LK_E3_Path[s], "FASTBOOT");
+				else if (!strcmp(fmcb->LK_E3_Path[s], "FASTBOOT"))
+					sprintf(fmcb->LK_E3_Path[s], "OSDMENU");
+				else
 					sprintf(fmcb->LK_E3_Path[s], "OSDSYS");
 			}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -2931,61 +2911,59 @@ return_fmcb:
 			sprintf(c, "E%d Button Settings", LKN);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-			for(i=0; i<17; i++)
-			{
-				switch(i)
-				{
-				case 0:
-					strcpy(c,"  Auto   : ");
-					break;
-				case 1:
-					strcpy(c,"  ÿ0     : ");
-					break;
-				case 2:
-					strcpy(c,"  ÿ1     : ");
-					break;
-				case 3:
-					strcpy(c,"  ÿ2     : ");
-					break;
-				case 4:
-					strcpy(c,"  ÿ3     : ");
-					break;
-				case 5:
-					strcpy(c,"  L1     : ");
-					break;
-				case 6:
-					strcpy(c,"  R1     : ");
-					break;
-				case 7:
-					strcpy(c,"  L2     : ");
-					break;
-				case 8:
-					strcpy(c,"  R2     : ");
-					break;
-				case 9:
-					strcpy(c,"  L3     : ");
-					break;
-				case 10:
-					strcpy(c,"  R3     : ");
-					break;
-				case 11:
-					strcpy(c,"  UP     : ");
-					break;
-				case 12:
-					strcpy(c,"  DOWN   : ");
-					break;
-				case 13:
-					strcpy(c,"  LEFT   : ");
-					break;
-				case 14:
-					strcpy(c,"  RIGHT  : ");
-					break;
-				case 15:
-					strcpy(c,"  START  : ");
-					break;
-				case 16:
-					strcpy(c,"  SELECT : ");
-					break;
+			for (i = 0; i < 17; i++) {
+				switch (i) {
+					case 0:
+						strcpy(c, "  Auto   : ");
+						break;
+					case 1:
+						strcpy(c, "  ÿ0     : ");
+						break;
+					case 2:
+						strcpy(c, "  ÿ1     : ");
+						break;
+					case 3:
+						strcpy(c, "  ÿ2     : ");
+						break;
+					case 4:
+						strcpy(c, "  ÿ3     : ");
+						break;
+					case 5:
+						strcpy(c, "  L1     : ");
+						break;
+					case 6:
+						strcpy(c, "  R1     : ");
+						break;
+					case 7:
+						strcpy(c, "  L2     : ");
+						break;
+					case 8:
+						strcpy(c, "  R2     : ");
+						break;
+					case 9:
+						strcpy(c, "  L3     : ");
+						break;
+					case 10:
+						strcpy(c, "  R3     : ");
+						break;
+					case 11:
+						strcpy(c, "  UP     : ");
+						break;
+					case 12:
+						strcpy(c, "  DOWN   : ");
+						break;
+					case 13:
+						strcpy(c, "  LEFT   : ");
+						break;
+					case 14:
+						strcpy(c, "  RIGHT  : ");
+						break;
+					case 15:
+						strcpy(c, "  START  : ");
+						break;
+					case 16:
+						strcpy(c, "  SELECT : ");
+						break;
 				}
 				if (LKN == 1)
 					strcat(c, fmcb->LK_E1_Path[i]);
@@ -3003,8 +2981,8 @@ return_fmcb:
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			y = Menu_start_y + (s+1)*FONT_HEIGHT;
-			if(s>16)
+			y = Menu_start_y + (s + 1) * FONT_HEIGHT;
+			if (s > 16)
 				y += FONT_HEIGHT / 2;
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
@@ -3014,7 +2992,7 @@ return_fmcb:
 					sprintf(c, "ÿ1:%s ÿ0:%s ÿ2:%s SELECT:Set special START:Run", "Browse", "Clear", "Map to any MC");
 				else
 					sprintf(c, "ÿ0:%s ÿ1:%s ÿ2:%s SELECT:Set special START:Run", "Browse", "Clear", "Map to any MC");
-			}  else {
+			} else {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "OK");
 				else
@@ -3023,56 +3001,56 @@ return_fmcb:
 			sprintf(tmp, " ÿ3:%s", "Return");
 			strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
+	}  //ends while
 
-}//ends Config_fmcb_key
+}  //ends Config_fmcb_key
 //---------------------------------------------------------------------------
 // Configuration menu for Hacked OSDSYS
 //---------------------------------------------------------------------------
-void setOSD(int item, int mode, int epath){//mode 1-> map file to mc? instead of mc0/1
+void setOSD(int item, int mode, int epath)
+{  //mode 1-> map file to mc? instead of mc0/1
 
 	char c[MAX_PATH];
 
-	if (epath == 1){
+	if (epath == 1) {
 		getFilePath(fmcb->OSD_E1_Path[item], TRUE);
-		if(!strncmp(fmcb->OSD_E1_Path[item], "mc", 2)){
-			if (!strncmp(fmcb->OSD_E1_Path[item]+7, "DATA-SYSTEM", 11))
+		if (!strncmp(fmcb->OSD_E1_Path[item], "mc", 2)) {
+			if (!strncmp(fmcb->OSD_E1_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E1_Path[item][6] = '?';
-			if (mode == 1){
+			if (mode == 1) {
 				sprintf(c, "mc?%s", &fmcb->OSD_E1_Path[item][3]);
 				strcpy(fmcb->OSD_E1_Path[item], c);
 			}
 		}
-	}
-	else if (epath == 2){
+	} else if (epath == 2) {
 		getFilePath(fmcb->OSD_E2_Path[item], TRUE);
-		if(!strncmp(fmcb->OSD_E2_Path[item], "mc", 2)){
-			if (!strncmp(fmcb->OSD_E2_Path[item]+7, "DATA-SYSTEM", 11))
+		if (!strncmp(fmcb->OSD_E2_Path[item], "mc", 2)) {
+			if (!strncmp(fmcb->OSD_E2_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E2_Path[item][6] = '?';
-			if (mode == 1){
+			if (mode == 1) {
 				sprintf(c, "mc?%s", &fmcb->OSD_E2_Path[item][3]);
 				strcpy(fmcb->OSD_E2_Path[item], c);
 			}
 		}
-	}
-	else if (epath == 3){
+	} else if (epath == 3) {
 		getFilePath(fmcb->OSD_E3_Path[item], TRUE);
-		if(!strncmp(fmcb->OSD_E3_Path[item], "mc", 2)){
-			if (!strncmp(fmcb->OSD_E3_Path[item]+7, "DATA-SYSTEM", 11))
+		if (!strncmp(fmcb->OSD_E3_Path[item], "mc", 2)) {
+			if (!strncmp(fmcb->OSD_E3_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E3_Path[item][6] = '?';
-			if (mode == 1){
+			if (mode == 1) {
 				sprintf(c, "mc?%s", &fmcb->OSD_E3_Path[item][3]);
 				strcpy(fmcb->OSD_E3_Path[item], c);
 			}
 		}
-	}	
+	}
 }
-void Config_fmcb_OSDSYS_item(int item){
+void Config_fmcb_OSDSYS_item(int item)
+{
 
 	char c[MAX_PATH];
 	//char fmcbMsg[MAX_PATH] = "";
@@ -3081,117 +3059,100 @@ void Config_fmcb_OSDSYS_item(int item){
 	int s;
 	int MAX_S = 4;
 	int x, y;
-	int event, post_event=0;
-	
+	int event, post_event = 0;
+
 	tmpfmcb = fmcb;
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 	*fmcb = *tmpfmcb;
-	
-	event = 1;	//event = initial entry
-	s=0;
-	while(1)
-	{
+
+	event = 1;  //event = initial entry
+	s = 0;
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
 				event |= 2;  //event |= valid pad command
-				if(s!=0)
+				if (s != 0)
 					s--;
 				else
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+					s = MAX_S;
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s!=MAX_S)
+				if (s != MAX_S)
 					s++;
 				else
-					s=0;
-			}
-			else if(new_pad & PAD_LEFT)
-			{
+					s = 0;
+			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
-				s = s-5;
-				if(s<=0)
-					s=0;
-			}
-			else if(new_pad & PAD_RIGHT)
-			{
+				s = s - 5;
+				if (s <= 0)
+					s = 0;
+			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
-				s = s+5;
-				if(s>=MAX_S)
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_SQUARE)
-			{
-				event |= 2;  //event |= valid pad command
-				if(s>0 && s<4)//s= 1-2-3 stands matches the 3 launch paths
+				s = s + 5;
+				if (s >= MAX_S)
+					s = MAX_S;
+			} else if (new_pad & PAD_SQUARE) {
+				event |= 2;          //event |= valid pad command
+				if (s > 0 && s < 4)  //s= 1-2-3 stands matches the 3 launch paths
 				{
-					setOSD(item, 1, s);//get elf file for corresponding launch path
+					setOSD(item, 1, s);  //get elf file for corresponding launch path
 				}
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s==0)
-					fmcb->OSD_Name[item][0]=0;
-				if(s==1)
-					fmcb->OSD_E1_Path[item][0]=0;
-				if(s==2)
-					fmcb->OSD_E2_Path[item][0]=0;
-				if(s==3)
-					fmcb->OSD_E3_Path[item][0]=0;	
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+				if (s == 0)
+					fmcb->OSD_Name[item][0] = 0;
+				if (s == 1)
+					fmcb->OSD_E1_Path[item][0] = 0;
+				if (s == 2)
+					fmcb->OSD_E2_Path[item][0] = 0;
+				if (s == 3)
+					fmcb->OSD_E3_Path[item][0] = 0;
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if (s==0){
+				if (s == 0) {
 					strcpy(title_tmp, fmcb->OSD_Name[item]);
-					if(keyboard(title_tmp, MAX_ELF_TITLE)>=0)
+					if (keyboard(title_tmp, MAX_ELF_TITLE) >= 0)
 						strcpy(fmcb->OSD_Name[item], title_tmp);
 				}
 
-				if(s>0 && s<4)//s= 1-2-3 stands matches the 3 launch paths
+				if (s > 0 && s < 4)  //s= 1-2-3 stands matches the 3 launch paths
 				{
-					setOSD(item, 0, s);//get elf file for corresponding launch path
+					setOSD(item, 0, s);  //get elf file for corresponding launch path
 				}
 
-				else if(s==MAX_S)
-					goto return_fmcb;				
+				else if (s == MAX_S)
+					goto return_fmcb;
 
-			}
-			else if(new_pad & PAD_SELECT) { //s= 1-2-3 stands matches the 3 launch paths
-				event |= 2;  //event |= valid pad command
-				if (s == 1){
+			} else if (new_pad & PAD_SELECT) {  //s= 1-2-3 stands matches the 3 launch paths
+				event |= 2;                     //event |= valid pad command
+				if (s == 1) {
 					if (!strcmp(fmcb->OSD_E1_Path[item], "OSDSYS"))
-							sprintf(fmcb->OSD_E1_Path[item], "FASTBOOT");
+						sprintf(fmcb->OSD_E1_Path[item], "FASTBOOT");
 					else
-					sprintf(fmcb->OSD_E1_Path[item], "OSDSYS");
-				} else if (s == 2){
+						sprintf(fmcb->OSD_E1_Path[item], "OSDSYS");
+				} else if (s == 2) {
 					if (!strcmp(fmcb->OSD_E2_Path[item], "OSDSYS"))
-							sprintf(fmcb->OSD_E2_Path[item], "FASTBOOT");
+						sprintf(fmcb->OSD_E2_Path[item], "FASTBOOT");
 					else
-					sprintf(fmcb->OSD_E2_Path[item], "OSDSYS");
-				} else if (s == 3){
+						sprintf(fmcb->OSD_E2_Path[item], "OSDSYS");
+				} else if (s == 3) {
 					if (!strcmp(fmcb->OSD_E3_Path[item], "OSDSYS"))
-							sprintf(fmcb->OSD_E3_Path[item], "FASTBOOT");
+						sprintf(fmcb->OSD_E3_Path[item], "FASTBOOT");
 					else
-					sprintf(fmcb->OSD_E3_Path[item], "OSDSYS");
+						sprintf(fmcb->OSD_E3_Path[item], "OSDSYS");
 				}
-			}			
-			else if(new_pad & PAD_TRIANGLE) {
-return_fmcb:
+			} else if (new_pad & PAD_TRIANGLE) {
+			return_fmcb:
 				free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -3201,16 +3162,16 @@ return_fmcb:
 
 			x = Menu_start_x;
 			y = Menu_start_y;
-			sprintf(title_tmp, "Item %d Settings", item+1);
+			sprintf(title_tmp, "Item %d Settings", item + 1);
 			printXY(title_tmp, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  Name: %s", fmcb->OSD_Name[item]);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  Path1: %s", fmcb->OSD_E1_Path[item]);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
@@ -3221,15 +3182,15 @@ return_fmcb:
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  %s", "Return");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			y = Menu_start_y + (s+1)*FONT_HEIGHT + FONT_HEIGHT/2;
-			if(s>0)
+			y = Menu_start_y + (s + 1) * FONT_HEIGHT + FONT_HEIGHT / 2;
+			if (s > 0)
 				y += FONT_HEIGHT / 2;
-			if(s>3)
+			if (s > 3)
 				y += FONT_HEIGHT / 2;
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
@@ -3239,14 +3200,12 @@ return_fmcb:
 					sprintf(c, "ÿ1:%s ÿ0:%s", "Type", "Clear");
 				else
 					sprintf(c, "ÿ0:%s ÿ1:%s", "Type", "Clear");
-			}
-			else if (s>0 && s<4) {
+			} else if (s > 0 && s < 4) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s ÿ2:%s SELECT:Set special", "Browse", "Clear", "Map to any MC");
 				else
 					sprintf(c, "ÿ0:%s ÿ1:%s ÿ2:%s SELECT:Set special", "Browse", "Clear", "Map to any MC");
-			}
-			else {
+			} else {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "OK");
 				else
@@ -3255,15 +3214,16 @@ return_fmcb:
 			sprintf(tmp, " ÿ3:%s", "Return");
 			strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
+	}  //ends while
 
-}//ends Config_fmcb_OSDSYS_item
-void Config_fmcb_OSDSYS_scroll(){
+}  //ends Config_fmcb_OSDSYS_item
+void Config_fmcb_OSDSYS_scroll()
+{
 
 	char c[MAX_PATH];
 	//char fmcbMsg[MAX_PATH] = "";
@@ -3272,169 +3232,150 @@ void Config_fmcb_OSDSYS_scroll(){
 	int s;
 	int MAX_S = 9;
 	int x, y;
-	int event, post_event=0;
-	
+	int event, post_event = 0;
+
 	tmpfmcb = fmcb;
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 	*fmcb = *tmpfmcb;
-	
-	event = 1;	//event = initial entry
-	s=0;
-	while(1)
-	{
+
+	event = 1;  //event = initial entry
+	s = 0;
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
 				event |= 2;  //event |= valid pad command
-				if(s!=0)
+				if (s != 0)
 					s--;
 				else
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+					s = MAX_S;
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s!=MAX_S)
+				if (s != MAX_S)
 					s++;
 				else
-					s=0;
-			}
-			else if(new_pad & PAD_LEFT)
-			{
+					s = 0;
+			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
-				s = s-5;
-				if(s<=0)
-					s=0;
-			}
-			else if(new_pad & PAD_RIGHT)
-			{
+				s = s - 5;
+				if (s <= 0)
+					s = 0;
+			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
-				s = s+5;
-				if(s>=MAX_S)
-					s=MAX_S;
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{
+				s = s + 5;
+				if (s >= MAX_S)
+					s = MAX_S;
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
 
-				if(s==1){
-					fmcb->OSD_displayitems = fmcb->OSD_displayitems-2;
-					if (fmcb->OSD_displayitems % 2 == 0)//prevent even numbers from appearing
+				if (s == 1) {
+					fmcb->OSD_displayitems = fmcb->OSD_displayitems - 2;
+					if (fmcb->OSD_displayitems % 2 == 0)  //prevent even numbers from appearing
 						fmcb->OSD_displayitems = fmcb->OSD_displayitems++;
 					if (fmcb->OSD_displayitems <= 0)
 						fmcb->OSD_displayitems = 15;
 				}
 
-				if(s==2){
+				if (s == 2) {
 					fmcb->OSDSYS_menu_y = fmcb->OSDSYS_menu_y--;
 					if (fmcb->OSDSYS_menu_y < 0)
 						fmcb->OSDSYS_menu_y = 220;
 				}
-				if (s==3){
-					fmcb->OSD_mvelocity = fmcb->OSD_mvelocity-100;
+				if (s == 3) {
+					fmcb->OSD_mvelocity = fmcb->OSD_mvelocity - 100;
 					if (fmcb->OSD_mvelocity < 0)
 						fmcb->OSD_mvelocity = 0;
 				}
-				if (s==4){
-					fmcb->OSD_accel = fmcb->OSD_accel-10;
+				if (s == 4) {
+					fmcb->OSD_accel = fmcb->OSD_accel - 10;
 					if (fmcb->OSD_accel < 0)
 						fmcb->OSD_accel = 0;
 				}
-				if(s==5)
+				if (s == 5)
 					fmcb->OSD_cursor[0][0] = 0;
-				if(s==6)
+				if (s == 6)
 					fmcb->OSD_cursor[1][0] = 0;
-				if(s==7)
+				if (s == 7)
 					fmcb->OSD_delimiter[0][0] = 0;
-				if(s==8)
+				if (s == 8)
 					fmcb->OSD_delimiter[1][0] = 0;
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if (s==0)
+				if (s == 0)
 					fmcb->OSD_scroll = !fmcb->OSD_scroll;
-				if(s==1){
-					fmcb->OSD_displayitems = fmcb->OSD_displayitems+2;
-					if (fmcb->OSD_displayitems % 2 == 0) //prevent even numbers from appearing
+				if (s == 1) {
+					fmcb->OSD_displayitems = fmcb->OSD_displayitems + 2;
+					if (fmcb->OSD_displayitems % 2 == 0)  //prevent even numbers from appearing
 						fmcb->OSD_displayitems = fmcb->OSD_displayitems--;
 					if (fmcb->OSD_displayitems >= 16)
 						fmcb->OSD_displayitems = 1;
 				}
-				if (s==2){
+				if (s == 2) {
 					fmcb->OSDSYS_menu_y = fmcb->OSDSYS_menu_y++;
 					if (fmcb->OSDSYS_menu_y > 220)
 						fmcb->OSDSYS_menu_y = 0;
 				}
-				if (s==3)
+				if (s == 3)
 					fmcb->OSD_mvelocity = fmcb->OSD_mvelocity + 100;
-					/*if (fmcb->OSD_mvelocity >= 800)
-						fmcb->OSD_mvelocity = 0;*/					
-				if (s==4)
+				/*if (fmcb->OSD_mvelocity >= 800)
+						fmcb->OSD_mvelocity = 0;*/
+				if (s == 4)
 					fmcb->OSD_accel = fmcb->OSD_accel + 10;
-					/*if (fmcb->OSD_accel >= 800)
-						fmcb->OSD_accel = 0;*/					
-				if(s==5)
-				{
+				/*if (fmcb->OSD_accel >= 800)
+						fmcb->OSD_accel = 0;*/
+				if (s == 5) {
 					strcpy(title_tmp, fmcb->OSD_cursor[0]);
-					if(keyboard(title_tmp, 10)>=0)
+					if (keyboard(title_tmp, 10) >= 0)
 						strcpy(fmcb->OSD_cursor[0], title_tmp);
 				}
-				if(s==6)
-				{
+				if (s == 6) {
 					strcpy(title_tmp, fmcb->OSD_cursor[1]);
-					if(keyboard(title_tmp, 10)>=0)
+					if (keyboard(title_tmp, 10) >= 0)
 						strcpy(fmcb->OSD_cursor[1], title_tmp);
 				}
-				if(s==7)
-				{
+				if (s == 7) {
 					strcpy(title_tmp, fmcb->OSD_delimiter[0]);
-					if(keyboard(title_tmp, 80)>=0)
+					if (keyboard(title_tmp, 80) >= 0)
 						strcpy(fmcb->OSD_delimiter[0], title_tmp);
 				}
-				if(s==8)
-				{
+				if (s == 8) {
 					strcpy(title_tmp, fmcb->OSD_delimiter[1]);
-					if(keyboard(title_tmp, 80)>=0)
+					if (keyboard(title_tmp, 80) >= 0)
 						strcpy(fmcb->OSD_delimiter[1], title_tmp);
 				}
 
-				else if(s==MAX_S)
-					goto return_fmcb;				
+				else if (s == MAX_S)
+					goto return_fmcb;
 
-			}
-			else if (new_pad & PAD_SELECT){
+			} else if (new_pad & PAD_SELECT) {
 				event |= 2;  //event |= valid pad command
-				if (s==1)
+				if (s == 1)
 					fmcb->OSD_displayitems = 7;
-				if (s==2)
+				if (s == 2)
 					fmcb->OSDSYS_menu_y = 110;
-				if (s==3)
+				if (s == 3)
 					fmcb->OSD_mvelocity = 1000;
-				if (s==4)
+				if (s == 4)
 					fmcb->OSD_accel = 100;
-				if (s==5)
+				if (s == 5)
 					strcpy(fmcb->OSD_cursor[0], "o009");
-				if (s==6)
+				if (s == 6)
 					strcpy(fmcb->OSD_cursor[1], "o008");
-				if (s==7)
+				if (s == 7)
 					strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60Free McBoot v1.8 for Fortunar0.60]y-00");
-				if (s==8)
+				if (s == 8)
 					strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99Howling Wolf & Chelseay-00r0.00");
-			}
-			else if(new_pad & PAD_TRIANGLE) {
-return_fmcb:
+			} else if (new_pad & PAD_TRIANGLE) {
+			return_fmcb:
 				free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -3448,49 +3389,49 @@ return_fmcb:
 			printXY(title_tmp, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
-/**/		if(fmcb->OSD_scroll)
+
+			/**/ if (fmcb->OSD_scroll)
 				sprintf(c, "  %s: %s", "Scroll Menu", "ON");
 			else
 				sprintf(c, "  %s: %s", "Scroll Menu", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  %s: %d", "Displayed Items", fmcb->OSD_displayitems);
+			/**/ sprintf(c, "  %s: %d", "Displayed Items", fmcb->OSD_displayitems);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  %s: %d", "Menu y", fmcb->OSDSYS_menu_y);
+			/**/ sprintf(c, "  %s: %d", "Menu y", fmcb->OSDSYS_menu_y);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  %s: %d", "Cursor Max Velocity", fmcb->OSD_mvelocity);
+			/**/ sprintf(c, "  %s: %d", "Cursor Max Velocity", fmcb->OSD_mvelocity);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  %s: %d", "Cursor Acceleration", fmcb->OSD_accel);
-			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;
-			y += FONT_HEIGHT / 2;
-			
-/**/			sprintf(c, "  Left Cursor: %s", fmcb->OSD_cursor[0]);
-			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;
-/**/			sprintf(c, "  Rigth Cursor: %s", fmcb->OSD_cursor[1]);
-			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;
-/**/			sprintf(c, "  Top Delimiter: %s", fmcb->OSD_delimiter[0]);
-			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;
-/**/			sprintf(c, "  Bottom Delimiter: %s", fmcb->OSD_delimiter[1]);
+			/**/ sprintf(c, "  %s: %d", "Cursor Acceleration", fmcb->OSD_accel);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
+			/**/ sprintf(c, "  Left Cursor: %s", fmcb->OSD_cursor[0]);
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			/**/ sprintf(c, "  Rigth Cursor: %s", fmcb->OSD_cursor[1]);
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			/**/ sprintf(c, "  Top Delimiter: %s", fmcb->OSD_delimiter[0]);
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			/**/ sprintf(c, "  Bottom Delimiter: %s", fmcb->OSD_delimiter[1]);
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			y += FONT_HEIGHT / 2;
+
 			sprintf(c, "  %s", "Return");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			y = Menu_start_y + (s+1)*FONT_HEIGHT + FONT_HEIGHT/2;
-			if(s>4)
+			y = Menu_start_y + (s + 1) * FONT_HEIGHT + FONT_HEIGHT / 2;
+			if (s > 4)
 				y += FONT_HEIGHT / 2;
-			if(s>8)
+			if (s > 8)
 				y += FONT_HEIGHT / 2;
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
@@ -3500,20 +3441,17 @@ return_fmcb:
 					sprintf(c, "ÿ1:%s", "Change");
 				else
 					sprintf(c, "ÿ0:%s", "Change");
-			}
-			else if (s>0 && s<5){
+			} else if (s > 0 && s < 5) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s SELECT: set default", "Add", "Subtract");
 				else
-					sprintf(c, "ÿ0:%s ÿ1:%s SELECT: set default", "Add", "Subtract");			
-			}
-			else if (s>4 && s<9) {
+					sprintf(c, "ÿ0:%s ÿ1:%s SELECT: set default", "Add", "Subtract");
+			} else if (s > 4 && s < 9) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s SELECT: set default", "Type", "Clear");
 				else
 					sprintf(c, "ÿ0:%s ÿ1:%s SELECT: set default", "Type", "Clear");
-			}
-			else {
+			} else {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "OK");
 				else
@@ -3522,62 +3460,61 @@ return_fmcb:
 			sprintf(tmp, " ÿ3:%s", "Return");
 			strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
+	}  //ends while
 
-}//ends Config_fmcb_OSDSYS_scroll
+}  //ends Config_fmcb_OSDSYS_scroll
 int OSD_overwrite(int item)
 {
-	int event, post_event=0;
+	int event, post_event = 0;
 	char c[MAX_PATH];
 	const int
-		KEY_W = LINE_THICKNESS+12+(13*FONT_WIDTH+12*20)+12+LINE_THICKNESS,
-		KEY_H = LINE_THICKNESS + 1 + FONT_HEIGHT + 1
-		      + LINE_THICKNESS + 8 + (7*FONT_HEIGHT) + 8 + LINE_THICKNESS,
-		KEY_X = ((SCREEN_WIDTH - KEY_W)/2) & -2,
-		KEY_Y = ((SCREEN_HEIGHT - KEY_H)/2)& -2;
-		
+	    KEY_W = LINE_THICKNESS + 12 + (13 * FONT_WIDTH + 12 * 20) + 12 + LINE_THICKNESS,
+	    KEY_H = LINE_THICKNESS + 1 + FONT_HEIGHT + 1 + LINE_THICKNESS + 8 + (7 * FONT_HEIGHT) + 8 + LINE_THICKNESS,
+	    KEY_X = ((SCREEN_WIDTH - KEY_W) / 2) & -2,
+	    KEY_Y = ((SCREEN_HEIGHT - KEY_H) / 2) & -2;
+
 	event = 1;  //event = initial entry
-	while(1){
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad()){
-			if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE) ){
+		if (readpad()) {
+			if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				return 1;
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)){
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				return 0;
 			}
 		}
 
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
-			drawPopSprite(setting->color[0],KEY_X, KEY_Y,KEY_X+KEY_W-1, KEY_Y+KEY_H-1);
-			drawFrame(KEY_X, KEY_Y, KEY_X+KEY_W-1, KEY_Y+KEY_H-1, setting->color[1]);
+			drawPopSprite(setting->color[0], KEY_X, KEY_Y, KEY_X + KEY_W - 1, KEY_Y + KEY_H - 1);
+			drawFrame(KEY_X, KEY_Y, KEY_X + KEY_W - 1, KEY_Y + KEY_H - 1, setting->color[1]);
 
-			sprintf(c, "Overwrite item %d?", item+1);
-			printXY(c, KEY_X+FONT_WIDTH*14, KEY_Y+FONT_HEIGHT, setting->color[3], TRUE, 0);
+			sprintf(c, "Overwrite item %d?", item + 1);
+			printXY(c, KEY_X + FONT_WIDTH * 14, KEY_Y + FONT_HEIGHT, setting->color[3], TRUE, 0);
 
-			printXY(fmcb->OSD_Name[item], KEY_X+FONT_WIDTH, KEY_Y+FONT_HEIGHT*3, setting->color[3], TRUE, 0);
-			printXY(fmcb->OSD_E1_Path[item], KEY_X+FONT_WIDTH, KEY_Y+FONT_HEIGHT*4, setting->color[3], TRUE, 0);
-			printXY(fmcb->OSD_E2_Path[item], KEY_X+FONT_WIDTH, KEY_Y+FONT_HEIGHT*5, setting->color[3], TRUE, 0);
-			printXY(fmcb->OSD_E3_Path[item], KEY_X+FONT_WIDTH, KEY_Y+FONT_HEIGHT*6, setting->color[3], TRUE, 0);
+			printXY(fmcb->OSD_Name[item], KEY_X + FONT_WIDTH, KEY_Y + FONT_HEIGHT * 3, setting->color[3], TRUE, 0);
+			printXY(fmcb->OSD_E1_Path[item], KEY_X + FONT_WIDTH, KEY_Y + FONT_HEIGHT * 4, setting->color[3], TRUE, 0);
+			printXY(fmcb->OSD_E2_Path[item], KEY_X + FONT_WIDTH, KEY_Y + FONT_HEIGHT * 5, setting->color[3], TRUE, 0);
+			printXY(fmcb->OSD_E3_Path[item], KEY_X + FONT_WIDTH, KEY_Y + FONT_HEIGHT * 6, setting->color[3], TRUE, 0);
 			if (swapKeys)
-				printXY("ÿ1: OK / ÿ0: CANCEL", KEY_X+FONT_WIDTH*13, KEY_Y+FONT_HEIGHT*8, setting->color[3], TRUE, 0);
+				printXY("ÿ1: OK / ÿ0: CANCEL", KEY_X + FONT_WIDTH * 13, KEY_Y + FONT_HEIGHT * 8, setting->color[3], TRUE, 0);
 			else
-				printXY("ÿ0: OK / ÿ1: CANCEL", KEY_X+FONT_WIDTH*13, KEY_Y+FONT_HEIGHT*8, setting->color[3], TRUE, 0);			
-		}//ends if(event||post_event)
+				printXY("ÿ0: OK / ÿ1: CANCEL", KEY_X + FONT_WIDTH * 13, KEY_Y + FONT_HEIGHT * 8, setting->color[3], TRUE, 0);
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
-	}//ends while
-}//end OSD_overwrite
-void Config_fmcb_OSDSYS(){
+	}  //ends while
+}  //end OSD_overwrite
+void Config_fmcb_OSDSYS()
+{
 
 	char c[MAX_PATH];
 	char tempitem[4][MAX_PATH];
@@ -3590,342 +3527,325 @@ void Config_fmcb_OSDSYS(){
 	int ENTER = 20;
 	int VERSION = 23;
 	int x, y;
-	int event, post_event=0;
+	int event, post_event = 0;
 	int osd_item = 0;
-	
+
 	tmpfmcb = fmcb;
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 	*fmcb = *tmpfmcb;
-	
-	event = 1;	//event = initial entry
-	s=0;
-	while(1)
-	{
+
+	event = 1;  //event = initial entry
+	s = 0;
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
-				event |= 2;  //event |= valid pad command
-				if(s>SEL_COL-1 && s<UNSEL_COL)//
-					s=SEL_COL-1;
-				else if(s>UNSEL_COL-1 && s<UNSEL_COL+5)
-					s=SEL_COL;
-				else if(s==UNSEL_COL+5)
-					s=UNSEL_COL;
-				else if(s>ENTER-1 && s<VERSION)
-					s=ENTER-1;
-				else if(s>VERSION-1 && s<VERSION+3)
-					s=ENTER;
-				else if (s==VERSION+3)
-					s=VERSION;
-				else{
-					if(s!=0)
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
+				event |= 2;                            //event |= valid pad command
+				if (s > SEL_COL - 1 && s < UNSEL_COL)  //
+					s = SEL_COL - 1;
+				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 5)
+					s = SEL_COL;
+				else if (s == UNSEL_COL + 5)
+					s = UNSEL_COL;
+				else if (s > ENTER - 1 && s < VERSION)
+					s = ENTER - 1;
+				else if (s > VERSION - 1 && s < VERSION + 3)
+					s = ENTER;
+				else if (s == VERSION + 3)
+					s = VERSION;
+				else {
+					if (s != 0)
 						s--;
 					else
-						s=MAX_S;
+						s = MAX_S;
 				}
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s>SEL_COL-1 && s<UNSEL_COL)
-					s=UNSEL_COL;
-				else if(s>UNSEL_COL-1 && s<UNSEL_COL+5)
-					s=UNSEL_COL+5;
-				else if(s>ENTER-1 && s<VERSION)
-					s=VERSION;
-				else if(s>VERSION-1 && s<VERSION+3)
-					s=VERSION+3;
-				else{
-					if(s!=MAX_S)
-						s++;				
+				if (s > SEL_COL - 1 && s < UNSEL_COL)
+					s = UNSEL_COL;
+				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 5)
+					s = UNSEL_COL + 5;
+				else if (s > ENTER - 1 && s < VERSION)
+					s = VERSION;
+				else if (s > VERSION - 1 && s < VERSION + 3)
+					s = VERSION + 3;
+				else {
+					if (s != MAX_S)
+						s++;
 					else
-						s=0;
+						s = 0;
 				}
-			}
-			else if(new_pad & PAD_LEFT)
-			{
+			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
-				if (s==1){
-					osd_item = osd_item --;
-					if (osd_item < 0)	
+				if (s == 1) {
+					osd_item = osd_item--;
+					if (osd_item < 0)
 						osd_item = 99;
-				}
-				else if(s>SEL_COL && s<UNSEL_COL)
+				} else if (s > SEL_COL && s < UNSEL_COL)
 					s--;
-				else if(s>UNSEL_COL && s<UNSEL_COL+5)
+				else if (s > UNSEL_COL && s < UNSEL_COL + 5)
 					s--;
-				else if (s==SEL_COL)
-					s=s-5;
-				else if (s==UNSEL_COL)
-					s=s-9;
-				else if(s>ENTER && s<VERSION)
+				else if (s == SEL_COL)
+					s = s - 5;
+				else if (s == UNSEL_COL)
+					s = s - 9;
+				else if (s > ENTER && s < VERSION)
 					s--;
-				else if (s>VERSION && s<VERSION+3)
+				else if (s > VERSION && s < VERSION + 3)
 					s--;
-				else if (s==ENTER-1)
-					s=SEL_COL-3;					
-				else if (s==ENTER)
-					s=SEL_COL-2;
-				else if (s==VERSION)
-					s=SEL_COL-1;
-				else{
-					s = s-5;
-					if(s>SEL_COL && s<UNSEL_COL+4){
-						if (s!=UNSEL_COL)
-							s=5;
+				else if (s == ENTER - 1)
+					s = SEL_COL - 3;
+				else if (s == ENTER)
+					s = SEL_COL - 2;
+				else if (s == VERSION)
+					s = SEL_COL - 1;
+				else {
+					s = s - 5;
+					if (s > SEL_COL && s < UNSEL_COL + 4) {
+						if (s != UNSEL_COL)
+							s = 5;
 					}
-					if(s>ENTER && s<VERSION+2){
-						if(s!=VERSION)
-							s=7;
-					}
-					else if(s<=0)
-						s=0;
-
+					if (s > ENTER && s < VERSION + 2) {
+						if (s != VERSION)
+							s = 7;
+					} else if (s <= 0)
+						s = 0;
 				}
-			}
-			else if(new_pad & PAD_RIGHT)
-			{
+			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
-				if (s==1){
-					osd_item = osd_item ++;
-					if (osd_item > 99)	
+				if (s == 1) {
+					osd_item = osd_item++;
+					if (osd_item > 99)
 						osd_item = 0;
+				} else if (s > SEL_COL - 1 && s < UNSEL_COL - 1)
+					s++;
+				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 4)
+					s++;
+				else if (s == UNSEL_COL - 1 || s == UNSEL_COL + 4) {
+				}  //do nothing
+				else if (s > ENTER - 1 && s < VERSION - 1)
+					s++;
+				else if (s > VERSION - 1 && s < VERSION + 2)
+					s++;
+				else if (s == VERSION - 1 || s == VERSION + 2) {
+				}  //do nothing
+				else {
+					s = s + 5;
+					if (s > SEL_COL - 1 && s < UNSEL_COL + 5) {
+						if (s != UNSEL_COL)
+							s = UNSEL_COL + 5;
+					} else if (s > ENTER - 1 && s < VERSION + 3) {
+						if (s != VERSION)
+							s = VERSION + 3;
+					} else if (s >= MAX_S)
+						s = MAX_S;
 				}
-				else if(s>SEL_COL-1 && s<UNSEL_COL-1)
-					s++;
-				else if(s>UNSEL_COL-1 && s<UNSEL_COL+4)
-					s++;
-				else if (s==UNSEL_COL-1||s==UNSEL_COL+4){}//do nothing
-				else if(s>ENTER-1 && s<VERSION-1)
-					s++;
-				else if(s>VERSION-1 && s<VERSION+2)
-					s++;
-				else if (s==VERSION-1||s==VERSION+2){}//do nothing				
-				else{
-					s = s+5;
-					if (s>SEL_COL-1 && s<UNSEL_COL+5){
-						if (s!=UNSEL_COL)
-							s=UNSEL_COL+5;
-					}
-					else if (s>ENTER-1 && s<VERSION+3){
-						if (s!=VERSION)
-							s=VERSION+3;
-					}					
-					else if(s>=MAX_S)
-						s=MAX_S;				
-				}
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{ //User pressed CANCEL=>Subtract/Clear
-				event |= 2;  //event |= valid pad command
-				if (s==1){
-					fmcb->OSD_Name[osd_item][0]=0;
-					fmcb->OSD_E1_Path[osd_item][0]=0;
-					fmcb->OSD_E2_Path[osd_item][0]=0;
-					fmcb->OSD_E3_Path[osd_item][0]=0;
-				}
-				else if (s>SEL_COL && s<UNSEL_COL){
-					if (s==SEL_COL+1) e=0; if (s==SEL_COL+2) e=1; if (s==SEL_COL+3) e=2; if (s==SEL_COL+4) e=3;
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {  //User pressed CANCEL=>Subtract/Clear
+				event |= 2;                                                                         //event |= valid pad command
+				if (s == 1) {
+					fmcb->OSD_Name[osd_item][0] = 0;
+					fmcb->OSD_E1_Path[osd_item][0] = 0;
+					fmcb->OSD_E2_Path[osd_item][0] = 0;
+					fmcb->OSD_E3_Path[osd_item][0] = 0;
+				} else if (s > SEL_COL && s < UNSEL_COL) {
+					if (s == SEL_COL + 1)
+						e = 0;
+					if (s == SEL_COL + 2)
+						e = 1;
+					if (s == SEL_COL + 3)
+						e = 2;
+					if (s == SEL_COL + 4)
+						e = 3;
 					OSDSYS_selected_color[e]--;
 					if (OSDSYS_selected_color[e] == -1)
-						OSDSYS_selected_color[e] = 255;					
-				}
-				else if (s>UNSEL_COL && s<UNSEL_COL+5){
-					if (s==UNSEL_COL+1) e=0; if (s==UNSEL_COL+2) e=1; if (s==UNSEL_COL+3) e=2; if (s==UNSEL_COL+4) e=3;
+						OSDSYS_selected_color[e] = 255;
+				} else if (s > UNSEL_COL && s < UNSEL_COL + 5) {
+					if (s == UNSEL_COL + 1)
+						e = 0;
+					if (s == UNSEL_COL + 2)
+						e = 1;
+					if (s == UNSEL_COL + 3)
+						e = 2;
+					if (s == UNSEL_COL + 4)
+						e = 3;
 					OSDSYS_unselected_color[e]--;
 					if (OSDSYS_unselected_color[e] == -1)
-						OSDSYS_unselected_color[e] = 255;					
-				}
-				else if (s==ENTER-1){
+						OSDSYS_unselected_color[e] = 255;
+				} else if (s == ENTER - 1) {
 					fmcb->OSDSYS_menu_x--;
 					if (fmcb->OSDSYS_menu_x < 0)
 						fmcb->OSDSYS_menu_x = 0;
-				}				
-				else if (s==ENTER+1){
+				} else if (s == ENTER + 1) {
 					fmcb->OSDSYS_enter_x--;
-					if ( fmcb->OSDSYS_enter_x < -1)
+					if (fmcb->OSDSYS_enter_x < -1)
 						fmcb->OSDSYS_enter_x = 640;
-				}
-				else if (s==ENTER+2){
+				} else if (s == ENTER + 2) {
 					fmcb->OSDSYS_enter_y--;
-					if ( fmcb->OSDSYS_enter_y < -1)
-						fmcb->OSDSYS_enter_y = 256;					
-				}				
-				else if (s==VERSION+1){
+					if (fmcb->OSDSYS_enter_y < -1)
+						fmcb->OSDSYS_enter_y = 256;
+				} else if (s == VERSION + 1) {
 					fmcb->OSDSYS_version_x--;
-					if ( fmcb->OSDSYS_version_x < -1)
-						fmcb->OSDSYS_version_x = 640;					
-				}
-				else if (s==VERSION+2){
+					if (fmcb->OSDSYS_version_x < -1)
+						fmcb->OSDSYS_version_x = 640;
+				} else if (s == VERSION + 2) {
 					fmcb->OSDSYS_version_y--;
-					if ( fmcb->OSDSYS_version_y < -1)
-						fmcb->OSDSYS_version_y = 256;						
+					if (fmcb->OSDSYS_version_y < -1)
+						fmcb->OSDSYS_version_y = 256;
 				}
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s==0)
+				if (s == 0)
 					fmcb->hacked_OSDSYS = !fmcb->hacked_OSDSYS;
-				if(s==1)
+				if (s == 1)
 					Config_fmcb_OSDSYS_item(osd_item);
-				if(s==2)
+				if (s == 2)
 					Config_fmcb_OSDSYS_scroll();
-				if(s==3){
-					if(!strcmp(fmcb->OSD_tvmode, "AUTO"))
+				if (s == 3) {
+					if (!strcmp(fmcb->OSD_tvmode, "AUTO"))
 						strcpy(fmcb->OSD_tvmode, "NTSC");
-					else if(!strcmp(fmcb->OSD_tvmode, "NTSC"))
-						strcpy(fmcb->OSD_tvmode, "PAL");	
+					else if (!strcmp(fmcb->OSD_tvmode, "NTSC"))
+						strcpy(fmcb->OSD_tvmode, "PAL");
 					else
 						strcpy(fmcb->OSD_tvmode, "AUTO");
 				}
-				if(s==4)
+				if (s == 4)
 					fmcb->Skip_MC = !fmcb->Skip_MC;
-				if(s==5)
+				if (s == 5)
 					fmcb->Skip_HDD = !fmcb->Skip_HDD;
-				if(s==6)
+				if (s == 6)
 					fmcb->Skip_Disc = !fmcb->Skip_Disc;
-				if(s==7)
+				if (s == 7)
 					fmcb->Skip_Logo = !fmcb->Skip_Logo;
-				if(s == 8)
+				if (s == 8)
 					fmcb->Inner_Browser = !fmcb->Inner_Browser;
-				else if (s>SEL_COL && s<UNSEL_COL){
-					if (s==SEL_COL+1) e=0; if (s==SEL_COL+2) e=1; if (s==SEL_COL+3) e=2; if (s==SEL_COL+4) e=3;
+				else if (s > SEL_COL && s < UNSEL_COL) {
+					if (s == SEL_COL + 1)
+						e = 0;
+					if (s == SEL_COL + 2)
+						e = 1;
+					if (s == SEL_COL + 3)
+						e = 2;
+					if (s == SEL_COL + 4)
+						e = 3;
 					OSDSYS_selected_color[e]++;
 					if (OSDSYS_selected_color[e] > 255)
 						OSDSYS_selected_color[e] = 0;
-				}
-				else if (s>UNSEL_COL && s<UNSEL_COL+5){
-					if (s==UNSEL_COL+1) e=0; if (s==UNSEL_COL+2) e=1; if (s==UNSEL_COL+3) e=2; if (s==UNSEL_COL+4) e=3;
+				} else if (s > UNSEL_COL && s < UNSEL_COL + 5) {
+					if (s == UNSEL_COL + 1)
+						e = 0;
+					if (s == UNSEL_COL + 2)
+						e = 1;
+					if (s == UNSEL_COL + 3)
+						e = 2;
+					if (s == UNSEL_COL + 4)
+						e = 3;
 					OSDSYS_unselected_color[e]++;
 					if (OSDSYS_unselected_color[e] > 255)
 						OSDSYS_unselected_color[e] = 0;
-				}
-				else if (s==ENTER-1){
+				} else if (s == ENTER - 1) {
 					fmcb->OSDSYS_menu_x++;
 					if (fmcb->OSDSYS_menu_x > 640)
 						fmcb->OSDSYS_menu_x = 640;
-				}				
-				else if (s==ENTER+1){
+				} else if (s == ENTER + 1) {
 					fmcb->OSDSYS_enter_x++;
 					if (fmcb->OSDSYS_enter_x > 640)
 						fmcb->OSDSYS_enter_x = -1;
-				}
-				else if (s==ENTER+2){
+				} else if (s == ENTER + 2) {
 					fmcb->OSDSYS_enter_y++;
 					if (fmcb->OSDSYS_enter_y > 256)
-						fmcb->OSDSYS_enter_y = -1;					
-				}				
-				else if (s==VERSION+1){
+						fmcb->OSDSYS_enter_y = -1;
+				} else if (s == VERSION + 1) {
 					fmcb->OSDSYS_version_x++;
 					if (fmcb->OSDSYS_version_x > 640)
-						fmcb->OSDSYS_version_x = -1;					
-				}
-				else if (s==VERSION+2){
+						fmcb->OSDSYS_version_x = -1;
+				} else if (s == VERSION + 2) {
 					fmcb->OSDSYS_version_y++;
 					if (fmcb->OSDSYS_version_y > 256)
 						fmcb->OSDSYS_version_y = -1;
-				}				
-				else if(s==MAX_S)
-					goto return_fmcb;				
+				} else if (s == MAX_S)
+					goto return_fmcb;
 
-			}
-			else if(new_pad & PAD_L2){
+			} else if (new_pad & PAD_L2) {
 				event |= 2;  //event |= valid pad command
-				if (s==1){
+				if (s == 1) {
 					strcpy(tempitem[0], fmcb->OSD_Name[osd_item]);
 					strcpy(tempitem[1], fmcb->OSD_E1_Path[osd_item]);
 					strcpy(tempitem[2], fmcb->OSD_E2_Path[osd_item]);
 					strcpy(tempitem[3], fmcb->OSD_E3_Path[osd_item]);
 				}
-			}
-			else if(new_pad & PAD_R2){
+			} else if (new_pad & PAD_R2) {
 				event |= 2;  //event |= valid pad command
-				if (s==1){
-					if ( fmcb->OSD_Name[osd_item][0]==0 && fmcb->OSD_E1_Path[osd_item][0]==0 && fmcb->OSD_E2_Path[osd_item][0]==0 && fmcb->OSD_E3_Path[osd_item][0]==0){
+				if (s == 1) {
+					if (fmcb->OSD_Name[osd_item][0] == 0 && fmcb->OSD_E1_Path[osd_item][0] == 0 && fmcb->OSD_E2_Path[osd_item][0] == 0 && fmcb->OSD_E3_Path[osd_item][0] == 0) {
+						strcpy(fmcb->OSD_Name[osd_item], tempitem[0]);
+						strcpy(fmcb->OSD_E1_Path[osd_item], tempitem[1]);
+						strcpy(fmcb->OSD_E2_Path[osd_item], tempitem[2]);
+						strcpy(fmcb->OSD_E3_Path[osd_item], tempitem[3]);
+					} else if (OSD_overwrite(osd_item)) {
 						strcpy(fmcb->OSD_Name[osd_item], tempitem[0]);
 						strcpy(fmcb->OSD_E1_Path[osd_item], tempitem[1]);
 						strcpy(fmcb->OSD_E2_Path[osd_item], tempitem[2]);
 						strcpy(fmcb->OSD_E3_Path[osd_item], tempitem[3]);
 					}
-					else if (OSD_overwrite(osd_item)){
-						strcpy(fmcb->OSD_Name[osd_item], tempitem[0]);
-						strcpy(fmcb->OSD_E1_Path[osd_item], tempitem[1]);
-						strcpy(fmcb->OSD_E2_Path[osd_item], tempitem[2]);
-						strcpy(fmcb->OSD_E3_Path[osd_item], tempitem[3]);
-					}
 				}
-			}
-			else if(new_pad & PAD_SELECT) {
+			} else if (new_pad & PAD_SELECT) {
 				event |= 2;  //event |= valid pad command
-				if(s==SEL_COL){
-					OSDSYS_selected_color[0]=strtol("0x10", NULL, 16); // hex base
-					OSDSYS_selected_color[1]=strtol("0x80", NULL, 16); // hex base
-					OSDSYS_selected_color[2]=strtol("0xE0", NULL, 16); // hex base
-					OSDSYS_selected_color[3]=strtol("0x80", NULL, 16); // hex base			
-				}
-				else if (s>SEL_COL && s<UNSEL_COL){
-					if (s==SEL_COL+1)
-						OSDSYS_selected_color[0]=strtol("0x10", NULL, 16); // hex base
-					if (s==SEL_COL+2)
-						OSDSYS_selected_color[1]=strtol("0x80", NULL, 16); // hex base
-					if (s==SEL_COL+3)
-						OSDSYS_selected_color[2]=strtol("0xE0", NULL, 16); // hex base
-					if (s==SEL_COL+4)
-						OSDSYS_selected_color[3]=strtol("0x80", NULL, 16); // hex base
-				}
-				else if(s==UNSEL_COL){
-					OSDSYS_unselected_color[0]=strtol("0x33", NULL, 16); // hex base
-					OSDSYS_unselected_color[1]=strtol("0x33", NULL, 16); // hex base
-					OSDSYS_unselected_color[2]=strtol("0x33", NULL, 16); // hex base
-					OSDSYS_unselected_color[3]=strtol("0x80", NULL, 16); // hex base				
-				}
-				else if (s>UNSEL_COL && s<UNSEL_COL+5){
-					if (s==UNSEL_COL+1)
-						OSDSYS_unselected_color[0]=strtol("0x33", NULL, 16); // hex base
-					if (s==UNSEL_COL+2)
-						OSDSYS_unselected_color[1]=strtol("0x33", NULL, 16); // hex base
-					if (s==UNSEL_COL+3)
-						OSDSYS_unselected_color[2]=strtol("0x33", NULL, 16); // hex base
-					if (s==UNSEL_COL+4)
-						OSDSYS_unselected_color[3]=strtol("0x80", NULL, 16); // hex base
-				}
-				else if (s==ENTER-1)
+				if (s == SEL_COL) {
+					OSDSYS_selected_color[0] = strtol("0x10", NULL, 16);  // hex base
+					OSDSYS_selected_color[1] = strtol("0x80", NULL, 16);  // hex base
+					OSDSYS_selected_color[2] = strtol("0xE0", NULL, 16);  // hex base
+					OSDSYS_selected_color[3] = strtol("0x80", NULL, 16);  // hex base
+				} else if (s > SEL_COL && s < UNSEL_COL) {
+					if (s == SEL_COL + 1)
+						OSDSYS_selected_color[0] = strtol("0x10", NULL, 16);  // hex base
+					if (s == SEL_COL + 2)
+						OSDSYS_selected_color[1] = strtol("0x80", NULL, 16);  // hex base
+					if (s == SEL_COL + 3)
+						OSDSYS_selected_color[2] = strtol("0xE0", NULL, 16);  // hex base
+					if (s == SEL_COL + 4)
+						OSDSYS_selected_color[3] = strtol("0x80", NULL, 16);  // hex base
+				} else if (s == UNSEL_COL) {
+					OSDSYS_unselected_color[0] = strtol("0x33", NULL, 16);  // hex base
+					OSDSYS_unselected_color[1] = strtol("0x33", NULL, 16);  // hex base
+					OSDSYS_unselected_color[2] = strtol("0x33", NULL, 16);  // hex base
+					OSDSYS_unselected_color[3] = strtol("0x80", NULL, 16);  // hex base
+				} else if (s > UNSEL_COL && s < UNSEL_COL + 5) {
+					if (s == UNSEL_COL + 1)
+						OSDSYS_unselected_color[0] = strtol("0x33", NULL, 16);  // hex base
+					if (s == UNSEL_COL + 2)
+						OSDSYS_unselected_color[1] = strtol("0x33", NULL, 16);  // hex base
+					if (s == UNSEL_COL + 3)
+						OSDSYS_unselected_color[2] = strtol("0x33", NULL, 16);  // hex base
+					if (s == UNSEL_COL + 4)
+						OSDSYS_unselected_color[3] = strtol("0x80", NULL, 16);  // hex base
+				} else if (s == ENTER - 1)
 					fmcb->OSDSYS_menu_x = 320;
-				else if (s==ENTER){
+				else if (s == ENTER) {
 					fmcb->OSDSYS_enter_x = -1;
 					fmcb->OSDSYS_enter_y = -1;
-				}
-				else if (s==ENTER+1){
+				} else if (s == ENTER + 1) {
 					fmcb->OSDSYS_enter_x = -1;
-				}
-				else if (s==ENTER+2){
+				} else if (s == ENTER + 2) {
 					fmcb->OSDSYS_enter_y = -1;
-				}
-				else if (s==VERSION){
+				} else if (s == VERSION) {
 					fmcb->OSDSYS_version_x = -1;
 					fmcb->OSDSYS_version_y = -1;
-				}				
-				else if (s==VERSION+1){
+				} else if (s == VERSION + 1) {
 					fmcb->OSDSYS_version_x = -1;
-				}
-				else if (s==VERSION+2){
+				} else if (s == VERSION + 2) {
 					fmcb->OSDSYS_version_y = -1;
 				}
-			}			
-			else if(new_pad & PAD_TRIANGLE) {
-return_fmcb:
+			} else if (new_pad & PAD_TRIANGLE) {
+			return_fmcb:
 				free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -3939,89 +3859,89 @@ return_fmcb:
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
-/**/		if(fmcb->hacked_OSDSYS)
+
+			/**/ if (fmcb->hacked_OSDSYS)
 				sprintf(c, "  %s: %s", "Hacked OSDSYS", "ON");
 			else
 				sprintf(c, "  %s: %s", "Hacked OSDSYS", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  Configure Item %2d : %s", osd_item+1, fmcb->OSD_Name[osd_item]);
+			/**/ sprintf(c, "  Configure Item %2d : %s", osd_item + 1, fmcb->OSD_Name[osd_item]);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		sprintf(c, "  Configure Scrolling Options");
+			/**/ sprintf(c, "  Configure Scrolling Options");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
 
-/**/		if(!strcmp(fmcb->OSD_tvmode, "AUTO"))
+			/**/ if (!strcmp(fmcb->OSD_tvmode, "AUTO"))
 				sprintf(c, "  %s: %s", "Video Mode", "AUTO");
-			else if(!strcmp(fmcb->OSD_tvmode, "NTSC"))
-				sprintf(c, "  %s: %s", "Video Mode", "NTSC");	
+			else if (!strcmp(fmcb->OSD_tvmode, "NTSC"))
+				sprintf(c, "  %s: %s", "Video Mode", "NTSC");
 			else
 				sprintf(c, "  %s: %s", "Video Mode", "PAL");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;				
-/**/		if(fmcb->Skip_MC)
+			y += FONT_HEIGHT;
+			/**/ if (fmcb->Skip_MC)
 				sprintf(c, "  %s: %s", "Skip MC update check", "ON");
 			else
 				sprintf(c, "  %s: %s", "Skip MC update check", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		if(fmcb->Skip_HDD)
+			/**/ if (fmcb->Skip_HDD)
 				sprintf(c, "  %s: %s", "Skip HDD update check", "ON");
 			else
 				sprintf(c, "  %s: %s", "Skip HDD update check", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		if(fmcb->Skip_Disc)
+			/**/ if (fmcb->Skip_Disc)
 				sprintf(c, "  %s: %s", "Skip Disc Boot", "ON");
 			else
 				sprintf(c, "  %s: %s", "Skip Disc Boot", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;			
-/**/		if(fmcb->Skip_Logo)
+			y += FONT_HEIGHT;
+			/**/ if (fmcb->Skip_Logo)
 				sprintf(c, "  %s: %s", "Skip Sony Logo", "ON");
 			else
 				sprintf(c, "  %s: %s", "Skip Sony Logo", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-/**/		if(fmcb->Inner_Browser)
+			/**/ if (fmcb->Inner_Browser)
 				sprintf(c, "  %s: %s", "Go to Browser", "ON");
 			else
 				sprintf(c, "  %s: %s", "Go to Browser", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT*2;
+			y += FONT_HEIGHT * 2;
 
 			sprintf(c, "R     G     B     A");
-			printXY(c, x+FONT_WIDTH*25, y-FONT_HEIGHT, setting->color[3], TRUE, 0);
-			sprintf(c, "%03d   %03d   %03d   %03d",OSDSYS_selected_color[0],OSDSYS_selected_color[1],OSDSYS_selected_color[2],OSDSYS_selected_color[3]);
-			printXY(c, x+FONT_WIDTH*24, y, setting->color[3], TRUE, 0);
-			sprintf(c, "%03d   %03d   %03d   %03d",OSDSYS_unselected_color[0],OSDSYS_unselected_color[1],OSDSYS_unselected_color[2],OSDSYS_unselected_color[3]);
-			printXY(c, x+FONT_WIDTH*24, y+FONT_HEIGHT, setting->color[3], TRUE, 0);			
-			
+			printXY(c, x + FONT_WIDTH * 25, y - FONT_HEIGHT, setting->color[3], TRUE, 0);
+			sprintf(c, "%03d   %03d   %03d   %03d", OSDSYS_selected_color[0], OSDSYS_selected_color[1], OSDSYS_selected_color[2], OSDSYS_selected_color[3]);
+			printXY(c, x + FONT_WIDTH * 24, y, setting->color[3], TRUE, 0);
+			sprintf(c, "%03d   %03d   %03d   %03d", OSDSYS_unselected_color[0], OSDSYS_unselected_color[1], OSDSYS_unselected_color[2], OSDSYS_unselected_color[3]);
+			printXY(c, x + FONT_WIDTH * 24, y + FONT_HEIGHT, setting->color[3], TRUE, 0);
+
 			sprintf(c, "  %s", "Selected Color");
-			printXY(c, x, y, GS_SETREG_RGBA(OSDSYS_selected_color[0],OSDSYS_selected_color[1],OSDSYS_selected_color[2],OSDSYS_selected_color[3]), TRUE, 0);
+			printXY(c, x, y, GS_SETREG_RGBA(OSDSYS_selected_color[0], OSDSYS_selected_color[1], OSDSYS_selected_color[2], OSDSYS_selected_color[3]), TRUE, 0);
 			sprintf(c, "ÿ4");
-			printXY(c, x+FONT_WIDTH*46, y, GS_SETREG_RGBA(OSDSYS_selected_color[0],OSDSYS_selected_color[1],OSDSYS_selected_color[2],OSDSYS_selected_color[3]), TRUE, 0);
+			printXY(c, x + FONT_WIDTH * 46, y, GS_SETREG_RGBA(OSDSYS_selected_color[0], OSDSYS_selected_color[1], OSDSYS_selected_color[2], OSDSYS_selected_color[3]), TRUE, 0);
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s", "Unselected Color");
-			printXY(c, x, y, GS_SETREG_RGBA(OSDSYS_unselected_color[0],OSDSYS_unselected_color[1],OSDSYS_unselected_color[2],OSDSYS_unselected_color[3]), TRUE, 0);
+			printXY(c, x, y, GS_SETREG_RGBA(OSDSYS_unselected_color[0], OSDSYS_unselected_color[1], OSDSYS_unselected_color[2], OSDSYS_unselected_color[3]), TRUE, 0);
 			sprintf(c, "ÿ4");
-			printXY(c, x+FONT_WIDTH*46, y, GS_SETREG_RGBA(OSDSYS_unselected_color[0],OSDSYS_unselected_color[1],OSDSYS_unselected_color[2],OSDSYS_unselected_color[3]), TRUE, 0);			
+			printXY(c, x + FONT_WIDTH * 46, y, GS_SETREG_RGBA(OSDSYS_unselected_color[0], OSDSYS_unselected_color[1], OSDSYS_unselected_color[2], OSDSYS_unselected_color[3]), TRUE, 0);
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s: %d", "Menu X", fmcb->OSDSYS_menu_x);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s", "Enter");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			sprintf(c, "X: %03d   Y: %03d",fmcb->OSDSYS_enter_x, fmcb->OSDSYS_enter_y);
-			printXY(c, x+FONT_WIDTH*24, y, setting->color[3], TRUE, 0);
+			sprintf(c, "X: %03d   Y: %03d", fmcb->OSDSYS_enter_x, fmcb->OSDSYS_enter_y);
+			printXY(c, x + FONT_WIDTH * 24, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s", "Version");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			sprintf(c, "X: %03d   Y: %03d",fmcb->OSDSYS_version_x, fmcb->OSDSYS_version_y);
-			printXY(c, x+FONT_WIDTH*24, y, setting->color[3], TRUE, 0);
+			sprintf(c, "X: %03d   Y: %03d", fmcb->OSDSYS_version_x, fmcb->OSDSYS_version_y);
+			printXY(c, x + FONT_WIDTH * 24, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
 
@@ -4029,78 +3949,70 @@ return_fmcb:
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			if (s>SEL_COL && s<UNSEL_COL){
-				y = Menu_start_y + (SEL_COL+3)*FONT_HEIGHT;
-				if(s==SEL_COL+1)
-					x +=FONT_WIDTH*22;
-				if(s==SEL_COL+2)
-					x +=FONT_WIDTH*28;
-				if(s==SEL_COL+3)
-					x +=FONT_WIDTH*34;
-				if(s==SEL_COL+4)
-					x +=FONT_WIDTH*40;
+			if (s > SEL_COL && s < UNSEL_COL) {
+				y = Menu_start_y + (SEL_COL + 3) * FONT_HEIGHT;
+				if (s == SEL_COL + 1)
+					x += FONT_WIDTH * 22;
+				if (s == SEL_COL + 2)
+					x += FONT_WIDTH * 28;
+				if (s == SEL_COL + 3)
+					x += FONT_WIDTH * 34;
+				if (s == SEL_COL + 4)
+					x += FONT_WIDTH * 40;
+			} else if (s > UNSEL_COL && s < UNSEL_COL + 5) {
+				y = Menu_start_y + (SEL_COL + 4) * FONT_HEIGHT;
+				if (s == UNSEL_COL + 1)
+					x += FONT_WIDTH * 22;
+				if (s == UNSEL_COL + 2)
+					x += FONT_WIDTH * 28;
+				if (s == UNSEL_COL + 3)
+					x += FONT_WIDTH * 34;
+				if (s == UNSEL_COL + 4)
+					x += FONT_WIDTH * 40;
+			} else if (s < SEL_COL + 1) {
+				y = Menu_start_y + (s + 1) * FONT_HEIGHT + FONT_HEIGHT / 2;
+				if (s > 2)
+					y += FONT_HEIGHT / 2;
+				if (s > 8)
+					y += FONT_HEIGHT;
+			} else if (s == UNSEL_COL) {
+				y = Menu_start_y + (UNSEL_COL - 2) * FONT_HEIGHT + FONT_HEIGHT;
+			} else if (s == ENTER - 1) {
+				y = Menu_start_y + (UNSEL_COL - 1) * FONT_HEIGHT + FONT_HEIGHT;
+			} else if (s > ENTER - 1 && s < VERSION) {
+				y = Menu_start_y + (UNSEL_COL - 1) * FONT_HEIGHT + FONT_HEIGHT * 2;
+
+				if (s == ENTER + 1)
+					x += FONT_WIDTH * 22;
+				if (s == ENTER + 2)
+					x += FONT_WIDTH * 31;
+			} else if (s > VERSION - 1 && s < VERSION + 3) {
+				y = Menu_start_y + (UNSEL_COL - 1) * FONT_HEIGHT + FONT_HEIGHT * 3;
+
+				if (s == VERSION + 1)
+					x += FONT_WIDTH * 22;
+				if (s == VERSION + 2)
+					x += FONT_WIDTH * 31;
+			} else if (s == MAX_S) {
+				y = Menu_start_y + (UNSEL_COL)*FONT_HEIGHT + FONT_HEIGHT * 3 + FONT_HEIGHT / 2;
 			}
-			else if (s>UNSEL_COL && s<UNSEL_COL+5){
-				y = Menu_start_y + (SEL_COL+4)*FONT_HEIGHT;
-				if(s==UNSEL_COL+1)
-					x +=FONT_WIDTH*22;
-				if(s==UNSEL_COL+2)
-					x +=FONT_WIDTH*28;
-				if(s==UNSEL_COL+3)
-					x +=FONT_WIDTH*34;
-				if(s==UNSEL_COL+4)
-					x +=FONT_WIDTH*40;
-			}
-			else if (s<SEL_COL+1){
-			y = Menu_start_y + (s+1)*FONT_HEIGHT + FONT_HEIGHT/2;
-			if(s>2)
-				y += FONT_HEIGHT / 2;
-			if(s>8)
-				y += FONT_HEIGHT;
-			}
-			else if (s==UNSEL_COL){
-				y = Menu_start_y + (UNSEL_COL-2)*FONT_HEIGHT + FONT_HEIGHT;
-			}
-			else if (s==ENTER-1){
-				y = Menu_start_y + (UNSEL_COL-1)*FONT_HEIGHT + FONT_HEIGHT;
-			}
-			else if (s>ENTER-1 && s<VERSION){
-				y = Menu_start_y + (UNSEL_COL-1)*FONT_HEIGHT + FONT_HEIGHT*2;
-			
-				if (s==ENTER+1)
-					x +=FONT_WIDTH*22;
-				if (s==ENTER+2)
-					x +=FONT_WIDTH*31;
-			}
-			else if (s>VERSION-1 && s<VERSION+3){
-				y = Menu_start_y + (UNSEL_COL-1)*FONT_HEIGHT + FONT_HEIGHT*3;
-			
-				if (s==VERSION+1)
-					x +=FONT_WIDTH*22;
-				if (s==VERSION+2)
-					x +=FONT_WIDTH*31;
-			}			
-			else if (s==MAX_S){
-				y = Menu_start_y + (UNSEL_COL)*FONT_HEIGHT + FONT_HEIGHT*3 + FONT_HEIGHT/2;
-			}
-				
+
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
 			//Tooltip section
-			if(s==0||(s> 2 && s<9)) {
+			if (s == 0 || (s > 2 && s < 9)) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "Change");
 				else
 					sprintf(c, "ÿ0:%s", "Change");
-			}
-			else if(s==1)
+			} else if (s == 1)
 				if (swapKeys)
 					sprintf(c, "ÿ1:OK ÿ0:Clear ÿ<|ÿ::Change item L2:Copy item R2:Paste item");
 				else
 					sprintf(c, "ÿ0:OK ÿ1:Clear ÿ<|ÿ::Change item L2:Copy item R2:Paste item");
-			else if(s==SEL_COL||s==UNSEL_COL||s==ENTER||s==VERSION)
+			else if (s == SEL_COL || s == UNSEL_COL || s == ENTER || s == VERSION)
 				sprintf(c, "SELECT: set default");
-			else if ((s>UNSEL_COL && s<UNSEL_COL+5) || (s>SEL_COL && s<UNSEL_COL) || (s>ENTER && s<VERSION) || (s>VERSION && s<VERSION+3) || s==ENTER-1){
+			else if ((s > UNSEL_COL && s < UNSEL_COL + 5) || (s > SEL_COL && s < UNSEL_COL) || (s > ENTER && s < VERSION) || (s > VERSION && s < VERSION + 3) || s == ENTER - 1) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s SELECT: set default", "Add", "Subtract");
 				else
@@ -4108,7 +4020,7 @@ return_fmcb:
 			}
 			/*else if (s==ENTER||s==VERSION)
 				c[0]=0;*/
-			else{
+			else {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "OK");
 				else
@@ -4117,16 +4029,17 @@ return_fmcb:
 			sprintf(tmp, " ÿ3:%s", "Return");
 			strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
+	}  //ends while
 
-}//ends Config_fmcb_OSDSYS
+}  //ends Config_fmcb_OSDSYS
 
-void Config_ESR_path(){
+void Config_ESR_path()
+{
 
 	char c[MAX_PATH];
 	//char fmcbMsg[MAX_PATH] = "";
@@ -4135,37 +4048,32 @@ void Config_ESR_path(){
 	int s;
 	int MAX_S = 3;
 	int x, y;
-	int event, post_event=0;
-	
+	int event, post_event = 0;
+
 	tmpfmcb = fmcb;
-	fmcb = (FMCB*)malloc(sizeof(FMCB));
+	fmcb = (FMCB *)malloc(sizeof(FMCB));
 	*fmcb = *tmpfmcb;
-	
-	event = 1;	//event = initial entry
-	s=0;
-	while(1)
-	{
+
+	event = 1;  //event = initial entry
+	s = 0;
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
 				event |= 2;  //event |= valid pad command
-				if(s!=0)
+				if (s != 0)
 					s--;
 				else
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+					s = MAX_S;
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s!=MAX_S)
+				if (s != MAX_S)
 					s++;
 				else
-					s=0;
+					s = 0;
 			}
-	/*		else if(new_pad & PAD_LEFT)
+			/*		else if(new_pad & PAD_LEFT)
 			{
 				event |= 2;  //event |= valid pad command
 				s = s-5;
@@ -4179,53 +4087,47 @@ void Config_ESR_path(){
 				if(s>=MAX_S)
 					s=MAX_S;
 			}
-	*/		else if(new_pad & PAD_SQUARE)
-			{
+	*/
+			else if (new_pad & PAD_SQUARE) {
 				event |= 2;  //event |= valid pad command
-				
-				if(s<3){				
+
+				if (s < 3) {
 					getFilePath(fmcb->ESR_Path[s], TRUE);
-					if(!strncmp(fmcb->ESR_Path[s], "mc", 2)){
-						if (!strncmp(fmcb->ESR_Path[s]+7, "DATA-SYSTEM", 11))
+					if (!strncmp(fmcb->ESR_Path[s], "mc", 2)) {
+						if (!strncmp(fmcb->ESR_Path[s] + 7, "DATA-SYSTEM", 11))
 							fmcb->ESR_Path[s][6] = '?';
 						sprintf(c, "mc?%s", &fmcb->ESR_Path[s][3]);
 						strcpy(fmcb->ESR_Path[s], c);
 					}
 				}
-			}
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{
-				event |= 2;  //event |= valid pad command
-				
-				if(s<3)	
-					fmcb->ESR_Path[s][0]=0;
-			
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+			} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
 
-				if(s<3)
-				{
+				if (s < 3)
+					fmcb->ESR_Path[s][0] = 0;
+
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
+				event |= 2;  //event |= valid pad command
+
+				if (s < 3) {
 					getFilePath(fmcb->ESR_Path[s], TRUE);
-						if (!strncmp(fmcb->ESR_Path[s]+7, "DATA-SYSTEM", 11))
-							fmcb->ESR_Path[s][6] = '?';
+					if (!strncmp(fmcb->ESR_Path[s] + 7, "DATA-SYSTEM", 11))
+						fmcb->ESR_Path[s][6] = '?';
 				}
 
-				else if(s==MAX_S)
-					goto return_fmcb;				
+				else if (s == MAX_S)
+					goto return_fmcb;
 
-			}
-			else if(new_pad & PAD_TRIANGLE) {
-return_fmcb:
+			} else if (new_pad & PAD_TRIANGLE) {
+			return_fmcb:
 				free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -4239,7 +4141,7 @@ return_fmcb:
 			printXY(title_tmp, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  Path1: %s", fmcb->ESR_Path[0]);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
@@ -4250,24 +4152,23 @@ return_fmcb:
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  %s", "Return");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			y = Menu_start_y + (s+1)*FONT_HEIGHT + FONT_HEIGHT/2;
-			if(s>2)
+			y = Menu_start_y + (s + 1) * FONT_HEIGHT + FONT_HEIGHT / 2;
+			if (s > 2)
 				y += FONT_HEIGHT / 2;
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
 			//Tooltip section
-			if (s<3) {
+			if (s < 3) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s ÿ2:%s", "Browse", "Clear", "Map to any MC");
 				else
 					sprintf(c, "ÿ0:%s ÿ1:%s ÿ2:%s", "Browse", "Clear", "Map to any MC");
-			}
-			else {
+			} else {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "OK");
 				else
@@ -4276,72 +4177,69 @@ return_fmcb:
 			sprintf(tmp, " ÿ3:%s", "Return");
 			strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
+	}  //ends while
 
-}//ends Config_ESR_path
+}  //ends Config_ESR_path
 
 //---------------------------------------------------------------------------
 // Configuration menu for Free McBoot
 //---------------------------------------------------------------------------
 void select_swapkeys()
 {
-	int event, post_event=0;
+	int event, post_event = 0;
 	const int
-		KEY_W = LINE_THICKNESS+12+(13*FONT_WIDTH+12*12)+12+LINE_THICKNESS,
-		KEY_H = LINE_THICKNESS + 1 + FONT_HEIGHT + 1
-		      + LINE_THICKNESS + 8 + (6*FONT_HEIGHT) + 8 + LINE_THICKNESS,
-		KEY_X = ((SCREEN_WIDTH - KEY_W)/2) & -2,
-		KEY_Y = ((SCREEN_HEIGHT - KEY_H)/2)& -2;
-		
+	    KEY_W = LINE_THICKNESS + 12 + (13 * FONT_WIDTH + 12 * 12) + 12 + LINE_THICKNESS,
+	    KEY_H = LINE_THICKNESS + 1 + FONT_HEIGHT + 1 + LINE_THICKNESS + 8 + (6 * FONT_HEIGHT) + 8 + LINE_THICKNESS,
+	    KEY_X = ((SCREEN_WIDTH - KEY_W) / 2) & -2,
+	    KEY_Y = ((SCREEN_HEIGHT - KEY_H) / 2) & -2;
+
 	const int
-		KEY_W2 = LINE_THICKNESS+12+(55*FONT_WIDTH+12*12)+12+LINE_THICKNESS,
-		KEY_H2 = LINE_THICKNESS + 1 + FONT_HEIGHT + 1
-		      + LINE_THICKNESS + 8 + (2*FONT_HEIGHT) + 8 + LINE_THICKNESS,
-		KEY_X2 = SCREEN_WIDTH - KEY_W2 -8,
-		KEY_Y2 = SCREEN_HEIGHT - KEY_H2 -2;
-	
+	    KEY_W2 = LINE_THICKNESS + 12 + (55 * FONT_WIDTH + 12 * 12) + 12 + LINE_THICKNESS,
+	    KEY_H2 = LINE_THICKNESS + 1 + FONT_HEIGHT + 1 + LINE_THICKNESS + 8 + (2 * FONT_HEIGHT) + 8 + LINE_THICKNESS,
+	    KEY_X2 = SCREEN_WIDTH - KEY_W2 - 8,
+	    KEY_Y2 = SCREEN_HEIGHT - KEY_H2 - 2;
+
 	event = 1;  //event = initial entry
-	while(1){
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad()){
-			if(new_pad)
+		if (readpad()) {
+			if (new_pad)
 				event |= 2;  //event |= pad command
-			if(new_pad & PAD_CROSS){
+			if (new_pad & PAD_CROSS) {
 				swapKeys = TRUE;
 				return;
-			}
-			else if (new_pad & PAD_CIRCLE)
+			} else if (new_pad & PAD_CIRCLE)
 				return;
 		}
 
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
-			drawPopSprite(setting->color[0],KEY_X, KEY_Y,KEY_X+KEY_W-1, KEY_Y+KEY_H-1);
-			drawFrame(KEY_X, KEY_Y, KEY_X+KEY_W-1, KEY_Y+KEY_H-1, setting->color[1]);
+			drawPopSprite(setting->color[0], KEY_X, KEY_Y, KEY_X + KEY_W - 1, KEY_Y + KEY_H - 1);
+			drawFrame(KEY_X, KEY_Y, KEY_X + KEY_W - 1, KEY_Y + KEY_H - 1, setting->color[1]);
 
-			printXY("Select buttons layout", KEY_X+FONT_HEIGHT*3, KEY_Y+FONT_HEIGHT, setting->color[3], TRUE, 0);				
-			printXY("ÿ0: ÿ1 Cancel / ÿ0 OK", KEY_X+FONT_HEIGHT*3, KEY_Y+FONT_HEIGHT*4, setting->color[3], TRUE, 0);
-			printXY("ÿ1: ÿ0 Cancel / ÿ1 OK", KEY_X+FONT_HEIGHT*3, KEY_Y+FONT_HEIGHT*6, setting->color[3], TRUE, 0);
-			
-			drawPopSprite(setting->color[0],KEY_X2, KEY_Y2,KEY_X2+KEY_W2-1, KEY_Y2+KEY_H2-1);
-			drawFrame(KEY_X2, KEY_Y2, KEY_X2+KEY_W2-1, KEY_Y2+KEY_H2-1, setting->color[1]);
-			printXY("FMCB Configurator by suloku. mod by HWNJ, modified by Matias Israelson", KEY_X2+FONT_WIDTH*2, KEY_Y2+FONT_HEIGHT, setting->color[3], TRUE, 0);
-			printXY("Based on uLaunchELF by E P and Dlanor, originally coded by Mirakichi.", KEY_X2+FONT_WIDTH*2, KEY_Y2+FONT_HEIGHT*2, setting->color[3], TRUE, 0);
-			printXY("Free McBoot by Jimmikaelkael and Neme 2008. Special thanks to uyjulian.", KEY_X2+FONT_WIDTH*2, KEY_Y2+FONT_HEIGHT*3, setting->color[3], TRUE, 0);
+			printXY("Select buttons layout", KEY_X + FONT_HEIGHT * 3, KEY_Y + FONT_HEIGHT, setting->color[3], TRUE, 0);
+			printXY("ÿ0: ÿ1 Cancel / ÿ0 OK", KEY_X + FONT_HEIGHT * 3, KEY_Y + FONT_HEIGHT * 4, setting->color[3], TRUE, 0);
+			printXY("ÿ1: ÿ0 Cancel / ÿ1 OK", KEY_X + FONT_HEIGHT * 3, KEY_Y + FONT_HEIGHT * 6, setting->color[3], TRUE, 0);
 
-		}//ends if(event||post_event)
+			drawPopSprite(setting->color[0], KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1);
+			drawFrame(KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1, setting->color[1]);
+			printXY("FMCB Configurator by suloku. mod by HWNJ, modified by Matias Israelson", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT, setting->color[3], TRUE, 0);
+			printXY("Based on uLaunchELF by E P and Dlanor, originally coded by Mirakichi.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 2, setting->color[3], TRUE, 0);
+			printXY("Free McBoot by Jimmikaelkael and Neme 2008. Special thanks to uyjulian.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 3, setting->color[3], TRUE, 0);
+
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
-	}//ends while
-}//end selec_swapkeys
+	}  //ends while
+}  //end selec_swapkeys
 void Config_fmcb(char *fmcbMsg)
 {
 	char c[MAX_PATH];
@@ -4349,46 +4247,37 @@ void Config_fmcb(char *fmcbMsg)
 	int s;
 	int MAX_S = 15;
 	int x, y;
-	int event, post_event=0;
-	
-	event = 1;	//event = initial entry
-	s=0;
+	int event, post_event = 0;
+
+	event = 1;  //event = initial entry
+	s = 0;
 	select_swapkeys();
-	while(1)
-	{
+	while (1) {
 		//Pad response section
 		waitPadReady(0, 0);
-		if(readpad())
-		{
-			if(new_pad & PAD_UP)
-			{
+		if (readpad()) {
+			if (new_pad & PAD_UP) {
 				event |= 2;  //event |= valid pad command
-				if(s!=0)
+				if (s != 0)
 					s--;
 				else
-					s=MAX_S;
-			}
-			else if(new_pad & PAD_DOWN)
-			{
+					s = MAX_S;
+			} else if (new_pad & PAD_DOWN) {
 				event |= 2;  //event |= valid pad command
-				if(s!=MAX_S)
+				if (s != MAX_S)
 					s++;
 				else
-					s=0;
-			}
-			else if(new_pad & PAD_LEFT)
-			{
+					s = 0;
+			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
-				s = s-4;
-				if(s<=0)
-					s=0;
-			}
-			else if(new_pad & PAD_RIGHT)
-			{
+				s = s - 4;
+				if (s <= 0)
+					s = 0;
+			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
-				s = s+4;
-				if(s>=MAX_S)
-					s=MAX_S;
+				s = s + 4;
+				if (s >= MAX_S)
+					s = MAX_S;
 			}
 			/*else if((new_pad & PAD_SQUARE) && (s<SHOW_TITLES)){
 				event |= 2;  //event |= valid pad command
@@ -4396,98 +4285,81 @@ void Config_fmcb(char *fmcbMsg)
 				if(keyboard(title_tmp, MAX_ELF_TITLE)>=0)
 					strcpy(setting->LK_Title[s], title_tmp);
 			}*/
-			else if((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE) )
-			{
+			else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s==10)
-				{
-				fmcb->pad_delay = fmcb->pad_delay - 100;
+				if (s == 10) {
+					fmcb->pad_delay = fmcb->pad_delay - 100;
 				}
-				if(fmcb->pad_delay < 0)
+				if (fmcb->pad_delay < 0)
 					fmcb->pad_delay = 10000;
-			}
-			else if((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE))
-			{
+			} else if ((swapKeys && new_pad & PAD_CROSS) || (!swapKeys && new_pad & PAD_CIRCLE)) {
 				event |= 2;  //event |= valid pad command
-				if(s==0)
-				{
-				loadConfig_fmcb(fmcbMsg, cnf_path_fmcb);
+				if (s == 0) {
+					loadConfig_fmcb(fmcbMsg, cnf_path_fmcb);
 				}
-				if(s==1)
-				{
-				loadConfig_fmcb(fmcbMsg, cnf_path_fmcb2);
+				if (s == 1) {
+					loadConfig_fmcb(fmcbMsg, cnf_path_fmcb2);
 				}
-				if(s==2)
-				{
-				loadConfig_fmcb(fmcbMsg, cnf_path_fmcb3);
+				if (s == 2) {
+					loadConfig_fmcb(fmcbMsg, cnf_path_fmcb3);
 				}
-				
-				if(s==3)
-				{
-					sprintf(fmcbMsg," ");
+
+				if (s == 3) {
+					sprintf(fmcbMsg, " ");
 					Config_fmcb_key(1);
 				}
-				if(s==4)
-				{
-					sprintf(fmcbMsg," ");
+				if (s == 4) {
+					sprintf(fmcbMsg, " ");
 					Config_fmcb_key(2);
 				}
-				if(s==5)
-				{
-					sprintf(fmcbMsg," ");
+				if (s == 5) {
+					sprintf(fmcbMsg, " ");
 					Config_fmcb_key(3);
 				}
-				if(s==6)
-				{
-					sprintf(fmcbMsg," ");
+				if (s == 6) {
+					sprintf(fmcbMsg, " ");
 					Config_fmcb_OSDSYS();
 				}
-				if(s==7)
-				{
-					sprintf(fmcbMsg," ");				
+				if (s == 7) {
+					sprintf(fmcbMsg, " ");
 					Config_ESR_path();
 				}
-				if(s==8)
-				{
+				if (s == 8) {
 					fmcb->Fastboot = !fmcb->Fastboot;
 				}
-				if(s==9)
-				{
+				if (s == 9) {
 					fmcb->Debug = !fmcb->Debug;
 				}
-				if(s==10)
-				{
+				if (s == 10) {
 					fmcb->pad_delay = fmcb->pad_delay + 100;
-					if(fmcb->pad_delay > 10000)
+					if (fmcb->pad_delay > 10000)
 						fmcb->pad_delay = 0;
-				}				
-
-				else if(s==11)
-					saveFmcbCNF(fmcbMsg, cnf_path_fmcb);
-				else if (s==12)
-					saveFmcbCNF(fmcbMsg, cnf_path_fmcb2);
-				else if (s==13)
-					saveFmcbCNF(fmcbMsg, cnf_path_fmcb3);					
-				else if (s==MAX_S-1){
-					RunElf(fmcbMsg, "Loader");
 				}
-				else if(s==MAX_S)
-				__asm__ __volatile__(
-					"	li $3, 0x04;"
-					"	syscall;"
-					"	nop;");
-			}
-			else if(new_pad & PAD_SELECT){
+
+				else if (s == 11)
+					saveFmcbCNF(fmcbMsg, cnf_path_fmcb);
+				else if (s == 12)
+					saveFmcbCNF(fmcbMsg, cnf_path_fmcb2);
+				else if (s == 13)
+					saveFmcbCNF(fmcbMsg, cnf_path_fmcb3);
+				else if (s == MAX_S - 1) {
+					RunElf(fmcbMsg, "Loader");
+				} else if (s == MAX_S)
+					__asm__ __volatile__(
+					    "	li $3, 0x04;"
+					    "	syscall;"
+					    "	nop;");
+			} else if (new_pad & PAD_SELECT) {
 				event |= 2;  //event |= valid pad command
-				if (s>=0 && s<3){
+				if (s >= 0 && s < 3) {
 					initConfig_fmcb(0);
 					strcpy(fmcbMsg, "All set to default");
 				}
 			}
 			//else if(new_pad & PAD_TRIANGLE) {}
-		} //end if(readpad())
-		
-		if(event||post_event){ //NB: We need to update two frame buffers per event
+		}  //end if(readpad())
+
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
 
 			//Display section
 			clrScr(setting->color[0]);
@@ -4523,26 +4395,26 @@ void Config_fmcb(char *fmcbMsg)
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s...", "Configure ESR Path");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;			
+			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
 
-			if(fmcb->Fastboot)
+			if (fmcb->Fastboot)
 				sprintf(c, "  %s: %s", "FastBoot", "ON");
 			else
 				sprintf(c, "  %s: %s", "FastBoot", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-			
-			if(fmcb->Debug)
+
+			if (fmcb->Debug)
 				sprintf(c, "  %s: %s", "Debug Screen", "ON");
 			else
 				sprintf(c, "  %s: %s", "Debug Screen", "OFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
-			
-			sprintf(c, "  %s: %.1f", "Pad Delay", fmcb->pad_delay/1000);
+
+			sprintf(c, "  %s: %.1f", "Pad Delay", fmcb->pad_delay / 1000);
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;			
+			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
 
 			sprintf(c, "  %s", "Save CNF to MC0");
@@ -4553,9 +4425,9 @@ void Config_fmcb(char *fmcbMsg)
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s", "Save CNF to Mass");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
-			y += FONT_HEIGHT;			
+			y += FONT_HEIGHT;
 			y += FONT_HEIGHT / 2;
-			
+
 			sprintf(c, "  %s", "Return to FunTuna");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
@@ -4563,30 +4435,30 @@ void Config_fmcb(char *fmcbMsg)
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 
 			//Cursor positioning section
-			y = Menu_start_y + (s+1)*FONT_HEIGHT + FONT_HEIGHT/2;
-			if( s>2 )
+			y = Menu_start_y + (s + 1) * FONT_HEIGHT + FONT_HEIGHT / 2;
+			if (s > 2)
 				y += FONT_HEIGHT / 2;
-			if( s>7 )
+			if (s > 7)
 				y += FONT_HEIGHT / 2;
-			if( s>10 )
+			if (s > 10)
 				y += FONT_HEIGHT / 2;
-			if( s>13 )
+			if (s > 13)
 				y += FONT_HEIGHT / 2;
 
 			drawChar(LEFT_CUR, x, y, setting->color[3]);
 
 			//Tooltip section
-			if (s>=0 && s<3){
+			if (s >= 0 && s < 3) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s SELECT:Set all default", "OK");
 				else
 					sprintf(c, "ÿ0:%s SELECT:Set all default", "OK");
-			}else if(s>7 && s<10) {
+			} else if (s > 7 && s < 10) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s", "Change");
 				else
 					sprintf(c, "ÿ0:%s", "Change");
-			} else if (s==10) {
+			} else if (s == 10) {
 				if (swapKeys)
 					sprintf(c, "ÿ1:%s ÿ0:%s", "Add", "Subtract");
 				else
@@ -4600,13 +4472,13 @@ void Config_fmcb(char *fmcbMsg)
 			//sprintf(tmp, " ÿ3:%s", "Return");
 			//strcat(c, tmp);
 			setScrTmp(fmcbMsg, c);
-		}//ends if(event||post_event)
+		}  //ends if(event||post_event)
 		drawScr();
 		post_event = event;
 		event = 0;
 
-	}//ends while
-}//ends config_fmcb
+	}  //ends while
+}  //ends config_fmcb
 
 //---------------------------------------------------------------------------
 // End of file: config.c

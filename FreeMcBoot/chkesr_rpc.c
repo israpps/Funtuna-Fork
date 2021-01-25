@@ -39,27 +39,32 @@ int Check_ESR_Disc(void);
 
 #define CHKESR_IRX 0x0E0E0E0
 
-static SifRpcClientData_t chkesr    __attribute__((aligned(64)));
+static SifRpcClientData_t chkesr __attribute__((aligned(64)));
 static int Rpc_Buffer[1024] __attribute__((aligned(64)));
 
-typedef struct {
+typedef struct
+{
 	u32 ret;
 } Rpc_Packet_Send_Check_ESR_Disc;
 
-int chkesr_Inited  = 0;
+int chkesr_Inited = 0;
 
 //--------------------------------------------------------------
-int chkesrBindRpc(void) {
+int chkesrBindRpc(void)
+{
 	int ret;
 	int retryCount = 0x1000;
 
-	while(retryCount--) {
-	        ret = SifBindRpc( &chkesr, CHKESR_IRX, 0);
-        	if ( ret  < 0) return -1;
-	        if (chkesr.server != 0) break;
-	        // short delay 
-	      	ret = 0x10000;
-	    	while(ret--) asm("nop\nnop\nnop\nnop");
+	while (retryCount--) {
+		ret = SifBindRpc(&chkesr, CHKESR_IRX, 0);
+		if (ret < 0)
+			return -1;
+		if (chkesr.server != 0)
+			break;
+		// short delay
+		ret = 0x10000;
+		while (ret--)
+			asm("nop\nnop\nnop\nnop");
 	}
 	chkesr_Inited = 1;
 	return retryCount;
@@ -67,17 +72,20 @@ int chkesrBindRpc(void) {
 //--------------------------------------------------------------
 int chkesr_rpc_Init(void)
 {
- 	chkesrBindRpc();
- 	if(!chkesr_Inited) return -1;
- 	return 1;
+	chkesrBindRpc();
+	if (!chkesr_Inited)
+		return -1;
+	return 1;
 }
 //--------------------------------------------------------------
 int Check_ESR_Disc(void)
 {
- 	Rpc_Packet_Send_Check_ESR_Disc *Packet = (Rpc_Packet_Send_Check_ESR_Disc *)Rpc_Buffer;
- 	
-	if(!chkesr_Inited) chkesr_rpc_Init();
-   	if ((SifCallRpc(&chkesr, 1, 0, (void*)Rpc_Buffer, sizeof(Rpc_Packet_Send_Check_ESR_Disc), (void*)Rpc_Buffer, sizeof(int),0,0)) < 0) return -1;
- 	return Packet->ret;
+	Rpc_Packet_Send_Check_ESR_Disc *Packet = (Rpc_Packet_Send_Check_ESR_Disc *)Rpc_Buffer;
+
+	if (!chkesr_Inited)
+		chkesr_rpc_Init();
+	if ((SifCallRpc(&chkesr, 1, 0, (void *)Rpc_Buffer, sizeof(Rpc_Packet_Send_Check_ESR_Disc), (void *)Rpc_Buffer, sizeof(int), 0, 0)) < 0)
+		return -1;
+	return Packet->ret;
 }
 //--------------------------------------------------------------

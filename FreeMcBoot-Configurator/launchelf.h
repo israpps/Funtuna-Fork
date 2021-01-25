@@ -36,40 +36,39 @@
 #include <floatlib.h>
 //#include "hdl_rpc.h"
 
-#define TRUE		1
-#define FALSE		0
+#define TRUE 1
+#define FALSE 0
 
-#define SCANRATE (gsKit_detect_signal()==GS_MODE_NTSC ? 60:50)
+#define SCANRATE (gsKit_detect_signal() == GS_MODE_NTSC ? 60 : 50)
 
-enum {  // cnfmode values for getFilePath in browsing for configurable file paths
-	NON_CNF = 0,     // Normal browser mode, not configuration mode
-	LK_ELF_CNF,      // Normal ELF choice for launch keys
-	USBD_IRX_CNF,    // USBD.IRX choice for startup
-	SKIN_CNF,        // Skin JPG choice
-	GUI_SKIN_CNF,    // GUI Skin JPG choice
-	USBKBD_IRX_CNF,  // USB keyboard IRX choice (only PS2SDK)
-  KBDMAP_FILE_CNF, // USB keyboard mapping table choice
-  CNF_PATH_CNF,    // CNF Path override choice
-  TEXT_CNF,        // No restriction choice 
-  DIR_CNF,         // Directory choice 
-  JPG_CNF,				 // Jpg viewer choice
-	USBMASS_IRX_CNF, // USB_MASS.IRX choice for startup
-	LANG_CNF,				 // Language file choise
-	FONT_CNF,				 // Font file choice ( .fnt )
-  CNFMODE_CNT      // Total number of cnfmode values defined
+enum {                // cnfmode values for getFilePath in browsing for configurable file paths
+	NON_CNF = 0,      // Normal browser mode, not configuration mode
+	LK_ELF_CNF,       // Normal ELF choice for launch keys
+	USBD_IRX_CNF,     // USBD.IRX choice for startup
+	SKIN_CNF,         // Skin JPG choice
+	GUI_SKIN_CNF,     // GUI Skin JPG choice
+	USBKBD_IRX_CNF,   // USB keyboard IRX choice (only PS2SDK)
+	KBDMAP_FILE_CNF,  // USB keyboard mapping table choice
+	CNF_PATH_CNF,     // CNF Path override choice
+	TEXT_CNF,         // No restriction choice
+	DIR_CNF,          // Directory choice
+	JPG_CNF,          // Jpg viewer choice
+	USBMASS_IRX_CNF,  // USB_MASS.IRX choice for startup
+	LANG_CNF,         // Language file choise
+	FONT_CNF,         // Font file choice ( .fnt )
+	CNFMODE_CNT       // Total number of cnfmode values defined
 };
 
-enum
-{
+enum {
 	SCREEN_MARGIN = 16,
 	FONT_WIDTH = 8,
 	FONT_HEIGHT = 16,
 	LINE_THICKNESS = 3,
-	
+
 	MAX_NAME = 256,
 	MAX_PATH = 1025,
 	MAX_ENTRY = 2048,
-	MAX_PARTITIONS=500,
+	MAX_PARTITIONS = 500,
 	MAX_MENU_TITLE = 40,
 	MAX_ELF_TITLE = 72,
 	MAX_TEXT_LINE = 80
@@ -77,7 +76,7 @@ enum
 
 typedef struct
 {
-/*	char CNF_Path[MAX_PATH];
+	/*	char CNF_Path[MAX_PATH];
 	char LK_Path[15][MAX_PATH];
 	char LK_Title[15][MAX_ELF_TITLE];
 	int  LK_Flag[15];
@@ -103,22 +102,23 @@ typedef struct
 	char kbdmap_file[MAX_PATH];
 	char skin[MAX_PATH];
 	char GUI_skin[MAX_PATH];
-*/	char Menu_Title[MAX_MENU_TITLE+1];
-//	char lang_file[MAX_PATH];
-//	char font_file[MAX_PATH];	
-	int  Menu_Frame;
-//	int Show_Menu;
-//	int timeout;
-//	int Hide_Paths;
+*/
+	char Menu_Title[MAX_MENU_TITLE + 1];
+	//	char lang_file[MAX_PATH];
+	//	char font_file[MAX_PATH];
+	int Menu_Frame;
+	//	int Show_Menu;
+	//	int timeout;
+	//	int Hide_Paths;
 	u64 color[8];
 	int screen_x;
 	int screen_y;
-//	int discControl;
+	//	int discControl;
 	int interlace;
 	int resetIOP;
-//	int numCNF;
+	//	int numCNF;
 	int swapKeys;
-/*	int HOSTwrite;
+	/*	int HOSTwrite;
 	int Brightness;
 	int TV_mode;
 	int Popup_Opaque;
@@ -132,7 +132,7 @@ typedef struct
 	int PSU_HugeNames;
 	int PSU_DateNames;
 	int PSU_NoOverwrite;
-*/	
+*/
 } SETTING;
 
 /*typedef struct
@@ -163,42 +163,42 @@ int checkELFheader(char *filename);
 void RunLoaderElf(char *filename, char *);
 
 /* draw.c */
-#define BACKGROUND_PIC	0
-#define PREVIEW_PIC			1
-#define JPG_PIC					2
-#define THUMB_PIC				3
-#define PREVIEW_GUI			4
+#define BACKGROUND_PIC 0
+#define PREVIEW_PIC 1
+#define JPG_PIC 2
+#define THUMB_PIC 3
+#define PREVIEW_GUI 4
 
-#define FOLDER          0
-#define WARNING         1
+#define FOLDER 0
+#define WARNING 1
 
 //unsigned char icon_folder[1024];
 //unsigned char icon_warning[1024];
 
-extern GSGLOBAL  *gsGlobal;
+extern GSGLOBAL *gsGlobal;
 extern GSTEXTURE TexSkin, TexPreview, TexPicture, TexThumb[MAX_ENTRY], TexIcon[2];
-extern int      testskin, testsetskin, testjpg, testthumb;
-extern float     PicWidth, PicHeight, PicW, PicH, PicCoeff;
-extern int      SCREEN_WIDTH;
-extern int      SCREEN_HEIGHT;
-extern int      SCREEN_X;
-extern int      SCREEN_Y;
-extern int			Menu_start_x;
-extern int			Menu_title_y;
-extern int			Menu_message_y;
-extern int			Frame_start_y;
-extern int			Menu_start_y;
-extern int			Menu_end_y;
-extern int			Frame_end_y;
-extern int			Menu_tooltip_y;
-extern u64       BrightColor;
-extern int       PicRotate, FullScreen;
-extern u8       *FontBuffer;
+extern int testskin, testsetskin, testjpg, testthumb;
+extern float PicWidth, PicHeight, PicW, PicH, PicCoeff;
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
+extern int SCREEN_X;
+extern int SCREEN_Y;
+extern int Menu_start_x;
+extern int Menu_title_y;
+extern int Menu_message_y;
+extern int Frame_start_y;
+extern int Menu_start_y;
+extern int Menu_end_y;
+extern int Frame_end_y;
+extern int Menu_tooltip_y;
+extern u64 BrightColor;
+extern int PicRotate, FullScreen;
+extern u8 *FontBuffer;
 
 void setScrTmp(const char *msg0, const char *msg1);
 //void drawSprite( u64 color, int x1, int y1, int x2, int y2 );
-void drawPopSprite( u64 color, int x1, int y1, int x2, int y2 );
-void drawOpSprite( u64 color, int x1, int y1, int x2, int y2 );
+void drawPopSprite(u64 color, int x1, int y1, int x2, int y2);
+void drawOpSprite(u64 color, int x1, int y1, int x2, int y2);
 void drawMsg(const char *msg);
 //void drawLastMsg(void);
 void setupGS(int gs_vmode);
@@ -239,7 +239,7 @@ void waitAnyPadReady(void);
 /* config.c */
 #define TV_mode_AUTO 0
 #define TV_mode_NTSC 1
-#define TV_mode_PAL  2
+#define TV_mode_PAL 2
 
 extern char PathPad[30][MAX_PATH];
 extern SETTING *setting;
@@ -255,9 +255,10 @@ extern char cnf_path_fmcb2[MAX_PATH];
 extern char cnf_path_fmcb3[MAX_PATH];
 
 /* filer.c */
-typedef struct{
+typedef struct
+{
 	char name[MAX_NAME];
-	char title[32*2+1];
+	char title[32 * 2 + 1];
 	mcTable stats;
 } FILEINFO;
 
@@ -300,7 +301,7 @@ int genDclose(int fd);
 extern u64 WaitTime;
 
 void TimerInit(void);
-u64  Timer(void);
+u64 Timer(void);
 void TimerEnd(void);
 
 /* jpgviewer.c */
@@ -332,21 +333,21 @@ void Load_External_Language(void);
 
 extern unsigned char font_uLE[];
 enum {
-//0x100-0x109 are 5 double width characters for D-Pad buttons, which are accessed as:
-//"ÿ0"==Circle  "ÿ1"==Cross  "ÿ2"==Square  "ÿ3"==Triangle  "ÿ4"==filled Square
-	RIGHT_CUR = 0x10A, //Triangle pointing left, for use to the right of an item
-	LEFT_CUR  = 0x10B, //Triangle pointing right, for use to the left of an item
-	UP_ARROW  = 0x10C, //Arrow pointing up
-	DN_ARROW  = 0x10D, //Arrow pointing up
-	LT_ARROW  = 0x10E, //Arrow pointing up
-	RT_ARROW  = 0x10F, //Arrow pointing up
-	TEXT_CUR  = 0x110, //Vertical bar, for use between two text characters
-	UL_ARROW  = 0x111, //Arrow pointing up and to the left, from a vertical start.
-	BR_SPLIT  = 0x112, //Splits rectangle from BL to TR with BR portion filled
-	BL_SPLIT  = 0x113, //Splits rectangle from TL to BR with BL portion filled
-//0x114-0x11B are 4 double width characters for D-Pad buttons, which are accessed as:
-//"ÿ:"==Right  "ÿ;"==Down  "ÿ<"==Left  "ÿ="==Up
-	FONT_COUNT= 0x11C  //Total number of characters in font
+	//0x100-0x109 are 5 double width characters for D-Pad buttons, which are accessed as:
+	//"ÿ0"==Circle  "ÿ1"==Cross  "ÿ2"==Square  "ÿ3"==Triangle  "ÿ4"==filled Square
+	RIGHT_CUR = 0x10A,  //Triangle pointing left, for use to the right of an item
+	LEFT_CUR = 0x10B,   //Triangle pointing right, for use to the left of an item
+	UP_ARROW = 0x10C,   //Arrow pointing up
+	DN_ARROW = 0x10D,   //Arrow pointing up
+	LT_ARROW = 0x10E,   //Arrow pointing up
+	RT_ARROW = 0x10F,   //Arrow pointing up
+	TEXT_CUR = 0x110,   //Vertical bar, for use between two text characters
+	UL_ARROW = 0x111,   //Arrow pointing up and to the left, from a vertical start.
+	BR_SPLIT = 0x112,   //Splits rectangle from BL to TR with BR portion filled
+	BL_SPLIT = 0x113,   //Splits rectangle from TL to BR with BL portion filled
+	                    //0x114-0x11B are 4 double width characters for D-Pad buttons, which are accessed as:
+	                    //"ÿ:"==Right  "ÿ;"==Down  "ÿ<"==Left  "ÿ="==Up
+	FONT_COUNT = 0x11C  //Total number of characters in font
 };
 
 /* makeicon.c */
