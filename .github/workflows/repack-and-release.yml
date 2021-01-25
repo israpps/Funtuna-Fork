@@ -26,4 +26,4 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest automated build"
         files: |
-                *.zip
+                __Release/*.zip
