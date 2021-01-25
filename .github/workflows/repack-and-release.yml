@@ -4,9 +4,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
     - name: Archive Release
-      uses: thedoctor0/zip-release@master
+    - uses: actions/checkout@master
+    - uses: thedoctor0/zip-release@master
       with:
         filename: 'FunTuna.ZIP'
         path: /__Dependencies/BOOT/
