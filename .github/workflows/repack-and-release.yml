@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Zip Folder
-      run: zip -r -b /__Release/ FunTuna.zip .
+      run: zip -r -b /__Release FunTuna.zip .
     
     - name: Upload artifacts
       if: ${{ success() }}
