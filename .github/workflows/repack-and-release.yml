@@ -1,23 +1,19 @@
-name: Create Release
-on: 
-workflow_dispatch:
-push:
-
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@master
-      - name: Zip Release
-        uses: TheDoctor0/zip-release@0.4.1
-        with:
-          filename: 'funtuna-release.zip'
-          path: __Dependencies/BOOT/
-          
-          
-      - name: Upload artifacts
-      if: ${{ success() }}
-      uses: actions/upload-artifact@v2
+name: FunTuna-Release
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Archive Release
+      uses: thedoctor0/zip-release@master
       with:
-        name: FunTuna-Release
-        path: funtuna-release.zip
+        filename: 'FunTuna.ZIP'
+        path: /__Dependencies/BOOT/
+        
+        
+    - name: Upload Release
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "FunTuna.ZIP"
+        token: ${{ secrets.GITHUB_TOKEN }}
