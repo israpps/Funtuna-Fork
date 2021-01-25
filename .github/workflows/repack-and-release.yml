@@ -25,4 +25,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         title: "Release Repack"
-        files: __Release/FunTuna.zip
+        files: FunTuna.zip
