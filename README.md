@@ -1,9 +1,8 @@
 # Funtuna-Fork
 forked version of funtuna, a homebrew ps2 app launcher designed to ease the pain of getting a stable exploit for those that have a console uncompatible with FreeMcBoot that doesnt have a modchip
 
-[![Format-Check](https://github.com/ps2homebrew/wLaunchELF/workflows/Format-Check/badge.svg)](https://github.com/ps2homebrew/wLaunchELF/actions?query=workflow%3ACI)
-[![Automated-Build](https://github.com/ps2homebrew/wLaunchELF/workflows/Automated-Build/badge.svg)](https://github.com/ps2homebrew/wLaunchELF/actions?query=workflow%3AAutomated-Build)
-
+![Automated Build](https://github.com/israpps/Funtuna-Fork/workflows/.github/workflows/compilation.yml/badge.svg)
+![Formatting Check](https://github.com/israpps/Funtuna-Fork/workflows/.github/workflows/check-format.yml/badge.svg)
 
 
 
