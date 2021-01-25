@@ -1,25 +1,28 @@
-name: FunTuna-Release
-on: [workflow_dispatch]
+name: Release Funtuna
+on:
+  workflow_dispatch:
+  
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Zip on Ubuntu
-      run: zip -r FunTuna.zip . -i ./__Dependencies/BOOT 
-        
-        
+    - uses: actions/checkout@v1
+    - name: Zip Folder
+      run: zip -r -b /__Release/ FunTuna.zip .
+    
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: FunTuna.zip
-  
+        path: |
+              *.zip
     - name: Create release
       if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
-        title: "Latest automated build"
-        files: FunTuna.zip
+        title: "Release Repack"
+        files: |
+               *.zip
