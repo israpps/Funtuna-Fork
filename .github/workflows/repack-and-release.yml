@@ -8,8 +8,16 @@ push:
       runs-on: ubuntu-latest
       steps:
       - uses: actions/checkout@master
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@0.4.1
         with:
           filename: 'funtuna-release.zip'
-          path: ./__Dependencies/BOOT/
+          path: __Dependencies/BOOT/
+          
+          
+      - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: FunTuna-Release
+        path: funtuna-release.zip
