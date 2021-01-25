@@ -8,15 +8,16 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Zip Folder
-      run: zip -r -b /__Release FunTuna.zip .
+      run: |
+        cd __Release
+        zip -r FunTuna *
     
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: |
-              *.zip
+        path: __Release/FunTuna.zip
     - name: Create release
       if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
@@ -24,5 +25,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         title: "Release Repack"
-        files: |
-               *.zip
+        files: __Release/FunTuna.zip
