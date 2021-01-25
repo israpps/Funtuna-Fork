@@ -17,7 +17,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: __Release/FunTuna.zip
+        path: __Release/*.zip
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -25,4 +25,5 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         title: "Latest automated build"
-        files: FunTuna.zip
+        files: |
+                *.zip
