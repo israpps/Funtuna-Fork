@@ -4,16 +4,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Archive Release
-    - uses: actions/checkout@master
-    - uses: thedoctor0/zip-release@master
+    - name: Zip on Ubuntu
+      uses: nguyenquyhy/zip-release@v0.3.0
       with:
-        filename: 'FunTuna.ZIP'
-        path: /__Dependencies/BOOT/
+          filename: FunTuna.zip
+          path: ./__Dependencies/BOOT
         
         
-    - name: Upload Release
-    - uses: ncipollo/release-action@v1
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
       with:
-        artifacts: "FunTuna.ZIP"
-        token: ${{ secrets.GITHUB_TOKEN }}
+        name: FunTuna
+        path: FunTuna.zip
+  
+    - name: Create release
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        title: "Latest automated build"
+        files: FunTuna.zip
