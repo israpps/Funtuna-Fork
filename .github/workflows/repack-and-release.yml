@@ -10,7 +10,7 @@ jobs:
     - name: Zip Folder
       run: |
         cd __Release
-        zip -r FunTuna *
+        zip -r FunTuna.zip *
     
     - name: Upload artifacts
       if: ${{ success() }}
@@ -18,11 +18,11 @@ jobs:
       with:
         name: FunTuna
         path: __Release/FunTuna.zip
+ 
     - name: Create release
-      if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
-        title: "Release Repack"
+        title: "Latest automated build"
         files: FunTuna.zip
