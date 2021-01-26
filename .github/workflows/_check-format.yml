@@ -1,13 +1,13 @@
 name: clang-format Check
 
 on: 
-workflow_dispatch:
-push:
-    branches:
-      - master
-    paths:
-      - FreeMcBoot/**
-      - FreeMcBoot-Configurator/**
+    workflow_dispatch:
+    push:
+        branches:
+        - master
+        paths:
+        - FreeMcBoot/**
+        - FreeMcBoot-Configurator/**
 
 
 jobs:
