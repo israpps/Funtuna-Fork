@@ -1,6 +1,9 @@
 name: Release Funtuna
 on:
   workflow_dispatch:
+  pull_request:
+    paths: __Releases
+  create:
   
 jobs:
   build:
