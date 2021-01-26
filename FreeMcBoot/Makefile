@@ -60,6 +60,9 @@ clean:
 	rm -f crt0.o
 	rm -f *.elf *.ELF *.irx *.o init.s chkesr.s elf_loader.s
 
+format-check:
+	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
+	
 	
 iomanx.s:
 	iomanx.s iomanx_irx
