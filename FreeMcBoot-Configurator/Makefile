@@ -29,6 +29,10 @@ icon_sys.s:
 	bin2s icons/icon.sys icon_sys.s icon_sys		
 icon_icn.s:
 	bin2s icons/FMCB.icn icon_icn.s icon_icn	
+	
+format-check:
+	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
+	
 
 clean:
 	$(MAKE) -C loader clean
