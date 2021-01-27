@@ -37,6 +37,10 @@
 ---------------------------------------------------------------------------
 
 */
+#define FMCBVER "1.0.0"
+
+
+
 
 #include <tamtypes.h>
 #include <kernel.h>
@@ -325,6 +329,7 @@ int file_exists(char *filepath)
 }
 
 //________________ From uLaunchELF ______________________
+
 //---------------------------------------------------------------------------
 // get_CNF_string is the main CNF parser called for each CNF variable in a
 // CNF file. Input and output data is handled via its pointer parameters.
@@ -382,11 +387,35 @@ start_line:
 	return 1;         //return control to caller
 }  //Ends get_CNF_string
 
+//---------------------------------------------------------------------------------------
+char *replace_var(char *str, char *orig, char *rep)
+{
+  static char buffer[60];
+  char *p;
+
+  if(!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
+    return str;
+
+  strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
+  buffer[p-str] = '\0';
+
+  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+
+  return buffer;
+}
+
+//---------------------------------------------------------
+//replace_wildcards
+//---------------------------------------------------------
+
+
 //----------------------------------------------------------------
 // Load CNF
 //----------------------------------------------------------------
 int loadConfig(void)
 {
+	char* CNF_LOADED;
+	char* version = "1.0.";
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
 	char tsts[20];
@@ -402,22 +431,35 @@ int loadConfig(void)
 	if (fd < 0) {
 		strcpy(path, cnf_path);
 		fd = -1;
-		if (boot_from_mc == 1)
-			path[2] = '1';
-		fd = open(path, O_RDONLY);  // Try to open cnf from mc0:
+		if (boot_from_mc == 1)//if booting from MC1
+			path[2] = '1';//try with MC1 first
+		fd = open(path, O_RDONLY);  // Try to open cnf from the MC that FMCB was booted from
 		if (fd < 0) {
 			if (boot_from_mc == 1)
 				path[2] = '0';
 			else
 				path[2] = '1';
-			fd = open(path, O_RDONLY);  // Try to open cnf from mc1:
+			fd = -1;
+			fd = open(path, O_RDONLY);// Try to open cnf from the other MC
+			if (boot_from_mc == 1)
+				CNF_LOADED = "mc0";//set  %CNF% wildcard
+			else
+				CNF_LOADED = "mc1";//set  %CNF% wildcard
+			
+		} 
+		else 
+		{
+		if (boot_from_mc == 1)
+		 CNF_LOADED = "mc1"; //set  %CNF% wildcard
+		 else 
+		 CNF_LOADED = "mc0";//set  %CNF% wildcard
 		}
 		if (fd < 0) {
 		failed_load:
-			return 0;
+			return 0;// This point is only reached after succefully opening CNF
 		}
-	}  // This point is only reached after succefully opening CNF
-
+	} else 
+	CNF_LOADED = "mass";  //set  %CNF% wildcard
 	CNF_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
 
@@ -528,10 +570,21 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
+			version[strlen(version)] = '4';// kill null terminator (besause the string might continue after wildcard)
+			value = replace_var(value, "%VER%", version);
 			OSDSYS.menu_top_delimiter = value;
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
+			/*if (!strcmp(value, "@CNFPATH"))
+			{
+				char* vall = "c0r0.60y+99Loaded CNF %CNF%y-00r0.00";;
+
+				CNF_LOADED[strlen(CNF_LOADED)] = ':';
+				///sprintf(vall,"c0r0.60y+99Loaded CNF %%CNF%%y-00r0.00");
+				OSDSYS.menu_bottom_delimiter = replace_var(vall, "%CNF%", CNF_LOADED);
+				continue;
+			}//*/
 			OSDSYS.menu_bottom_delimiter = value;
 			continue;
 		}
