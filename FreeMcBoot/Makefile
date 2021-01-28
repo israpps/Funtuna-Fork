@@ -31,9 +31,9 @@
 #
 # ------------------------------------------------------------------------
 
-EE_BIN = main.elf
-EE_BIN_PACKED = launcher2.elf
-EE_BIN_STRIPPED = main-stripped.ELF
+EE_BIN = BOOT-UNC.ELF
+EE_BIN_PACKED = BOOT.ELF
+EE_BIN_STRIPPED = BOOT-STRIPPED.ELF
 
 EE_INCS = -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include -I$(PS2SDK)/sbv/include
 EE_LDFLAGS = -nostartfiles -Tlinkfile -L$(PS2SDK)/sbv/lib -L. -Lelf_loader/lib -s 

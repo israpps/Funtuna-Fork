@@ -570,7 +570,7 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
-			version[strlen(version)] = '4';// kill null terminator (besause the string might continue after wildcard)
+			version[strlen(version)] = '7';// kill null terminator (besause the string might continue after wildcard)
 			value = replace_var(value, "%VER%", version);
 			OSDSYS.menu_top_delimiter = value;
 			continue;
