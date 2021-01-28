@@ -58,7 +58,7 @@
 #include <malloc.h>
 #include <debug.h>
 #include "splash.h"
-#include "loading.h"
+//#include "loading.h"
 
 #define MAX_PATH 260
 
@@ -294,7 +294,7 @@ int old_dvdelf = 1;       // DVDELF version, Fat PS2 one by default
 char *valid_ESR_path;     // Tested valid ESR path
 u8 romver[16];
 int call_from_osdsys = 0;  // flag to be set to 1 when our functions are called from OSDSYS
-int loading_print = 0;     // flag to set to 1 if we want to print "loading" bitmap when load_elf func is called
+//int loading_print = 0;     // flag to set to 1 if we want to print "loading" bitmap when load_elf func is called
 u32 bios_version = 0;      // Bios revision (acquired from init.irx)
 int isEarlyJap = 0;        // To determine if the ps2 is an early Jap
 int dummy_memalloc = 1;
@@ -894,7 +894,7 @@ int handle_menu_selection(int selected)
 	if ((selected - 2) >= 0) {
 
 		call_from_osdsys = 1;
-		loading_print = 0;
+		//loading_print = 0;
 		load_elf(menuitem_path[selected - 2]);
 	}
 	return 0;
@@ -2189,7 +2189,7 @@ void load_elf(char *elf_path)
 	char eromdrv_arg[128];
 	char dvdpl_arg[128];
 	char ver[128];
-	static int loading_y = 214;
+	//static int loading_y = 214;
 	int dvdpl_update = 0;
 
 	if (call_from_osdsys) {
@@ -2200,11 +2200,11 @@ void load_elf(char *elf_path)
 		gs_reset();       // Reset GS
 		if (VMode == PAL) {
 			gs_init(PAL_640_512_32);
-			loading_y = 276;
+			//loading_y = 276;
 		}  // set video mode
 		else {
 			gs_init(NTSC_640_448_32);
-			loading_y = 214;
+			//loading_y = 214;
 		}
 		gs_set_fill_color(0x00, 0x00, 0x00);
 		gs_set_fill_color(0x00, 0x00, 0x00);
@@ -2212,8 +2212,8 @@ void load_elf(char *elf_path)
 	}
 
 	// Print loading bitmap if needed
-	if (loading_print)
-		gs_print_bitmap((gs_get_max_x() - loading_w) / 2, loading_y, loading_w, loading_h, loading);  // print centered loading bitmap
+	//if (loading_print)
+	//	gs_print_bitmap((gs_get_max_x() - loading_w) / 2, loading_y, loading_w, loading_h, loading);  // print centered loading bitmap
 
 
 	// Perform needed cleanUp
