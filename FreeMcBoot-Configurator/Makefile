@@ -1,4 +1,4 @@
-EE_BIN = BOOT.ELF
+EE_BIN = CFG-UNC.ELF
 EE_BIN_PACKED = CFG.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader.o  filer.o\
 	icon_sys.o icon_icn.o \
@@ -19,7 +19,8 @@ run: comp
 reset: clean
 	ps2client -h 192.168.1.4 reset
 comp: all
-	ps2_packer $(EE_BIN) $(EE_BIN_PACKED)
+$(EE_BIN_PACKED): $(EE_BIN)
+	ps2-packer $< $@
 
 loader.s:
 	$(MAKE) -C loader
@@ -35,7 +36,6 @@ format-check:
 	
 
 clean:
-	$(MAKE) -C loader clean
 	rm -f *.o *.a *.s BOOT.ELF BOOTc.ELF CFG.ELF
 
 include $(PS2SDK)/samples/Makefile.pref
