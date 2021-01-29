@@ -706,8 +706,8 @@ int genFixPath(char *inp_path, char *gen_path)
 		loadUsbModules();
 		if (!strncmp(uLE_path + 4, ":/", 2))     //if path needs patching
 			strcpy(gen_path + 5, uLE_path + 6);  //patch it to suit driver
-		                                         //end of clause for using a USB mass: path
-	}                                            /* else if(!strncmp(uLE_path, "hdd0:/", 6)){ //If using HDD path
+		//end of clause for using a USB mass: path
+	} /* else if(!strncmp(uLE_path, "hdd0:/", 6)){ //If using HDD path
 		strcpy(loc_path, uLE_path+6);
 		if((p=strchr(loc_path, '/'))!=NULL){
 			sprintf(gen_path,"pfs0:%s", p);

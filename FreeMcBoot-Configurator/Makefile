@@ -1,4 +1,4 @@
-EE_BIN = CFG-UNC.ELF
+EE_BIN = BOOT.ELF
 EE_BIN_PACKED = CFG.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader.o  filer.o\
 	icon_sys.o icon_icn.o \
@@ -19,8 +19,7 @@ run: comp
 reset: clean
 	ps2client -h 192.168.1.4 reset
 comp: all
-$(EE_BIN_PACKED): $(EE_BIN)
-	ps2-packer $< $@
+	ps2_packer $(EE_BIN) $(EE_BIN_PACKED)
 
 loader.s:
 	$(MAKE) -C loader
@@ -35,11 +34,9 @@ format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
 	
 
-clean-bin:
-	rm -f $(EE_BIN) BOOTc.ELF $(EE_BIN_PACKED)
-
 clean:
-	rm -f *.o *.a *.s $(EE_BIN) BOOTc.ELF $(EE_BIN_PACKED)
+	$(MAKE) -C loader clean
+	rm -f *.o *.a *.s BOOT.ELF BOOTc.ELF CFG.ELF
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal

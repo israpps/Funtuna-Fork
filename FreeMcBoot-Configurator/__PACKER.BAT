@@ -1,5 +1,6 @@
 @echo off
-set EE-BIN=CFG-UNC.ELF
-set EE-BIN-PACKED=CFG.ELF
-IF EXIST %EE-BIN% del %EE-BIN-PACKED%
-ps2_packer.exe %EE-BIN% %EE-BIN-PACKED%
+IF EXIST BOOT.ELF del CFG.ELF
+ps2_packer.exe BOOT.ELF CFG.ELF
+
+PAUSE >nul
+PAUSE
