@@ -41,7 +41,6 @@
 
 
 
-
 #include <tamtypes.h>
 #include <kernel.h>
 #include <sifrpc.h>
@@ -295,8 +294,8 @@ char *valid_ESR_path;     // Tested valid ESR path
 u8 romver[16];
 int call_from_osdsys = 0;  // flag to be set to 1 when our functions are called from OSDSYS
 //int loading_print = 0;     // flag to set to 1 if we want to print "loading" bitmap when load_elf func is called
-u32 bios_version = 0;      // Bios revision (acquired from init.irx)
-int isEarlyJap = 0;        // To determine if the ps2 is an early Jap
+u32 bios_version = 0;  // Bios revision (acquired from init.irx)
+int isEarlyJap = 0;    // To determine if the ps2 is an early Jap
 int dummy_memalloc = 1;
 int boot_from_mc = 0;      // To determine from which mc FMCB has been booted
 unsigned char *CNF_RAM_p;  // pointer to CNF file into memory
@@ -390,18 +389,18 @@ start_line:
 //---------------------------------------------------------------------------------------
 char *replace_var(char *str, char *orig, char *rep)
 {
-  static char buffer[60];
-  char *p;
+	static char buffer[60];
+	char *p;
 
-  if(!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
-    return str;
+	if (!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
+		return str;
 
-  strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
-  buffer[p-str] = '\0';
+	strncpy(buffer, str, p - str);  // Copy characters from 'str' start to 'orig' st$
+	buffer[p - str] = '\0';
 
-  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+	sprintf(buffer + (p - str), "%s%s", rep, p + strlen(orig));
 
-  return buffer;
+	return buffer;
 }
 
 //---------------------------------------------------------
@@ -414,8 +413,8 @@ char *replace_var(char *str, char *orig, char *rep)
 //----------------------------------------------------------------
 int loadConfig(void)
 {
-	char* CNF_LOADED;
-	char* version = "1.0.";
+	char *CNF_LOADED;
+	char *version = "1.0.";
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
 	char tsts[20];
@@ -431,8 +430,8 @@ int loadConfig(void)
 	if (fd < 0) {
 		strcpy(path, cnf_path);
 		fd = -1;
-		if (boot_from_mc == 1)//if booting from MC1
-			path[2] = '1';//try with MC1 first
+		if (boot_from_mc == 1)      //if booting from MC1
+			path[2] = '1';          //try with MC1 first
 		fd = open(path, O_RDONLY);  // Try to open cnf from the MC that FMCB was booted from
 		if (fd < 0) {
 			if (boot_from_mc == 1)
@@ -440,26 +439,24 @@ int loadConfig(void)
 			else
 				path[2] = '1';
 			fd = -1;
-			fd = open(path, O_RDONLY);// Try to open cnf from the other MC
+			fd = open(path, O_RDONLY);  // Try to open cnf from the other MC
 			if (boot_from_mc == 1)
-				CNF_LOADED = "mc0";//set  %CNF% wildcard
+				CNF_LOADED = "mc0";  //set  %CNF% wildcard
 			else
-				CNF_LOADED = "mc1";//set  %CNF% wildcard
-			
-		} 
-		else 
-		{
-		if (boot_from_mc == 1)
-		 CNF_LOADED = "mc1"; //set  %CNF% wildcard
-		 else 
-		 CNF_LOADED = "mc0";//set  %CNF% wildcard
+				CNF_LOADED = "mc1";  //set  %CNF% wildcard
+
+		} else {
+			if (boot_from_mc == 1)
+				CNF_LOADED = "mc1";  //set  %CNF% wildcard
+			else
+				CNF_LOADED = "mc0";  //set  %CNF% wildcard
 		}
 		if (fd < 0) {
 		failed_load:
-			return 0;// This point is only reached after succefully opening CNF
+			return 0;  // This point is only reached after succefully opening CNF
 		}
-	} else 
-	CNF_LOADED = "mass";  //set  %CNF% wildcard
+	} else
+		CNF_LOADED = "mass";  //set  %CNF% wildcard
 	CNF_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
 
@@ -570,7 +567,7 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
-			version[strlen(version)] = '7';// kill null terminator (besause the string might continue after wildcard)
+			version[strlen(version)] = '7';  // kill null terminator (besause the string might continue after wildcard)
 			value = replace_var(value, "%VER%", version);
 			OSDSYS.menu_top_delimiter = value;
 			continue;

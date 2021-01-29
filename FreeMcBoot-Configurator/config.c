@@ -2324,7 +2324,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 	genClose(fd);
 
 	//------------------------------------------------------------------------------------------------------------------------------------------
-/*#define ARRAY_ENTRIES 64
+	/*#define ARRAY_ENTRIES 64
 
 	///timestamp
 	static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
