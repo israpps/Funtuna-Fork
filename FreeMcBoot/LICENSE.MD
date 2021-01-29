@@ -1,7 +1,10 @@
-# Copyright (C) 2008 by Neme & jimmikaelkael (www.psx-scene.com)        
-## All Rights Reserved                                                   
+                                                  
 
-                           Free McBoot License
+# Free McBoot License
+
+ Copyright (C) 2008 by Neme & jimmikaelkael (www.psx-scene.com)        
+ All Rights Reserved 
+ 
 ***
 
  Free McBoot was created by :
