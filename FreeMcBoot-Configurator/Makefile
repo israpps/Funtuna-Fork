@@ -35,8 +35,11 @@ format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
 	
 
+clean-bin:
+	rm -f $(EE_BIN) BOOTc.ELF $(EE_BIN_PACKED)
+
 clean:
-	rm -f *.o *.a *.s BOOT.ELF BOOTc.ELF CFG.ELF
+	rm -f *.o *.a *.s $(EE_BIN) BOOTc.ELF $(EE_BIN_PACKED)
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal
