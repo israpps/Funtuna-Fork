@@ -1,4 +1,4 @@
-name: Release Funtuna
+name: Stable Release Funtuna
 on:
   workflow_dispatch:
   
