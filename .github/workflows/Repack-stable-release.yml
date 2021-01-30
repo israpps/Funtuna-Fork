@@ -1,0 +1,30 @@
+name: Release Funtuna
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Zip Folder
+      run: |
+        cd __Release
+        zip -r FunTuna.zip *
+    
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: FunTuna
+        path: __Release/*.zip
+ 
+    - name: Create release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-release"
+        prerelease: false
+        title: "Latest automated Release"
+        files: |
+                __Release/*.zip
