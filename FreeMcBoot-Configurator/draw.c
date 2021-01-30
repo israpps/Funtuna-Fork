@@ -2,7 +2,7 @@
 //File name:   draw.c
 //--------------------------------------------------------------
 //LANG TABLE
-#define LANG_VERSION " ÿ4 isra fork V1.0.0 ÿ4"
+#define LANG_VERSION " ÿ4      V1.0.9  ÿ4"
 
 
 

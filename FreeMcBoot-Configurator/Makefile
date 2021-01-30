@@ -1,7 +1,6 @@
 EE_BIN = BOOT.ELF
 EE_BIN_PACKED = CFG.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader.o  filer.o\
-	icon_sys.o icon_icn.o \
 	timer.o \
 	font_uLE.o
 
@@ -24,18 +23,13 @@ comp: all
 loader.s:
 	$(MAKE) -C loader
 	bin2s loader/loader.elf loader.s loader_elf
-
-icon_sys.s:
-	bin2s icons/icon.sys icon_sys.s icon_sys		
-icon_icn.s:
-	bin2s icons/FMCB.icn icon_icn.s icon_icn	
+	
 	
 format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
 	
 
 clean:
-	$(MAKE) -C loader clean
 	rm -f *.o *.a *.s BOOT.ELF BOOTc.ELF CFG.ELF
 
 include $(PS2SDK)/samples/Makefile.pref
