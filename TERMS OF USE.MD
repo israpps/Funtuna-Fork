@@ -1,6 +1,6 @@
 #  TERMS OF USE FOR FUNTUNA-FORK - by *matias israelson*
 
-Last Updated: [28/01/2021]
+Last Updated: [30/01/2021]
 
 These terms of service ("Terms") apply to your access and use of FunTuna-Fork (the "Service"). Please read them carefully.
 
@@ -32,7 +32,15 @@ From time to time, we may provide you with links to third party websites or serv
 
 #### [modification of this project]
 
-you can modify funtuna and any of its components or dependencies as long as you provide a link to [the github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")
+__you can modify funtuna and any of its components or dependencies as long as you don break the following rules:__
+
++ provide a link to [this github repositorium](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")
+
++ Give credits to HWNJ for making FunTuna and me for making the modifications and the repack
+
++ don't violate any term of the [FreeMcBoot 1.8 license](https://github.com/TnA-Plastic/FreeMcBoot/blob/master/LICENSE.txt "there's also a copy of that license in this repo")
+
++ don't erase the name of: me(Matías israelson), HWNJ, jimykaelkael, neme or any other person from the CFG.ELF first screen.
 
 ### [liability]
 Under no circumstances and under no legal theory,
