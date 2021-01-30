@@ -4,7 +4,7 @@
 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/israpps/Funtuna-Fork/latest/total?color=%232222ff&label=Bot%20repack%20downloads)
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/israpps/FunTuna-fork?color=%2300aaaa)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/israpps/Funtuna-Fork?color=%2300aaaa)
 
 
 forked version of funtuna, a combination of ps2 software that was designed to ease the pain of getting a stable exploit for those that have a console uncompatible with FreeMcBoot (SCPH-9XXXX with BIOS >= 2.30) that doesnt have a modchip
