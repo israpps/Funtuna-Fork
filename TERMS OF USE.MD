@@ -1,4 +1,4 @@
-#  TERMS OF SERVICE FOR FUNTUNA-FORK - by *matias israelson*
+#  TERMS OF USE FOR FUNTUNA-FORK - by *matias israelson*
 
 Last Updated: [28/01/2021]
 
