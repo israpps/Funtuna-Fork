@@ -1,10 +1,6 @@
-*.a
 *.elf
 *.ELF
-*.erl
 *.o
 *.swp
 *.tmp
-*.irx
-*.s
 githash.h
