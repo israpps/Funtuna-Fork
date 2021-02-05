@@ -16,9 +16,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Zip Folder
       run: |
-        echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
         cd __Release
-        zip -r FunTuna[${SHORT_SHA}].zip *
+        zip -r FunTuna[${GITHUB_SHA::8}].zip *
     
     - name: Upload artifacts
       if: ${{ success() }}
