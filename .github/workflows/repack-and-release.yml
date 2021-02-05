@@ -12,11 +12,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    
     - uses: actions/checkout@v1
     - name: Zip Folder
       run: |
+        echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
         cd __Release
-        zip -r FunTuna.zip *
+        zip -r FunTuna[${SHORT_SHA}].zip *
     
     - name: Upload artifacts
       if: ${{ success() }}
