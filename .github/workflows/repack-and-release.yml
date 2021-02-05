@@ -17,7 +17,8 @@ jobs:
     - name: Zip Folder
       run: |
         cd __Release
-        zip -r FunTuna\[${GITHUB_SHA::7}\].zip *
+        SCH=${GITHUB_SHA::7}
+        zip -r FunTuna\[$SCH\].zip *
     
     - name: Upload artifacts
       if: ${{ success() }}
