@@ -19,7 +19,8 @@ jobs:
         cd __Release
         SCH=${GITHUB_SHA::7}
         echo commit $SCH >>commit.txt
-        echo FunTuna\[$SCH\].zip
+        TARGET=FunTuna\[$SCH\].zip
+        echo $TARGET
         zip -r "FunTuna'['$SCH']'.zip" *
     
     - name: Upload artifacts
