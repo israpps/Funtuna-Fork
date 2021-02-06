@@ -21,7 +21,7 @@ jobs:
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].zip
         echo $TARGET
-        zip -r "FunTuna'['$SCH']'.zip" *
+        zip -r $TARGET *
     
     - name: Upload artifacts
       if: ${{ success() }}
