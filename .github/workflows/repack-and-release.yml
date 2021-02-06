@@ -18,7 +18,7 @@ jobs:
       run: |
         cd __Release
         SCH=${GITHUB_SHA::7}
-        zip -r "FunTuna[$SCH].zip" *
+        zip -r "FunTuna\[$SCH\].zip" *
     
     - name: Upload artifacts
       if: ${{ success() }}
