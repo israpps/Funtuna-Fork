@@ -17,7 +17,7 @@ jobs:
     - name: Zip Folder
       run: |
         cd __Release
-        //zip -f format('FunTuna[${0}].zip, ${GITHUB_SHA::7}') *
+        #zip -f format('FunTuna[${0}].zip, ${GITHUB_SHA::7}') *
         SCH=${GITHUB_SHA::7}
         zip -r "FunTuna[$SCH].zip" *
     
