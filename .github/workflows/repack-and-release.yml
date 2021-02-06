@@ -2,11 +2,9 @@ name: Release Funtuna
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
     paths:
-      - __Release/**
-      - .github/workflows/*.yml
+      - '__Release/**'
+      - '.github/workflows/*.yml'
   
 jobs:
   build:
