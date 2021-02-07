@@ -5,8 +5,6 @@ on:
     paths:
       - '__Release/**'
       - '.github/workflows/*.yml'
-env:
-    FNAME: ${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +19,7 @@ jobs:
         TARGET=FunTuna\[$SCH\].zip
         echo $TARGET
         echo "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}"
+        FNAME=${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}
         zip -r $FNAME *
     
     - name: Upload artifacts
