@@ -19,6 +19,7 @@ jobs:
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].zip
         echo $TARGET
+        echo "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}"
         zip -r "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}" *
     
     - name: Upload artifacts
