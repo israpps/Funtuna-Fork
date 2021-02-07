@@ -17,7 +17,7 @@ jobs:
         SCH=${GITHUB_SHA::7}
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].zip
-        echo $TARGET
+        echo TARGET is $TARGET
         echo "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}"
         FNAME=${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}
         zip -r $FNAME *
