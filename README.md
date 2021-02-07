@@ -14,3 +14,19 @@ forked version of funtuna, a combination of ps2 software that was designed to ea
 ## main download link 
 
 https://github.com/israpps/Funtuna-Fork/releases/tag/latest
+
+
+
+
+
+
+## current package contents:
+
+files        |         clean |     basic     | basic (light) | Dead
+------------ | ------------- | ------------- | ------------- | -------------
+Funtuna basic files |   x    |   x           |   x           | x
+USB Drivers | x | x | x | 
+wLaunchELF 4.43a_ISR | x | x | x |
+OPL 1.0.0 | | x | x |
+ESR | | x | |
+SMS | | x | |
