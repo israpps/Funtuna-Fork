@@ -21,6 +21,7 @@ jobs:
         echo "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}"
         FNAME=${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}
         zip -r $FNAME *
+        ls
     
     - name: Upload artifacts
       if: ${{ success() }}
