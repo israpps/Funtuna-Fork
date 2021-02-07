@@ -20,7 +20,7 @@ jobs:
         echo TARGET is $TARGET
         echo "${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}"
         FNAME=${{ format('FunTuna[{0}].zip', '${GITHUB_SHA::7}') }}
-        zip -r $FNAME *
+        zip -r $TARGET *
         ls
     
     - name: Upload artifacts
@@ -28,7 +28,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: __Release/*.zip
+        path: __Release/*\[*\].zip
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -37,4 +37,4 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest automated Repack"
         files: |
-                __Release/*.zip
+                __Release/*\[*\].zip
