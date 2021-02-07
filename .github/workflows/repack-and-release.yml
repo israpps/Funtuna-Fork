@@ -2,12 +2,9 @@ name: Release Funtuna
 on:
   workflow_dispatch:
   push:
-    branches:
-      - master
     paths:
-      - __Release/**
-      - .github/workflows/*.yml
-  
+      - '__Release/**'
+      - '.github/workflows/*.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,14 +15,18 @@ jobs:
       run: |
         cd __Release
         SCH=${GITHUB_SHA::7}
-        zip -r "FunTuna[$SCH].zip" *
+        echo commit $SCH >>commit.txt
+        TARGET=FunTuna\[$SCH\].zip
+        echo TARGET is $TARGET
+        zip -r $TARGET *
+        ls
     
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: __Release/*.zip
+        path: __Release/*\[*\].zip
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -34,4 +35,4 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest automated Repack"
         files: |
-                __Release/*.zip
+                __Release/*\[*\].zip
