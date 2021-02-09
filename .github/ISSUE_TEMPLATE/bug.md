@@ -29,12 +29,15 @@ A clear and concise description of what you expected to happen / descripción cl
 ***
 
 **Setup info / informacion de setup**
+
  - console model: / modelo de consola:
+
        "SCPH-XXXXX"
 
  - Código de commit/commit code (search/buscar commit.txt):
 
  - [ ] modchip?
+
     Wich one?/que marca?:
 
 
