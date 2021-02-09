@@ -7,9 +7,9 @@ assignees: israpps
 
 ---
 
-**Describe the bug/ describe el bug**
+**Describe the bug / describe el bug**
 A clear and concise description of what the bug is.
-Una descripcion clara y concisa de cual es el bug
+Una descripcion clara y concisa de cual es el bug.
 
 ***
 
@@ -28,11 +28,16 @@ A clear and concise description of what you expected to happen / descripción cl
 
 ***
 
-**Stup info / informacion de setup**
+**Setup info / informacion de setup**
  - console model: / modelo de consola:
        "SCPH-XXXXX"
 
- - Version:
+ - Código de commit/commit code (search/buscar commit.txt):
+
+ - [ ] modchip?
+    Wich one?/que marca?:
+
+
 
  ***
 
