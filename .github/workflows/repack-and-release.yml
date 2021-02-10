@@ -5,6 +5,9 @@ on:
     paths:
       - '__Release/**'
       - '.github/workflows/*.yml'
+
+  schedule:
+   - cron: "0 15 * * *"
 jobs:
   build:
     runs-on: ubuntu-latest
