@@ -24,9 +24,9 @@ https://github.com/israpps/Funtuna-Fork/releases/tag/latest
 
 files        |         clean |     basic     | basic (light) | Dead
 ------------ | ------------- | ------------- | ------------- | -------------
-Funtuna basic files |   x    |   x           |   x           | x
-USB Drivers | x | x | x | 
-wLaunchELF 4.43a_ISR | x | x | x |
-OPL 1.0.0 | | x | x |
-ESR | | x | |
-SMS | | x | |
+Funtuna basic files | __x__ | __x__ | __x__ | __x__
+USB Drivers | __x__ | __x__ | __x__ | 
+wLaunchELF 4.43a_ISR | __x__ | __x__ | __x__ |
+OPL 1.0.0 | | __x__ | __x__ |
+ESR | | __x__ | |
+SMS | | __x__ | |
