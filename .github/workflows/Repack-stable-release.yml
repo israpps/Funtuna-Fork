@@ -1,7 +1,10 @@
 name: Stable Release Funtuna
 on:
   workflow_dispatch:
-  
+  push:
+    paths:
+      - '__STABLE/**'
+      - '.github/workflows/Repack-stable-release.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Zip Folder
       run: |
-        cd __Release
+        cd __STABLE
         zip -r FunTuna.zip *
     
     - name: Upload artifacts
@@ -17,7 +20,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: __Release/*.zip
+        path: __STABLE/*.zip
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -27,4 +30,4 @@ jobs:
         prerelease: false
         title: "Latest automated Release"
         files: |
-                __Release/*.zip
+                __STABLE/*.zip
