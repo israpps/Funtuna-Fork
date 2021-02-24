@@ -13,7 +13,13 @@ jobs:
     - name: Zip Folder
       run: |
         cd __STABLE
-        zip -r FunTuna.zip *
+        SCH=${GITHUB_SHA::7}
+        echo commit $SCH >>commit.txt
+        echo Stable Release >>commit.txt
+        TARGET=FunTuna.Stable\[$SCH\].zip
+        echo TARGET is $TARGET
+        zip -r $TARGET *
+        ls
     
     - name: Upload artifacts
       if: ${{ success() }}
