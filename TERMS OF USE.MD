@@ -1,6 +1,6 @@
 #  TERMS OF USE FOR FUNTUNA-FORK - by *matias israelson*
 
-Last Updated: [30/01/2021]
+Last Updated: [24/02/2021]
 
 These terms of service ("Terms") apply to your access and use of FunTuna-Fork (the "Service"). Please read them carefully.
 
@@ -13,7 +13,7 @@ If you download or use this software, it means __you agree to be bound by all of
 
 + We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature or for some other reason.
 
-Whenever we make changes to these Terms, the changes are effective **24 hours** after we post such revised Terms (indicated by revising the date at the top of these Terms) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
+Whenever we make changes to these Terms, the changes are effective **15 MINUTES** after we post such revised Terms (indicated by revising the date at the top of these Terms, or the commit date specified for this file) or upon your acceptance . It is your responsibility to check [FunTuna-Fork](https://github.com/israpps/Funtuna-Fork "Funtuna-Fork main repositorium")  for changes to these Terms.
 
 If you continue to use the Service after the revised Terms go into effect, __then you have accepted the changes to these Terms__.
 
@@ -25,7 +25,7 @@ From time to time, we may provide you with links to third party websites or serv
 
 #### [redistribution]
 
-+ you're allowed to redistribute this package and all it's contents *ONLY* if you use the main download service located at the [Release section](https://github.com/israpps/Funtuna-Fork/releases "download") of this repositorium.
++ you're allowed to redistribute this package and all it's contents *ONLY* if you use the main download service located at the [Release section](https://github.com/israpps/Funtuna-Fork/releases "download") of this repositorium, and NOT from any other download service (such as: mega.nz mediafire.com, and any service of a similar nature).
 
 + in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com) or any other website or social media webpage related to it.
 
