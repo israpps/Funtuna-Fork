@@ -1,0 +1,8 @@
+  FreeMcBoot:
+    - 'FreeMcBoot/**/*.*'
+  
+  FreeMcBoot-Configurator:
+    - 'FreeMcBoot-Configurator/**/*.*'
+  
+  Release-Package:
+    - '__Release/**/*.*'
