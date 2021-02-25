@@ -28,4 +28,4 @@ proporcionar los siguientes datos:
 4. describa el bug lo mejor que pueda.
 ***
 
-
+Leyó la seccion de Preguntas Frecuentes de nuestra [WIKI](https://github.com/israpps/Funtuna-Fork/wiki)?
