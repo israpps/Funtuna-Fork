@@ -1,3 +1,7 @@
+blank_issues_enabled: false
+contact_links:
+
+
 - name: Bugs for noobs / bugs para noobs
   url: https://github.com/israpps/Funtuna-Fork/issues/new?assignees=israpps&labels=bug&template=bug.md&title=
   about: if youre a noob report your issue with this templace / si sos noob reporta los bugs con esta plantilla
