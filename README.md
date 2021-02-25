@@ -8,7 +8,7 @@
 
 forked version of funtuna, a combination of ps2 software that was designed to ease the pain of getting a stable exploit for those who have a console uncompatible with FreeMcBoot (SCPH-9XXXX with BIOS >= 2.30) that doesnt have a modchip
 
-Dont forget to read the [LICENSE](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD)
+## Dont forget to read the [LICENSE](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD)
 
 
 ## main download link 
