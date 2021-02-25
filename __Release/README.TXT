@@ -1,3 +1,9 @@
+FUNTUNA-FORK:
+Moded by: | modeado por:
+Matías Israelson
+https://github.com/israpps
+
+
 WIKI:
 https://github.com/israpps/Funtuna-Fork/wiki
 
