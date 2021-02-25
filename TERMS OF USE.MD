@@ -25,7 +25,7 @@ From time to time, we may provide you with links to third party websites or serv
 
 #### [redistribution]
 
-+ you're allowed to redistribute this package and all it's contents *ONLY* if you use the main download service located at the [Release section](https://github.com/israpps/Funtuna-Fork/releases/tag/latest "download") of this repositorium.
++ you're allowed to redistribute this package and all it's contents *ONLY* if you use the main download service located at the [Release section](https://github.com/israpps/Funtuna-Fork/releases "download") of this repositorium.
 
 + in addition to the term refered before, you're not allowed to upload this project at the website [ps2-home.com](https://www.ps2-home.com) or any other website or social media webpage related to it.
 
