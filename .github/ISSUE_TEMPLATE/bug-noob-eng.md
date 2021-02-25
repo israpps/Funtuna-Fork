@@ -35,4 +35,4 @@ give us this data on a comment:
 ***
 
 
-Please read the Common Questions topic in our [WIKI](https://github.com/israpps/Funtuna-Fork/wiki)?
+Please read the Common Questions topic in our [WIKI](https://github.com/israpps/Funtuna-Fork/wiki)
