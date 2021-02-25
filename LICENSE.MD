@@ -45,7 +45,7 @@ __Original Project by:__
  entire risk arising out of use or performance of the software remains with
  you.
 
-   In no event shall [Matias Israelson](https://github.com/israpps] be liable for any damages whatsoever
+   In no event shall [Matias Israelson](https://github.com/israpps) be liable for any damages whatsoever
  (including, without limitation, damages to your hardware or equipment,
  environmental damage, loss of health, or any kind of pecuniary loss)
  arising out of the use of or inability to use this software or
