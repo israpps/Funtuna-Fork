@@ -1,2 +1,4 @@
-
+__Release/**/desktop.ini
+__Experimental/**/desktop.ini
+__STABLE/**/desktop.ini
 FreeMcBoot/launcher2.elf.BAK
