@@ -1,0 +1,7 @@
+
+*.exploit
+payload.elf
+payload-stripped.elf
+*.o
+*.internal_notes
+

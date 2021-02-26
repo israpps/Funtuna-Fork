@@ -43,22 +43,52 @@ EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o d
 
 
 all:
+	@echo "="
+	@echo "========================= Compiling FreeMcBoot ========================="
 	$(MAKE) $(EE_BIN_PACKED)
 	
 	
 
 $(EE_BIN_STRIPPED): $(EE_BIN)
+	@echo "--------------- EE_STRIP ---------------"
 	$(EE_STRIP) -s -R .comment -R .gnu.version --strip-unneeded -o $@ $<
 	
 $(EE_BIN_PACKED): $(EE_BIN_STRIPPED)
-	ps2_packer/ps2_packer.exe -v $< $@
+	@echo "--------------- PS2-Packer ---------------"
+	../tools/ps2_packer/ps2_packer.exe -v $< $@
 
 clean:
-	$(MAKE) -C init clean	
-	$(MAKE) -C chkesr clean		
-	$(MAKE) -C elf_loader clean			
-	rm -f crt0.o
-	rm -f *.elf *.ELF *.irx *.o init.s chkesr.s elf_loader.s
+	@echo "="
+	@echo "================ Cleaning FreeMcBoot ============================="
+	@echo "--------------- Cleaning init ---------------"
+	@$(MAKE) -C init clean >nul
+	@echo "--------------- Cleaning chkesr--------------- "	
+	@$(MAKE) -C chkesr clean >nul
+	@echo "--------------- Cleaning elf_loader ---------------"
+	@$(MAKE) -C elf_loader clean >nul
+	@echo "--------------- Cleaning files ---------------"
+	
+	@echo "--crt0.o"
+	@rm -f crt0.o
+	
+	@echo "--*.ELF"
+	@rm -f *.elf
+	@rm -f *.ELF 
+	
+	@echo "--*.irx"
+	@rm -f *.irx 
+	
+	@echo "--*.o"
+	@rm -f *.o 
+	
+	@echo "--init.s "
+	@rm -f init.s 
+	
+	@echo "--chkesr.s "
+	@rm -f chkesr.s 
+	
+	@echo "--elf_loader.s"
+	@rm -f elf_loader.s
 
 format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
@@ -73,14 +103,20 @@ iomanx.s:
 #usbhdfsd.s:
 #	usbhdfsd.s usb_mass_irx
 init.s:
-	$(MAKE) -C init
-	bin2s init.irx init.s init_irx
+	@echo "--------------- init ---------------"
+	@$(MAKE) -C init >nul
+	@echo "converting with bin2s"
+	@bin2s init.irx init.s init_irx
 chkesr.s:
-	$(MAKE) -C chkesr
-	bin2s chkesr.irx chkesr.s chkesr_irx
+	@echo "--------------- chkesr ---------------"
+	@$(MAKE) -C chkesr >nul
+	@echo "converting with bin2s"
+	@bin2s chkesr.irx chkesr.s chkesr_irx
 elf_loader.s:
-	$(MAKE) -C elf_loader
-	bin2s elf_loader/src/loader/loader.elf elf_loader.s elf_loader
+	@echo "--------------- elf_loader ---------------"
+	@$(MAKE) -C elf_loader >nul
+	@echo "converting with bin2s"
+	@bin2s elf_loader/src/loader/loader.elf elf_loader.s elf_loader
 
 include Makefile.pref
 include Makefile.eeglobal
