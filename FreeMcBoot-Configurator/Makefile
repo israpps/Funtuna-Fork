@@ -11,9 +11,9 @@ EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib -L$(PS2DEV)/libjpg\
 	-L$(PS2SDKOLD)/sbv/lib -L$(PS2DEVOLD)/libcdvd/lib -s
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lmf -lpatches -ldebug -lc
 
-all:	
+all: $(EE_BIN)
 	@echo "================ Compiling FreeMcBoot-Configurator ==============="
-	$(EE_BIN)
+
 	
 
 run: comp
