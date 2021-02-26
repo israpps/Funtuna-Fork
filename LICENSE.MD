@@ -75,7 +75,7 @@ __Original Project by:__ [__Howling Wolf and Chelsea__](https://github.com/Howli
   if your petition is aproved you'll see your youtube channel name + link at the File [AUTH.TXT](https://github.com/israpps/Funtuna-Fork/blob/main/AUTH.TXT) 
   
   
-  you can find ways to contact me at [README.MD](https://github.com/israpps/Funtuna-Fork/blob/main/README.MD)
+  you can find ways to contact me at [README.MD](https://github.com/israpps/Funtuna-Fork/blob/main/README.md)
  
  
  
