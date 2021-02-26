@@ -15,17 +15,11 @@ __every change to this licence will become effective __15 minutes__ after update
 
 ***
 #### General Credits:
-__Free McBoot 1.8 (BOOT.ELF in this project) was created by :__
-
-[__jimmikaelkael__](https://github.com/jimmikaelkael)
-
- __Neme__         
+__Free McBoot 1.8 (BOOT.ELF in this project) was created by :__ [__jimmikaelkael__](https://github.com/jimmikaelkael) and __Neme__         
  
-__Original Project by:__
- [__Howling Wolf and Chelsea__](https://github.com/HowlingWolfHWC)
+__Original Project by:__ [__Howling Wolf and Chelsea__](https://github.com/HowlingWolfHWC)
  
- __Modifications by:__
- [__Matías Israelson__](https://github.com/israpps)
+ __Modifications by:__ [__Matías Israelson__](https://github.com/israpps)
  
 
  
