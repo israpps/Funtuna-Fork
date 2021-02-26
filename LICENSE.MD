@@ -14,18 +14,20 @@ __every change to this licence will become effective __15 minutes__ after update
 
 
 ***
-
+#### General Credits:
 __Free McBoot 1.8 (BOOT.ELF in this project) was created by :__
- __jimmikaelkael__ 
+
+[__jimmikaelkael__](https://github.com/jimmikaelkael)
+
  __Neme__         
  
 __Original Project by:__
- __Howling Wolf and Chelsea__
+ [__Howling Wolf and Chelsea__](https://github.com/HowlingWolfHWC)
  
  __Modifications by:__
  [__Matías Israelson__](https://github.com/israpps)
  
- 
+
  
  __by downloading this project you automatically accept:__
  + this [LICENCE](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD).
@@ -66,14 +68,14 @@ __Original Project by:__
  4. All __derivative work must stay under the Free McBoot license, this license and open source__.
 
 
-### [redistribution]
+#### redistribution:
 
 you're allowed to redistribute this package and all it's contents __ONLY__ if you use the [__main download service__](https://github.com/israpps/Funtuna-Fork/releases) located at the Release section of this repositorium, and __NOT from *any other download service*__ (such as: mega.nz mediafire.com, and any service of a similar nature).
 
 in addition to the term refered before, you're __not allowed__ to __upload this project__ at the website [__ps2-home.com__](https://www.ps2-home.com/) or __any other website or social media webpage related to it__.
 
 
-### [YouTube Tutorials]
+#### YouTube Tutorials:
  any youtube tutorial must have previous authorization from me
  
  if your petition is aproved you'll see your youtube channel name + link at the File [AUTH.TXT](https://github.com/israpps/Funtuna-Fork/blob/main/AUTH.TXT) at this repo
@@ -82,13 +84,13 @@ in addition to the term refered before, you're __not allowed__ to __upload this 
  
  
  
-### [modification of this project]
+#### modification of this project:
  youre allowed to modify this project as long as:
    + the names ef the developers mentioned inside [CFG.ELF](https://github.com/israpps/Funtuna-Fork/tree/main/FreeMcBoot-Configurator) main menu arent Removed/Modified
    + provide a link to this [repositorium](https://github.com/israpps/Funtuna-Fork)
    + dont Bundle [Open Ps2 Loader Daily Build](https://github.com/Jay-Jay-OPL/OPL-Daily-Builds) or any other piece of software that provides/contains any copyrighted content
  
- ### [Changes or aditions to this license]
+ #### Changes or aditions to this license:
  we reserve the right to change the contents of this license without warning, and those changes WILL go into Effect 15 minutes after aplying those changes
  
  
