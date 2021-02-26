@@ -15,6 +15,12 @@ forked version of funtuna, a combination of ps2 software that was designed to ea
 
 https://github.com/israpps/Funtuna-Fork/releases/tag/latest
 
+## contact links:
+
+ + [FaceBook](https://www.facebook.com/matias.israelson.5/)
+
+ + [PSX-Place](https://www.psx-place.com/members/el_isra.59064/)
+
 
 
 
