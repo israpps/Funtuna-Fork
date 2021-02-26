@@ -71,6 +71,14 @@ __Original Project by:__
 you're allowed to redistribute this package and all it's contents __ONLY__ if you use the [__main download service__](https://github.com/israpps/Funtuna-Fork/releases) located at the Release section of this repositorium, and __NOT from *any other download service*__ (such as: mega.nz mediafire.com, and any service of a similar nature).
 
 in addition to the term refered before, you're __not allowed__ to __upload this project__ at the website [__ps2-home.com__](https://www.ps2-home.com/) or __any other website or social media webpage related to it__.
+
+
+### [YouTube Tutorials]
+ any youtube tutorial must have previous authorization from me
+ 
+ if your petition is aproved you'll see your youtube channel name + link at the File [AUTH.TXT](https://github.com/israpps/Funtuna-Fork/blob/main/AUTH.TXT) at this repo
+ 
+ you can find ways to contact me at [README.MD](https://github.com/israpps/Funtuna-Fork/blob/main/README.MD)
  
  
  
