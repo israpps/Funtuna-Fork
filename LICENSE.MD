@@ -64,7 +64,9 @@ __Original Project by:__ [__Howling Wolf and Chelsea__](https://github.com/Howli
 
 #### redistribution:
 
- 5. you're allowed to redistribute this package and all it's contents __ONLY__ if you use the [__main download service__](https://github.com/israpps/Funtuna-Fork/releases) located at the Release section of this repositorium, and __NOT from *any other download service*__ (such as: mega.nz mediafire.com, and any service of a similar nature).
+ 5. you're allowed to redistribute this package and all it's contents __ONLY__ if you use the [__main download service__](https://github.com/israpps/Funtuna-Fork/releases) located at the Release section of this repositorium, and __NOT from *any other download service*__ (such as: mega.nz mediafire.com, and any service of a similar nature), also, you must provide the link without any kind of:
+ + way to make profit of it (trough shorteners and any kind of simiar service
+ + auto-promotion of your webpages or social media of your own
 
  6. in addition to the term refered before, you're __not allowed__ to __upload this project__ at the website [__ps2-home.com__](https://www.ps2-home.com/) or __any other website or social media webpage related to it__.
 
