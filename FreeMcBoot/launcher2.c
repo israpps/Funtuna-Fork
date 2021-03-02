@@ -414,7 +414,7 @@ char *replace_var(char *str, char *orig, char *rep)
 int loadConfig(void)
 {
 	char *CNF_LOADED;
-	char *version = "1.0.";
+	char *version = "1.0.1";
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
 	char tsts[20];
@@ -567,7 +567,7 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
-			version[strlen(version)] = '9';  // kill null terminator (besause the string might continue after wildcard)
+			version[strlen(version)] = '0';  // kill null terminator (besause the string might continue after wildcard)
 			value = replace_var(value, "%VER%", version);
 			OSDSYS.menu_top_delimiter = value;
 			continue;
