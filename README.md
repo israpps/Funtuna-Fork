@@ -32,9 +32,9 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 
 files        |         clean |     basic     | basic (light) |
 ------------ | ------------- | ------------- | ------------- | 
-Funtuna basic files | __x__ | __x__ | __x__ |
-USB Drivers | __x__ | __x__ | __x__ | 
-wLaunchELF 4.43a_ISR | __x__ | __x__ | __x__ |
-OPL 1.0.0 | | __x__ | __x__ |
-ESR | | __x__ | 
-SMS | | __x__ | 
+Funtuna basic files | __x__  | __x__         | __x__         |
+USB Drivers  | __x__         | __x__         | __x__         | 
+wLaunchELF 4.43a_ISR | __x__ | __x__         | __x__         |
+OPL 1.0.0    |               | __x__         | __x__         |
+ESR          |               | __x__         |               |
+SMS          |               | __x__         |               |
