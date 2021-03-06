@@ -16,7 +16,7 @@ jobs:
       - name: "Check file existence"
         uses: andstor/file-existence-action@v1
         with:
-          files: "__Binaries/BOOT.ELF, __Binaries/CFG.ELF , __Binaries/USBD.IRX , __Binaries/USBHDFSD.IRX , __Binaries/ULE.ELF , __Binaries/LAUNCHELF.CNF , __Binaries/POWEROFF.ELF"
+          files: "./__Binaries/BOOT.ELF, ./__Binaries/CFG.ELF , ./__Binaries/USBD.IRX , ./__Binaries/USBHDFSD.IRX , ./__Binaries/ULE.ELF , ./__Binaries/LAUNCHELF.CNF , ./__Binaries/POWEROFF.ELF"
           allow_failure: "true"
 
 
