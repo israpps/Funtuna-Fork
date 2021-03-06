@@ -9,11 +9,17 @@ on:
   #schedule:
   # - cron: "0 15 * * *"
 jobs:
-
   check-binaries:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
 
+      - name: "Check file existence"
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "__Binaries/BOOT.ELF, __Binaries/CFG.ELF , __Binaries/USBD.IRX , __Binaries/USBHDFSD.IRX , __Binaries/ULE.ELF , __Binaries/LAUNCHELF.CNF , __Binaries/POWEROFF.ELF"
+          allow_failure: "true"
 
 
 
