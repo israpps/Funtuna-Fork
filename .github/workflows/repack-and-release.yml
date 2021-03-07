@@ -59,6 +59,8 @@ jobs:
         cp ULE.ELF ../__Release/\!Funtuna-Basic/BOOT/ULE.ELF
         cp ULE.ELF ../__Release/\!Funtuna-Clean/BOOT/ULE.ELF
         cp ULE.ELF ../__Release/\!Funtuna-Basic - Light/BOOT/ULE.ELF
+        
+        cd ..
 
     - uses: actions/checkout@v1
     - name: Zip Folder
