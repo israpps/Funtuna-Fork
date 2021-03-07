@@ -28,6 +28,38 @@ jobs:
     needs: check-binaries
     steps:
     
+    - name: Place binaries at Specific locations
+      run: |
+        cd __Binaries
+        
+        cp BOOT.ELF ../__Release/\!Funtuna-Basic/BOOT/BOOT.ELF
+        cp BOOT.ELF ../__Release/\!Funtuna-Clean/BOOT/BOOT.ELF
+        cp BOOT.ELF ../__Release/\!Funtuna-Basic - Light/BOOT/BOOT.ELF
+
+        cp CFG.ELF ../__Release/\!Funtuna-Basic/BOOT/CFG.ELF
+        cp CFG.ELF ../__Release/\!Funtuna-Clean/BOOT/CFG.ELF
+        cp CFG.ELF ../__Release/\!Funtuna-Basic - Light/BOOT/CFG.ELF
+
+        cp LAUNCHELF.CNF ../__Release/\!Funtuna-Basic/BOOT/LAUNCHELF.CNF
+        cp LAUNCHELF.CNF ../__Release/\!Funtuna-Clean/BOOT/LAUNCHELF.CNF
+        cp LAUNCHELF.CNF ../__Release/\!Funtuna-Basic - Light/BOOT/LAUNCHELF.CNF
+
+        cp POWEROFF.ELF ../__Release/\!Funtuna-Basic/BOOT/POWEROFF.ELF
+        cp POWEROFF.ELF ../__Release/\!Funtuna-Clean/BOOT/POWEROFF.ELF
+        cp POWEROFF.ELF ../__Release/\!Funtuna-Basic - Light/BOOT/POWEROFF.ELF
+
+        cp USBD.IRX ../__Release/\!Funtuna-Basic/BOOT/USBD.IRX
+        cp USBD.IRX ../__Release/\!Funtuna-Clean/BOOT/USBD.IRX
+        cp USBD.IRX ../__Release/\!Funtuna-Basic - Light/BOOT/USBD.IRX
+
+        cp USBHDFSD.IRX ../__Release/\!Funtuna-Basic/BOOT/USBHDFSD.IRX
+        cp USBHDFSD.IRX ../__Release/\!Funtuna-Clean/BOOT/USBHDFSD.IRX
+        cp USBHDFSD.IRX ../__Release/\!Funtuna-Basic - Light/BOOT/USBHDFSD.IRX
+
+        cp ULE.ELF ../__Release/\!Funtuna-Basic/BOOT/ULE.ELF
+        cp ULE.ELF ../__Release/\!Funtuna-Clean/BOOT/ULE.ELF
+        cp ULE.ELF ../__Release/\!Funtuna-Basic - Light/BOOT/ULE.ELF
+
     - uses: actions/checkout@v1
     - name: Zip Folder
       run: |
