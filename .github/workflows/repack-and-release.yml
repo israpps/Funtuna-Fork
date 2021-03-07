@@ -23,7 +23,7 @@ jobs:
 
 
 
-  Repakc&Release:
+  Repack_and_Release:
     runs-on: ubuntu-latest
     needs: check-binaries
     steps:
