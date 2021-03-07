@@ -29,6 +29,7 @@ jobs:
     steps:
     
     - name: Place binaries at Specific locations
+    - uses: actions/checkout@v1
       run: |
         cd __Binaries/
         
@@ -62,7 +63,7 @@ jobs:
         
         cd ..
 
-    - uses: actions/checkout@v1
+    
     - name: Zip Folder
       run: |
         cd __Release
