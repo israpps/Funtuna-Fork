@@ -30,7 +30,7 @@ jobs:
     
     - name: Place binaries at Specific locations
       run: |
-        cd __Binaries
+        cd __Binaries/
         
         cp BOOT.ELF ../__Release/\!Funtuna-Basic/BOOT/BOOT.ELF
         cp BOOT.ELF ../__Release/\!Funtuna-Clean/BOOT/BOOT.ELF
