@@ -28,8 +28,11 @@ jobs:
     needs: check-binaries
     steps:
     
-    - name: Place binaries at Specific locations
+
+    - name: checkout code for release
     - uses: actions/checkout@v1
+
+    - name: Place binaries at Specific locations
       run: |
         cd __Binaries/
         
