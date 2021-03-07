@@ -23,7 +23,7 @@ jobs:
 
 
 
-  build:
+  Repakc&Release:
     runs-on: ubuntu-latest
     needs: check-binaries
     steps:
