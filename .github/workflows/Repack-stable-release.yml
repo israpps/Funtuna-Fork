@@ -1,4 +1,4 @@
-name: Latest stable Release
+name: Latest-stable-Release
 on:
   workflow_dispatch:
   push:
@@ -10,6 +10,7 @@ jobs:
   generate_package_manifest:
     runs-on: ubuntu-latest
     steps:
+    
     - name: checkout
     - uses: actions/chechout@v1
     
