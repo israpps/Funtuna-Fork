@@ -6,7 +6,28 @@ on:
       - '__STABLE/**'
       - '.github/workflows/Repack-stable-release.yml'
 jobs:
-  build:
+
+  generate_package_manifest:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+    - uses: actions/chechout@v1
+    
+    - name: create list
+      run: |
+        ls -R __STABLE >manifest.bin
+        
+    - name: upload manifest
+      uses: actions/upload-artifact@v2
+      with:
+        name: manifest.bin
+        path: |
+          manifest.bin
+        
+        
+        
+        
+  Repack:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -19,7 +40,6 @@ jobs:
         TARGET=FunTuna.Stable\[$SCH\].zip
         echo TARGET is $TARGET
         zip -r $TARGET *
-        ls
     
     - name: Upload artifacts
       if: ${{ success() }}
