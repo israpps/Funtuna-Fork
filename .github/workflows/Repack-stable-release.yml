@@ -1,4 +1,4 @@
-name: Stable Release Funtuna
+name: Latest stable Release
 on:
   workflow_dispatch:
   push:
