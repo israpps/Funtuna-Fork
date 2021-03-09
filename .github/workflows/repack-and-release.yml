@@ -77,6 +77,24 @@ jobs:
         zip -r $TARGET *
         ls
     
+    
+  generate_package_manifest:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: checkout
+      uses: actions/checkout@v1
+    
+    - name: create list
+      run: |
+        ls -R __STABLE >manifest.bin
+        
+    - name: upload manifest
+      uses: actions/upload-artifact@v2
+      with:
+        name: manifest.bin
+        path: |
+          manifest.bin
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
