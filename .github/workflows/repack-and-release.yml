@@ -75,32 +75,16 @@ jobs:
         TARGET=FunTuna\[$SCH\].zip
         echo TARGET is $TARGET
         zip -r $TARGET *
-        ls
+        ls -R >manifest.bin
     
-    
-  generate_package_manifest:
-    runs-on: ubuntu-latest
-    steps:
-    
-    - name: checkout
-      uses: actions/checkout@v1
-    
-    - name: create list
-      run: |
-        ls -R __STABLE >manifest.bin
-        
-    - name: upload manifest
-      uses: actions/upload-artifact@v2
-      with:
-        name: manifest.bin
-        path: |
-          manifest.bin
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
         name: FunTuna
-        path: __Release/*\[*\].zip
+        path: |
+             __Release/*.zip
+             __Release/manifest.bin
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -109,4 +93,4 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest automated Repack"
         files: |
-                __Release/*\[*\].zip
+                __Release/*.zip
