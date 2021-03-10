@@ -1,5 +1,5 @@
 
-![Logo](https://github.com/israpps/Funtuna-Fork/blob/main/logos%20%26%20others/github%20logo.png "Funtuna logo")
+[![Logo](https://github.com/israpps/Funtuna-Fork/blob/main/logos%20%26%20others/github%20logo.png "Funtuna logo")](https://github.com/israpps/Funtuna-Fork/releases)
 ***
 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/israpps/Funtuna-Fork/latest/total?color=%232222ff&label=Bot%20repack%20downloads)
