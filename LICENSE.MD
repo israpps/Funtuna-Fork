@@ -26,7 +26,7 @@ __Original Project by:__ [__Howling Wolf and Chelsea__](https://github.com/Howli
  __by downloading this project you automatically accept:__
  + this [LICENCE](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD).
  + the [FreeMcBoot 1.8 license](https://github.com/TnA-Plastic/FreeMcBoot/blob/master/LICENSE.txt).
- + any other license bound to any file [bundled inside](https://github.com/israpps/Funtuna-Fork/tree/main/__Release) this project.
+ + any other license bound to any file [bundled inside](https://github.com/israpps/Funtuna-Fork/releases) this project.
  
  
  ***
