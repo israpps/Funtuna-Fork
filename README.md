@@ -11,9 +11,7 @@
 ## Dont forget to read the [LICENSE](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD)
 
 
-## main download link 
-
-https://github.com/israpps/Funtuna-Fork/releases/tag/latest
+## [main download link](https://github.com/israpps/Funtuna-Fork/releases/tag/latest)
 
 you can find the instructions to install at the [__WIKI__](https://github.com/israpps/Funtuna-Fork/wiki)
 
