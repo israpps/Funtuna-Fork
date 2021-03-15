@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - '__Release/**'
-      - '.github/workflows/*.yml'
+      - '__Binaries/**'
+      - '.github/workflows/repack-and-release.yml'
 
   #schedule:
   # - cron: "0 15 * * *"
