@@ -1,14 +1,6 @@
-name: Release Funtuna
+name: Release Funtuna as Release (stable release
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '__Release/**'
-      - '__Binaries/**'
-      - '.github/workflows/repack-and-release.yml'
-
-  #schedule:
-  # - cron: "0 15 * * *"
 jobs:
   check-binaries:
     runs-on: ubuntu-latest
@@ -36,29 +28,35 @@ jobs:
     - name: Place binaries at Specific locations
       run: |
         cd __Binaries/
-        
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp BOOT.ELF "../__Release/!Funtuna-Basic/BOOT/BOOT.ELF"
         cp BOOT.ELF "../__Release/!Funtuna-Clean/BOOT/BOOT.ELF"
         cp BOOT.ELF "../__Release/!Funtuna-Basic - Light/BOOT/BOOT.ELF"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp CFG.ELF "../__Release/!Funtuna-Basic/BOOT/CFG.ELF"
         cp CFG.ELF "../__Release/!Funtuna-Clean/BOOT/CFG.ELF"
         cp CFG.ELF "../__Release/!Funtuna-Basic - Light/BOOT/CFG.ELF"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp LAUNCHELF.CNF "../__Release/!Funtuna-Basic/BOOT/LAUNCHELF.CNF"
         cp LAUNCHELF.CNF "../__Release/!Funtuna-Clean/BOOT/LAUNCHELF.CNF"
         cp LAUNCHELF.CNF "../__Release/!Funtuna-Basic - Light/BOOT/LAUNCHELF.CNF"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp POWEROFF.ELF "../__Release/!Funtuna-Basic/BOOT/POWEROFF.ELF"
         cp POWEROFF.ELF "../__Release/!Funtuna-Clean/BOOT/POWEROFF.ELF"
         cp POWEROFF.ELF "../__Release/!Funtuna-Basic - Light/BOOT/POWEROFF.ELF"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp USBD.IRX "../__Release/!Funtuna-Basic/BOOT/USBD.IRX"
         cp USBD.IRX "../__Release/!Funtuna-Clean/BOOT/USBD.IRX"
         cp USBD.IRX "../__Release/!Funtuna-Basic - Light/BOOT/USBD.IRX"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp USBHDFSD.IRX "../__Release/!Funtuna-Basic/BOOT/USBHDFSD.IRX"
         cp USBHDFSD.IRX "../__Release/!Funtuna-Clean/BOOT/USBHDFSD.IRX"
         cp USBHDFSD.IRX "../__Release/!Funtuna-Basic - Light/BOOT/USBHDFSD.IRX"
+        #--------------------------------------------------------------------------------------------------------------------------#
         cp ULE.ELF "../__Release/!Funtuna-Basic/BOOT/ULE.ELF"
         cp ULE.ELF "../__Release/!Funtuna-Clean/BOOT/ULE.ELF"
         cp ULE.ELF "../__Release/!Funtuna-Basic - Light/BOOT/ULE.ELF"
-        
+        #--------------------------------------------------------------------------------------------------------------------------#
         cd ..
     
     - name: Zip Folder
@@ -85,6 +83,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-release"
         prerelease: false
-        title: "Latest automated Release"
+        title: "Latest stable Release"
         files: |
-                __STABLE/*.zip
+                __Release/*.zip
