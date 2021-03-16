@@ -4245,7 +4245,7 @@ void Config_fmcb(char *fmcbMsg)
 	char c[MAX_PATH];
 	//char fmcbMsg[MAX_PATH] = "";
 	int s;
-	int MAX_S = 15;
+	int MAX_S = 17;
 	int x, y;
 	int event, post_event = 0;
 
@@ -4342,9 +4342,14 @@ void Config_fmcb(char *fmcbMsg)
 					saveFmcbCNF(fmcbMsg, cnf_path_fmcb2);
 				else if (s == 13)
 					saveFmcbCNF(fmcbMsg, cnf_path_fmcb3);
-				else if (s == MAX_S - 1) {
+				else if (s == 14) {
 					RunElf(fmcbMsg, "Loader");
-				} else if (s == MAX_S)
+				} else if (s == 15) {
+					RunElf(fmcbMsg, "mc?:/BOOT/ULE.ELF");
+				} else if (s == 16) {
+					RunElf(fmcbMsg, "mc?:/BOOT/POWEROFF.ELF");
+				}
+				 else if (s == MAX_S)
 					__asm__ __volatile__(
 					    "	li $3, 0x04;"
 					    "	syscall;"
@@ -4429,6 +4434,12 @@ void Config_fmcb(char *fmcbMsg)
 			y += FONT_HEIGHT / 2;
 
 			sprintf(c, "  %s", "Return to FunTuna");
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			sprintf(c, "  %s", "Return to uLaunchELF");
+			printXY(c, x, y, setting->color[3], TRUE, 0);
+			y += FONT_HEIGHT;
+			sprintf(c, "  %s", "POWEROFF");
 			printXY(c, x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 			sprintf(c, "  %s", "PS2 Browser");
