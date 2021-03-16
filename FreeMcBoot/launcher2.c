@@ -37,7 +37,8 @@
 ---------------------------------------------------------------------------
 
 */
-#define FMCBVER "1.0.0"
+#define COREVER
+#define NULL_KILLER
 
 
 
@@ -413,8 +414,10 @@ char *replace_var(char *str, char *orig, char *rep)
 //----------------------------------------------------------------
 int loadConfig(void)
 {
-	char *CNF_LOADED;
-	char *version = "1.0.1";
+	unsigned char* dummy_wildcards;
+	unsigned char *CNF_LOADED;
+	unsigned char *version = "1.01";
+	version[strlen(version)] = '1';  // kill null terminator (besause the string might continue after wildcard)
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
 	char tsts[20];
@@ -567,23 +570,15 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
-			version[strlen(version)] = '0';  // kill null terminator (besause the string might continue after wildcard)
+			
 			value = replace_var(value, "%VER%", version);
 			OSDSYS.menu_top_delimiter = value;
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
-			/*if (!strcmp(value, "@CNFPATH"))
-			{
-				char* vall = "c0r0.60y+99Loaded CNF %CNF%y-00r0.00";;
-
-				CNF_LOADED[strlen(CNF_LOADED)] = ':';
-				///sprintf(vall,"c0r0.60y+99Loaded CNF %%CNF%%y-00r0.00");
-				OSDSYS.menu_bottom_delimiter = replace_var(vall, "%CNF%", CNF_LOADED);
-				continue;
-			}//*/
-			OSDSYS.menu_bottom_delimiter = value;
-			continue;
+		OSDSYS.menu_bottom_delimiter = value; 
+		
+		continue;
 		}
 		if (!strcmp(name, "OSDSYS_num_displayed_items")) {
 			OSDSYS.num_displayed_items = atoi(value);
