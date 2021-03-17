@@ -1,16 +1,14 @@
 
 
 
-| CFG.ELF se congela cuando intento asignar una app a `mass:/` |
------------- |
+## CFG.ELF se congela cuando intento asignar una app a `mass:/` 
 
    hay dos respuestas, dependiendo de su respuesta a esta pregunta: `Descargó funtuna después de 28/1/2021?`
    - `si`: __inicia un nuevo [reporte](https://github.com/israpps/Funtuna-Fork/issues)__
    - `no`: actualiza funtuna desde [aqui](https://github.com/israpps/Funtuna-Fork/releases), este error se resolvió en el commit [71b2dd8](https://github.com/israpps/Funtuna-Fork/commit/b9e3d8f4ff48df03c371a23702f78e8c52444e97)
 
 ***
-|Tenía otro OPL antes de instalar Funtuna, y ahora el OPL nuevo se cangela |
------------- |
+## Tenía otro OPL antes de instalar Funtuna, y ahora el OPL nuevo se cangela 
 
 Probablemente es un conflicto con el archivo de configuración.
 
@@ -18,8 +16,8 @@ borra el archivo de configuracion y ejecuta el nuevo OPL para recrear el archivo
 
 ***
 
-|el icono invisible desapareció / no es el primero del navegador|
------------- |
+## el icono invisible desapareció / no es el primero del navegador
+
 
 algo (probablemente **vos**, si es que tocaste algo en la carpeta `BXEXEC-FUNTUNA`) afectó la fecha de la carpeta de fortuna
 
