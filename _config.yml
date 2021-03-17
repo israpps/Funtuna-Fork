@@ -6,5 +6,5 @@ show_downloads: true
 github:
       zip_url: https://github.com/israpps/Funtuna-Fork/releases
       tar_url: https://github.com/israpps/Funtuna-Fork/archive/latest.tar.gz
-      
+      tuto_url: https://israpps.github.io/Funtuna-Fork/INSTALL.html
       
