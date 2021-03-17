@@ -1,4 +1,8 @@
-
+---
+layout: default
+title: Common Questions
+description: _
+---
 
 ##  CFG.ELF Freezes when I try to Configure a new app from `mass:/` 
 
