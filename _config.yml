@@ -4,6 +4,7 @@ description: a combination of PS2 Software prepared to ease the pain of getting 
 show_downloads: true
 
 github:
+      license: https://israpps.github.io/Funtuna-Fork/LICENSE.html
       index: https://israpps.github.io/Funtuna-Fork/index.html
       zip_url: https://github.com/israpps/Funtuna-Fork/releases
       common_questions: https://israpps.github.io/Funtuna-Fork/ASK.html
