@@ -1,4 +1,8 @@
-
+---
+layout: default
+title: Preguntas Frecuentes
+description: _
+---
 
 
 ## CFG.ELF se congela cuando intento asignar una app a `mass:/` 
