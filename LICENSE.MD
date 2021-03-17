@@ -15,7 +15,7 @@ description: _
 
 ### Funtuna Fork License
 
-__every change to this licence will become effective __15 minutes__ after updated (you can check the update date here at github)__
+every change to this licence will become effective __15 minutes__ after updated (you can check the update date at github)
 
 
 ***
