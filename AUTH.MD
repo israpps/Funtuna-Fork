@@ -1,6 +1,9 @@
-layout |	title |	description
--------|--------|------------
-default | Authorized Tutorials | tutorials aproved by me
+
+---
+layout: default
+title: Authorized Tutorials
+description: tutorials aproved by me
+---
 
 ### Spanish
 ******
