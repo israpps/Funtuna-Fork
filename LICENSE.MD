@@ -5,8 +5,9 @@ description: _
 ---
 
    Copyright (C) 2020-2021 by Matias Israelson        
-   All Rights Reserved                                                   
-***
+   All Rights Reserved              
+   
+*****
 
 
 
