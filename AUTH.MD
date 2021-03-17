@@ -1,9 +1,9 @@
-
 ---
 layout: default
-title: Authorized Tutorials
+title: Authorized tutorials
 description: tutorials aproved by me
 ---
+
 
 ### Spanish
 ******
