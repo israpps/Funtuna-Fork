@@ -34,7 +34,7 @@ description: ESPAÑOL
 
 
 *******************************************************************************************************************************************************
-Notas | | 
+Notas | _ 
 ---------|-------------------------
 **1** | Se recomienda utilizar el [ulaunchelf incluido en este paquete](https://github.com/israpps/Funtuna-Fork/blob/main/__Release/ULE_psu.ELF) (ULE_psu.ELF), se recomienda utilizarlo para evitar errores al realizar el paso 9
 **2** | si lo hizo bien debería aparecer un cuadrado verde en la esquina superior derecha de la pantalla
