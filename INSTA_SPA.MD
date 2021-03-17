@@ -1,3 +1,9 @@
+---
+layout: default
+title: Como Instalar FunTuna Fork
+description: ESPAÑOL
+---
+
 1  - copiar todos los archivos a una USB __(formato FAT32)__
 
 2  - lanzar uLaunchELF __(Ver nota 1)__ desde la consola.
