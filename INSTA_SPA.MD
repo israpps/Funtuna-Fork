@@ -10,7 +10,7 @@ description: ESPAÑOL
 
 3  - en uLaunchELF dirijase a _"File Browser"_, luego a _"mass:/"_, dirijase a donde colocó los archivos incluidos junto a este y elija uno de los paquetes __(las carpetas que empiezan con '!')__ __(funtuna basic se recomienda para principiantes, funtuna-clean tiene los archivos Basicos + [uLaunchELF 4.43x_isr](https://github.com/israpps/wLaunchELF_ISR) )__
 
-4  - una vez elegido el paquete entre a la carpeta del mismo, presione ![Cuadrado](https://github.com/israpps/Funtuna-Fork/blob/main/logos%20%26%20others/PAD/SQUARE.PNG "cuadrado") , luego presione R1, luego en copy __(ver nota 2)__
+4  - una vez elegido el paquete entre a la carpeta del mismo, presione ![Cuadrado](https://github.com/israpps/Funtuna-Fork/tree/gh-pages/PAD/SQUARE.PNG "cuadrado") , luego presione R1, luego en copy __(ver nota 2)__
 
 5  - salga de la USB presionando ![Triangulo](https://github.com/israpps/Funtuna-Fork/blob/main/logos%20%26%20others/PAD/TRIANGLE.PNG) e ingrese en _mc0:/_
 
