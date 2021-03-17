@@ -1,4 +1,8 @@
-# How to Install:
+---
+layout: default
+title: How to Install FunTuna Fork
+description: ENGLISH
+---
 
 1. copy/unzip all files to a usb device (format=FAT32).
 
