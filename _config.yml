@@ -1,3 +1,4 @@
 theme: jekyll-theme-cayman
 title: FunTuna Fork
 description: a combination of PS2 Software prepared to ease the pain of getting a stable exploit on a ps2 uncompatible with FreeMcBoot
+show_downloads: true
