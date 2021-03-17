@@ -14,3 +14,8 @@ description: tutorials aproved by me
 ### English
 ******
 [__Funtuna-Fork Wiki__](https://github.com/israpps/Funtuna-Fork/wiki/manual-installation)
+
+
+
+
+[back](./)
