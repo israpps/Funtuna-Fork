@@ -27,7 +27,7 @@
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% if site.github.is_project_page %}
-        <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
+        <a href="{{ site.github.index }}" class="btn">Index</a>
         <a href="{{ site.github.tuto_url }}" class="btn">How to Install</a>
       {% endif %}
       {% if site.show_downloads %}
