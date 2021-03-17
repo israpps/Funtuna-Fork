@@ -1,7 +1,6 @@
 ## welcome to FunTuna-Fork Website
 
-### [Downloads](https://github.com/israpps/Funtuna-Fork/releases)
-
-### [License](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD)
-
+ |  [__Downloads__](https://github.com/israpps/Funtuna-Fork/releases) |  [__License__](https://github.com/israpps/Funtuna-Fork/blob/main/LICENSE.MD) | [__PSX-Place Thread__](https://www.psx-place.com/resources/funtuna-fork.1110/) | [__Source Code__](https://github.com/israpps/Funtuna-Fork) 
+-----|-----|-----|-----
+| [__Authorized Tutorials__](https://github.com/israpps/Funtuna-Fork/tree/gh-pages)
 
