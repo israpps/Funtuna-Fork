@@ -1,4 +1,4 @@
-name: Release Funtuna
+name: stable Release Funtuna
 on:
   workflow_dispatch:
 #  push:
