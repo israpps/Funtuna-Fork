@@ -79,7 +79,7 @@ jobs:
         cd __Release
         SCH=${GITHUB_SHA::7}
         echo commit $SCH >>commit.txt
-        TARGET=FunTuna\[$SCH\].zip
+        TARGET=FunTuna-Release\[$SCH\].zip
         echo TARGET is $TARGET
         zip -r $TARGET *
         ls -R 
