@@ -26,9 +26,8 @@ description: ENGLISH
 
 ***
 
- NOTES   |  _     
--------- | --------
-1 | you should use the uLaunchELF version bundled in this package during installation (ULE_psu.ELF) to ensure the step 9 is performed correctly
-2 | check if you can see a green scuare at the right upper corner
-3 | __NEVER TOUCH THIS FOLDER__
+## NOTES
+1. you should use the uLaunchELF version bundled in this package during installation (ULE_psu.ELF) to ensure the step 9 is performed correctly
+2. check if you can see a green scuare at the right upper corner
+3. __NEVER TOUCH THIS FOLDER__
 
