@@ -19,8 +19,7 @@ jobs:
       - name: "Check file existence"
         uses: andstor/file-existence-action@v1
         with:
-          files: |
-            "__Binaries/BOOT.ELF , __Binaries/CFG.ELF, __Binaries/USBD.IRX, __Binaries/USBHDFSD.IRX, __Binaries/ULE.ELF, __Binaries/LAUNCHELF.CNF, __Binaries/POWEROFF.ELF, __Binaries/icon.sys, __Binaries/SYSTEM.icn, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF"
+          files: "__Binaries/BOOT.ELF , __Binaries/CFG.ELF, __Binaries/USBD.IRX, __Binaries/USBHDFSD.IRX, __Binaries/ULE.ELF, __Binaries/LAUNCHELF.CNF, __Binaries/POWEROFF.ELF, __Binaries/icon.sys, __Binaries/SYSTEM.icn, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF"
           allow_failure: "true"
 
 
