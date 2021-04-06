@@ -8,7 +8,6 @@
 # Review ps2sdk README & LICENSE files for further details.
 */
 
-#include "elf.h"
 #include <string.h>
 #include <sifrpc.h>
 #include <kernel.h>
@@ -16,7 +15,7 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-
+#include "elf.h"
 
 // Loader ELF variables
 extern u8 loader_elf[];

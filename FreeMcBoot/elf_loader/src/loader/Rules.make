@@ -21,10 +21,10 @@ EE_CFLAGS := -D_EE -O2 -G0 -Wall -Werror $(EE_CFLAGS)
 EE_CXXFLAGS := -D_EE -O2 -G0 -Wall -Werror $(EE_CXXFLAGS)
 
 # Linker flags
-EE_LDFLAGS := -L$(PS2SDK)/ee/lib -L$(PS2DEV)/ee/ee/lib $(EE_LDFLAGS) -lc -lkernel
+EE_LDFLAGS := -L$(PS2SDKSRC)/ee/kernel/lib -L$(PS2SDKSRC)/ee/libc/lib $(EE_LDFLAGS)
 
 # Assembler flags
-EE_ASFLAGS := -G0  $(EE_ASFLAGS)
+EE_ASFLAGS := -G0 $(EE_ASFLAGS)
 
 # Externally defined variables: EE_BIN, EE_OBJS, EE_LIB
 

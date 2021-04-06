@@ -6,16 +6,15 @@
 # Licenced under Academic Free License version 2.0
 # Review ps2sdk README & LICENSE files for further details.
 
-EE_OBJS = src/elf.o src/loader.o
+EE_OBJS = elf.o loader.o
 
 all:: prepareLoader $(EE_LIB)
 
 clean:: cleanLoader
 
 prepareLoader:
-	mkdir -p lib
 	$(MAKE) -C src/loader
-	bin2c src/loader/loader.elf src/loader.c loader_elf
+	C:\MinGW\msys\1.0\usr\local\ps2dev\ps2sdk\bin\bin2c.exe src/loader/loader.elf src/loader.c loader_elf
 
 cleanLoader:
 	$(MAKE) -C src/loader clean
