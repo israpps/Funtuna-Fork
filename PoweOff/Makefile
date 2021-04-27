@@ -1,14 +1,12 @@
 EE_BIN = uncompressed_poweroff.elf
 EE_BIN_PACKED = POWEROFF.ELF
 EE_LIBS = -lpoweroff -lpatches -lc -lkernel
-
-EE_OBJS = main.o poweroff_irx.o
+EE_LDFLAGS = -s -Os 
+EE_OBJS = main.o POWEROFF.o
 
 all: $(EE_BIN)
-	 $(PS2DEV)/bin/ps2-packer $(EE_BIN) $(EE_BIN_PACKED)
+	../tools/ps2_packer/ps2_packer.exe $(EE_BIN) $(EE_BIN_PACKED)
 
-poweroff_irx.c: $(PS2SDK)/iop/irx/poweroff.irx
-	bin2c $(PS2SDK)/iop/irx/poweroff.irx poweroff_irx.c poweroff_irx
 
 clean:
 	rm -f $(EE_BIN) $(EE_OBJS) $(EE_BIN_PACKED) *_irx.c
