@@ -22,7 +22,7 @@ description: ESPAÑOL
 
 9  - dirijase a la mc0 y presione __R1__, luego __PSUPaste__. si todo salió bien deberia aparecer una carpeta llamada "BXEXEC-FUNTUNA". __(Ver nota 3)__
 
-10 - si en la MC0 hay una carpeta llamada _"FORTUNA"_ __eliminela inmediatamente__ situandose sobre ella, presionando R1, luego en delete
+10 - si en la MC0 hay una carpeta llamada _"FORTUNA"_, _"APPS"_ o _"BOOT"_ __eliminela inmediatamente__ situandose sobre ella, presionando R1, luego en delete
 
 11 - si todo salio bien la "instalacion" ya está completa
 
