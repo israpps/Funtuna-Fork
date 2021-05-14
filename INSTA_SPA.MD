@@ -8,11 +8,11 @@ description: ESPAÑOL
 
 2  - lanzar uLaunchELF __(Ver nota 1)__ desde la consola.
 
-3  - en uLaunchELF dirijase a _"File Browser"_, luego a _"mass:/"_, dirijase a donde colocó los archivos incluidos junto a este y elija uno de los paquetes __(las carpetas que empiezan con '!')__ __(funtuna basic se recomienda para principiantes, funtuna-clean tiene los archivos Basicos + [uLaunchELF 4.43x_isr](https://github.com/israpps/wLaunchELF_ISR) )__
+3  - en uLaunchELF dirijase a _"File Browser"_, luego a _"mass:/"_, dirijase a donde colocó los archivos incluidos junto a este y elija uno de los paquetes __(las carpetas que empiezan con '!')__ __(funtuna basic light se recomienda para principiantes, funtuna-clean tiene los archivos Basicos + [uLaunchELF 4.43x_isr](https://github.com/israpps/wLaunchELF_ISR) )__
 
-4  - una vez elegido el paquete entre a la carpeta del mismo, presione ![Cuadrado](https://github.com/israpps/Funtuna-Fork/tree/gh-pages/PAD/SQUARE.PNG "cuadrado") , luego presione R1, luego en copy __(ver nota 2)__
+4  - una vez elegido el paquete entre a la carpeta del mismo, presione Cuadrado , luego presione R1, luego en copy __(ver nota 2)__
 
-5  - salga de la USB presionando ![Triangulo](https://israpps.github.io/Funtuna-Fork/logos%20%26%20others/PAD/TRIANGLE.PNG) e ingrese en _mc0:/_
+5  - salga de la USB presionando Triangulo e ingrese en _mc0:/_
 
 6  - una vez alli presione __R1__ y luego en __paste__
 
@@ -34,8 +34,10 @@ description: ESPAÑOL
 
 
 *******************************************************************************************************************************************************
-Notas | _ 
----------|-------------------------
-**1** | Se recomienda utilizar el [ulaunchelf incluido en este paquete](https://github.com/israpps/Funtuna-Fork/blob/main/__Release/ULE_psu.ELF) (ULE_psu.ELF), se recomienda utilizarlo para evitar errores al realizar el paso 9
-**2** | si lo hizo bien debería aparecer un cuadrado verde en la esquina superior derecha de la pantalla
-**3** | NUNCA TOQUE ESTA CARPETA, tras crearla asegurese de que la fecha indicada para esa carpeta sea 2099
+### Notas 
+
+1 - Se recomienda utilizar el ulaunchelf incluido en el paquete (ULE_psu.ELF), se recomienda utilizarlo para evitar errores al realizar el paso 9
+
+2 - si lo hizo bien debería aparecer un cuadrado verde en la esquina superior derecha de la pantalla
+
+3 - NUNCA TOQUE ESTA CARPETA, tras crearla asegurese de que la fecha indicada para esa carpeta sea 2099
