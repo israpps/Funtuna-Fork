@@ -14,8 +14,9 @@ SMS          |               | __x__         |               |
 
 
 
-![BROWSER](https://github.com/israpps/Funtuna-Fork/blob/gh-pages/src/_BROWSER.png)
-
-![BOOT](https://github.com/israpps/Funtuna-Fork/blob/gh-pages/src/_BOOT_LOGO.png)
-
-![OSDSYS](https://github.com/israpps/Funtuna-Fork/blob/gh-pages/src/_FUNTUNA.png)
+### FunTuna installed 
+![BROWSER](./src/_BROWSER.png)
+### Boot logo
+![BOOT](./src/_BOOT_LOGO.png)
+### hacked OSDSYS
+![OSDSYS](./src/_FUNTUNA.png)
