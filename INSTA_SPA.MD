@@ -12,7 +12,7 @@ description: ESPAÑOL
 
 4  - una vez elegido el paquete entre a la carpeta del mismo, presione ![Cuadrado](https://github.com/israpps/Funtuna-Fork/tree/gh-pages/PAD/SQUARE.PNG "cuadrado") , luego presione R1, luego en copy __(ver nota 2)__
 
-5  - salga de la USB presionando ![Triangulo](https://github.com/israpps/Funtuna-Fork/blob/main/logos%20%26%20others/PAD/TRIANGLE.PNG) e ingrese en _mc0:/_
+5  - salga de la USB presionando ![Triangulo](https://israpps.github.io/Funtuna-Fork/logos%20%26%20others/PAD/TRIANGLE.PNG) e ingrese en _mc0:/_
 
 6  - una vez alli presione __R1__ y luego en __paste__
 
