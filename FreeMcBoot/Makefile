@@ -64,6 +64,8 @@ clean:
 	@$(MAKE) -C init clean >nul
 	@echo "--------------- Cleaning chkesr--------------- "	
 	@$(MAKE) -C chkesr clean >nul
+	@echo "--------------- Cleaning elf_loader ---------------"
+	@$(MAKE) -C elf_loader clean >nul
 	@echo "--------------- Cleaning files ---------------"
 	
 	@echo "--crt0.o"
@@ -110,11 +112,11 @@ chkesr.s:
 	@$(MAKE) -C chkesr >nul
 	@echo "converting with bin2s"
 	@bin2s chkesr.irx chkesr.s chkesr_irx
-#elf_loader.s:
-#	@echo "--------------- elf_loader ---------------"
-#	@$(MAKE) -C elf_loader >nul
-	#@echo "converting with bin2s"
-	#@bin2s elf_loader/src/loader/loader.elf elf_loader.s elf_loader
+elf_loader.s:
+	@echo "--------------- elf_loader ---------------"
+	@$(MAKE) -C elf_loader >nul
+	@echo "converting with bin2s"
+	@bin2s elf_loader/src/loader/loader.elf elf_loader.s elf_loader
 
 include Makefile.pref
 include Makefile.eeglobal
