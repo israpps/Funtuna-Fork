@@ -9,8 +9,8 @@ on:
       - '__Binaries/**'
       - '.github/workflows/repack-and-release.yml'
 
-  schedule:
-   - cron: "0 15 * * 2,5"
+#  schedule:
+#   - cron: "0 15 * * 2,5"
 jobs:
   check-binaries:
     runs-on: ubuntu-latest
