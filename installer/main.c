@@ -154,7 +154,7 @@ static int install(int mcport)
 	int ret, retorno;
 	static int mc_Type, mc_Free, mc_Format;
 
-	mcGetInfo(0, 0, &mc_Type, &mc_Free, &mc_Format);
+	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
 	mcSync(0, NULL, &ret);
 
 	//If there's no MC, we have an error:
