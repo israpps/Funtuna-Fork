@@ -89,7 +89,11 @@ jobs:
         cp icon.sys "../__Release/!Funtuna-Basic - Light/BOOT/icon.sys"
         cd ..
 
-    
+    - name: build installer
+      run: |
+        cd installer
+        make clean
+        make
     - name: Zip Folder
       run: |
         SCH=${GITHUB_SHA::7}
