@@ -33,6 +33,9 @@ jobs:
     needs: check-binaries
     steps:
     
+    - name: Install dependencies
+      run: |
+        apk add build-base git zip p7zip
 
     - name: checkout code for release
       uses: actions/checkout@v1
