@@ -7,6 +7,7 @@ on:
     paths:
       - '__Release/**'
       - '__Binaries/**'
+      - 'installer/**'
       - '.github/workflows/repack-and-release.yml'
 
 #  schedule:
