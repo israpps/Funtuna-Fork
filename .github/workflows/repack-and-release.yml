@@ -28,6 +28,7 @@ jobs:
 
   Repack_and_Release:
     runs-on: ubuntu-latest
+    container: ps2dev:v1.2.0
     needs: check-binaries
     steps:
     
@@ -90,8 +91,9 @@ jobs:
     
     - name: Zip Folder
       run: |
-        cd __Release
         SCH=${GITHUB_SHA::7}
+        cp installer/Installer.elf __Release/FunTuna-Fork_installer-$SCH.ELF
+        cd __Release
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].7z
         echo TARGET is $TARGET
