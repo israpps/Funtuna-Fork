@@ -97,6 +97,7 @@ jobs:
         cd installer
         make clean
         make
+
     - name: Zip Folder
       run: |
         SCH=${GITHUB_SHA::7}
@@ -107,7 +108,7 @@ jobs:
         echo TARGET is $TARGET
         7z a -t7z -r $TARGET *
         ls -R 
-    
+
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
@@ -115,7 +116,7 @@ jobs:
         name: FunTuna
         path: |
              __Release/*.7z
-             
+             installer/FunTuna-Fork_Installer.ELF
  
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
@@ -125,8 +126,4 @@ jobs:
         title: "Latest automated Repack"
         files: |
                 __Release/*.7z
-
-
-
-
-
+                installer/FunTuna-Fork_Installer.ELF
