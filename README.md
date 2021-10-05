@@ -26,13 +26,15 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 
 
 
-## current package contents:
+## Differences compared to original FunTuna:
 
-files        |         clean |     basic     | basic (light) |
------------- | ------------- | ------------- | ------------- | 
-Funtuna basic files | __x__  | __x__         | __x__         |
-USB Drivers  | __x__         | __x__         | __x__         | 
-wLaunchELF 4.43x_isr | __x__ | __x__         | __x__         |
-OPL 1.0.0    |               | __x__         | __x__         |
-ESR          |               | __x__         |               |
-SMS          |               | __x__         |               |
+- __Hacked icon (Opentuna/fortuna) is stored on an independent Folder to avoid timestamp changes when updating software__
+- __Fixed bugs on FreeMcBoot__
+- changed FreeMcBoot settings filename to keep FunTuna settings separated from FreeMcBoot settings on usb
+- FreeMcBoot and configurator can load USB drivers from `SYS-CONF` if not found on `BOOT`
+- __Replaced fortuna with latest Opentuna__
+- __bundled with [wLaunchELF mod](https://github.com/israpps/wLaunchELF_ISR) capable of fixing fortuna/Opentuna icon date__ (quite stable and 101kb smaller than the original one
+- Bundled with [latest OPL release](https://github.com/ps2homebrew/Open-PS2-Loader/releases/latest)
+- Installer based on Opentuna installer
+- FreeMcBoot and configurator are slightly smaller
+- Automatically updated if uLaunchELF or OPL are updated
