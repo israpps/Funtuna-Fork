@@ -8,6 +8,8 @@
 #else 
 #define DEBUG_PRINTF(arg...)	
 #endif
+
+
 //----------------------------------------//
 extern u8 exploit_bin[];
 extern int size_exploit_bin;
@@ -59,6 +61,35 @@ static int pad_inited = 0;
 #include "FUNTUNA_FORK_INSTALLER_WELCOME.h"
 #include "FUNTUNA_FORK_INSTALLER_SUCESS.h"
 #include "FUNTUNA_FORK_INSTALLER_FAIL.h"
+
+enum OPENTUNA_VARIANTS
+{
+	SLIMS = 0,	  // fat 0x190 and every 0x2?? ROM
+	FATS,		  // 0x110, 0x120, 0x150, 0x160
+	FAT170,		  // 0x170
+	PROTOKERNELS, // this corresponds to rom 0x100 and 0x101, parrado won´t make the icons, but i will leavi it here in case someone makes it faster than instatuna
+	UNSUPPORTED,
+	
+	OPENTUNA_VARIANTS_AMMOUNT
+};
+char* ICONTYPE_ALIAS[4] = {"190+","110+","170","100&101"};
+
+int GetIconType(unsigned long int ROMVERSION)
+{
+	int icontype = UNSUPPORTED;
+
+	if (ROMVERSION >= 0x190)
+		icontype = SLIMS;
+
+	if ((ROMVERSION < 0x190) && (ROMVERSION >= 0x110))
+		icontype = FATS;
+
+	if (ROMVERSION == 0x170)
+		icontype = FAT170;
+
+	return icontype;
+}
+
 //--------------------------------------------------------------
 static int file_exists(char *filepath)
 {
@@ -146,7 +177,7 @@ static int write_embed(void *embed_file, const int embed_size, char* folder, cha
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //return 0 = ok, return 1 = error
-static int install(int mcport)
+static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
 	scr_printf("Installing for memory card %u...\n",mcport);
@@ -190,6 +221,10 @@ static int install(int mcport)
 		mcSync(0, NULL, &ret);
 	scr_printf("\tWriting Files\n");
 	scr_printf("\t\tOpentuna files\n");
+	
+	
+	
+	
 		retorno = write_embed(&exploit_bin, size_exploit_bin, "BXEXEC-OPENTUNA","icon.icn",mcport);
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
