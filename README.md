@@ -34,7 +34,7 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 - changed FreeMcBoot settings filename to keep FunTuna settings separated from FreeMcBoot settings on usb
 - FreeMcBoot and configurator can load USB drivers from `SYS-CONF` if not found on `BOOT`
 - __Replaced fortuna with latest Opentuna__
-- __bundled with [wLaunchELF mod](https://github.com/israpps/wLaunchELF_ISR) capable of fixing fortuna/Opentuna icon date__ (quite stable and 101kb smaller than the original one
+- __bundled with [wLaunchELF mod](https://github.com/israpps/wLaunchELF_ISR) capable of fixing fortuna/Opentuna icon date__ (quite stable and 101kb smaller than the original one)
 - Bundled with [latest OPL release](https://github.com/ps2homebrew/Open-PS2-Loader/releases/latest)
 - Installer based on Opentuna installer
 - FreeMcBoot and configurator are slightly smaller
