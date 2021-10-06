@@ -258,7 +258,7 @@ static int install(int mcport, int icon_variant)
 			retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
 			if (retorno < 0) {return 6;}
 			
-				if ((fd = open(version_manifest_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0){
+				if (! ((fd = open(version_manifest_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0)){
 				ret = write(fd, ICONTYPE_ALIAS[icon_variant], 4);
 				close(fd);
 				}
