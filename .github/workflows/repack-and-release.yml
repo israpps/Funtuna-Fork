@@ -6,27 +6,12 @@ on:
   push:
     paths:
       - '__Release/**'
-      - '__Binaries/**'
       - 'installer/**'
       - '.github/workflows/repack-and-release.yml'
 
 #  schedule:
 #   - cron: "0 15 * * 2,5"
 jobs:
-  check-binaries:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v1
-
-      - name: "Check file existence"
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "__Binaries/BOOT.ELF , __Binaries/CFG.ELF, __Binaries/USBD.IRX, __Binaries/USBHDFSD.IRX, __Binaries/ULE.ELF, __Binaries/LAUNCHELF.CNF, __Binaries/POWEROFF.ELF, __Binaries/icon.sys, __Binaries/SYSTEM.icn, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF, __Release/!Funtuna-Basic/BOOT/FUNTUNA.CNF"
-          allow_failure: "true"
-
-
-
   Repack_and_Release:
     runs-on: ubuntu-latest
     container: ps2dev/ps2dev:v1.2.0
@@ -42,56 +27,7 @@ jobs:
       
     - name: Update wLaunchELF_ISR
       run: |
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Binaries/ULE.ELF
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
-    - name: Place binaries at Specific locations
-      run: |
-        cd __Binaries/
-        
-        cp BOOT.ELF "../__Release/!Funtuna-Basic/BOOT/BOOT.ELF"
-        cp BOOT.ELF "../__Release/!Funtuna-Clean/BOOT/BOOT.ELF"
-        cp BOOT.ELF "../installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF"
-        cp BOOT.ELF "../__Release/!Funtuna-Basic - Light/BOOT/BOOT.ELF"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp CFG.ELF "../__Release/!Funtuna-Basic/BOOT/CFG.ELF"
-        cp CFG.ELF "../__Release/!Funtuna-Clean/BOOT/CFG.ELF"
-        cp CFG.ELF "../installer/INSTALLER_CONTENTS/BOOT/CFG.ELF"
-        cp CFG.ELF "../__Release/!Funtuna-Basic - Light/BOOT/CFG.ELF"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp LAUNCHELF.CNF "../__Release/!Funtuna-Basic/BOOT/LAUNCHELF.CNF"
-        cp LAUNCHELF.CNF "../installer/INSTALLER_CONTENTS/BOOT/LAUNCHELF.CNF"
-        cp LAUNCHELF.CNF "../__Release/!Funtuna-Clean/BOOT/LAUNCHELF.CNF"
-        cp LAUNCHELF.CNF "../__Release/!Funtuna-Basic - Light/BOOT/LAUNCHELF.CNF"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp POWEROFF.ELF "../__Release/!Funtuna-Basic/BOOT/POWEROFF.ELF"
-        cp POWEROFF.ELF "../installer/INSTALLER_CONTENTS/BOOT/POWEROFF.ELF"
-        cp POWEROFF.ELF "../__Release/!Funtuna-Clean/BOOT/POWEROFF.ELF"
-        cp POWEROFF.ELF "../__Release/!Funtuna-Basic - Light/BOOT/POWEROFF.ELF"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp USBD.IRX "../__Release/!Funtuna-Basic/BOOT/USBD.IRX"
-        cp USBD.IRX "../installer/INSTALLER_CONTENTS/BOOT/USBD.IRX"
-        cp USBD.IRX "../__Release/!Funtuna-Clean/BOOT/USBD.IRX"
-        cp USBD.IRX "../__Release/!Funtuna-Basic - Light/BOOT/USBD.IRX"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp USBHDFSD.IRX "../__Release/!Funtuna-Basic/BOOT/USBHDFSD.IRX"
-        cp USBHDFSD.IRX "../installer/INSTALLER_CONTENTS/BOOT/USBHDFSD.IRX"
-        cp USBHDFSD.IRX "../__Release/!Funtuna-Clean/BOOT/USBHDFSD.IRX"
-        cp USBHDFSD.IRX "../__Release/!Funtuna-Basic - Light/BOOT/USBHDFSD.IRX"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp ULE.ELF "../__Release/!Funtuna-Basic/BOOT/ULE.ELF"
-        cp ULE.ELF "../__Release/!Funtuna-Clean/BOOT/ULE.ELF"
-        cp ULE.ELF "../__Release/!Funtuna-Basic - Light/BOOT/ULE.ELF"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp SYSTEM.icn "../__Release/!Funtuna-Basic/BOOT/SYSTEM.icn"
-        cp SYSTEM.icn "../__Release/!Funtuna-Clean/BOOT/SYSTEM.icn"
-        cp SYSTEM.icn "../__Release/!Funtuna-Basic - Light/BOOT/SYSTEM.icn"
-        #--------------------------------------------------------------------------------------------------------------------------#
-        cp icon.sys "../__Release/!Funtuna-Basic/BOOT/icon.sys"
-        cp icon.sys "../__Release/!Funtuna-Clean/BOOT/icon.sys"
-        cp icon.sys "../__Release/!Funtuna-Basic - Light/BOOT/icon.sys"
-        cd ..
-
     - name: build installer
       run: |
         cd installer
@@ -102,6 +38,9 @@ jobs:
       run: |
         SCH=${GITHUB_SHA::7}
         cp installer/Installer.elf __Release/FunTuna-Fork_installer-$SCH.ELF
+        cp -r installer/INSTALLER_CONTENTS/BOOT/ __Release/MANUAL_INSTALL/BOOT/
+        cp -r installer/INSTALLER_CONTENTS/APPS/ __Release/MANUAL_INSTALL/APPS/
+        cp -r installer/INSTALLER_CONTENTS/OPL/ __Release/MANUAL_INSTALL/OPL/
         cd __Release
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].7z
