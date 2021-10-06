@@ -5,3 +5,8 @@ FreeMcBoot/launcher2.elf.BAK
 **/desktop.ini
 **.lnk
 
+installer/**.o
+installer/**.s
+installer/FunTuna-Fork_Installer.ELF
+installer/Installer.elf
+installer/stripped.elf
