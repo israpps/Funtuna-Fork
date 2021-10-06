@@ -220,13 +220,28 @@ static int install(int mcport, int icon_variant)
 		ret = mcMkDir(mcport, 0, "APPS");
 		mcSync(0, NULL, &ret);
 	scr_printf("\tWriting Files\n");
-	scr_printf("\t\tOpentuna files\n");
+	//scr_printf("\t\tOpentuna files\n");
 	
+	if (icon_variant == SLIMS)
+	{
+		retorno = write_embed(&exploit_bin, size_exploit_bin, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+		scr_printf("\t\tWriting Opentuna for SLIMS and FAT 50k ROM 1.90\n");
+	}
+	else if (icon_variant == FATS)
+	{
+		retorno = write_embed(&opentuna_fats, size_opentuna_fats, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+		scr_printf("\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
+	}
+	else if (icon_variant == FAT170)
+	{
+		retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+		scr_printf("\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
+	}
 	
-	
-	
-		retorno = write_embed(&exploit_bin, size_exploit_bin, "BXEXEC-OPENTUNA","icon.icn",mcport);
-		if (retorno < 0) {return 6;}
+	if (retorno < 0)
+	{
+		return 6;
+	}
 		retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
 		if (retorno < 0) {return 6;}
 	scr_printf("\t\tAPPS folder icons\n");
