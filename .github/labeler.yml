@@ -6,3 +6,6 @@
   
   Release-Package:
     - '__Release/**/*.*'
+
+  Installer:
+    - 'installer/**'
