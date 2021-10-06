@@ -29,6 +29,7 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 ## Differences compared to original FunTuna:
 
 - __Hacked icon (Opentuna/fortuna) is stored on an independent Folder to avoid timestamp changes when updating software__
+- Every OSDSYS element is customizable (original FunTuna had top and bottom delimiters hardcoded)
 - __Fixed bugs on FreeMcBoot__
 - changed FreeMcBoot settings filename to keep FunTuna settings separated from FreeMcBoot settings on usb
 - FreeMcBoot and configurator can load USB drivers from `SYS-CONF` if not found on `BOOT`
