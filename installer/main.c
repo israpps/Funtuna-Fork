@@ -187,7 +187,7 @@ static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
 	scr_printf("Installing for memory card %u...\n",mcport);
-	char* version_manifest_path;
+	char version_manifest_path[31];
 	
 	int ret, fd, retorno;
 	static int mc_Type, mc_Free, mc_Format;
