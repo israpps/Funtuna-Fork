@@ -15,7 +15,6 @@ jobs:
   Repack_and_Release:
     runs-on: ubuntu-latest
     container: ps2dev/ps2dev:v1.2.0
-    needs: check-binaries
     steps:
     
     - name: Install dependencies
