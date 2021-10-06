@@ -12,6 +12,8 @@
 #include <libpad.h>
 #include <string.h>
 #include <stdio.h>
+
+#include <stdlib.h>
 //#include <osd_config.h>
 //#include <libcdvd.h>
 #include <debug.h>

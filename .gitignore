@@ -1,7 +1,18 @@
 __Release/**/desktop.ini
 __Experimental/**/desktop.ini
 __STABLE/**/desktop.ini
-FreeMcBoot/launcher2.elf.BAK
 **/desktop.ini
+
+FreeMcBoot/launcher2.elf.BAK
 **.lnk
 
+installer/**.o
+installer/**.s
+
+installer/FunTuna-Fork_Installer.ELF
+installer/Installer.elf
+installer/stripped.elf
+
+!**dma_asm.S
+!**gs_asm.S
+!**ps2_asm.S

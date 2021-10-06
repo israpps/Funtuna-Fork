@@ -8,9 +8,31 @@
 #else 
 #define DEBUG_PRINTF(arg...)	
 #endif
+
+extern u8 opl_icn[];
+extern int size_opl_icn;
 //----------------------------------------//
-extern u8 exploit_bin[];
-extern int size_exploit_bin;
+extern u8 opl_sys[];
+extern int size_opl_sys;
+//----------------------------------------//
+extern u8 opl_cfg[];
+extern int size_opl_cfg;
+//----------------------------------------//
+extern u8 opl_cfg1[];
+extern int size_opl_cfg1;
+//----------------------------------------//
+extern u8 opl_dualshock[];
+extern int size_opl_dualshock;
+//
+//----------------------------------------//
+extern u8  opentuna_slims[];
+extern int size_opentuna_slims;
+//----------------------------------------//
+extern u8 opentuna_fats[];
+extern int size_opentuna_fats;
+//----------------------------------------//
+extern u8 opentuna_fat170[];
+extern int size_opentuna_fat170;
 //----------------------------------------//
 extern u8 exploit_sys[];
 extern int size_exploit_sys;
@@ -59,6 +81,35 @@ static int pad_inited = 0;
 #include "FUNTUNA_FORK_INSTALLER_WELCOME.h"
 #include "FUNTUNA_FORK_INSTALLER_SUCESS.h"
 #include "FUNTUNA_FORK_INSTALLER_FAIL.h"
+
+enum OPENTUNA_VARIANTS
+{
+	SLIMS = 0,	  // fat 0x190 and every 0x2?? ROM
+	FATS,		  // 0x110, 0x120, 0x150, 0x160
+	FAT170,		  // 0x170
+	PROTOKERNELS, // this corresponds to rom 0x100 and 0x101, parrado won´t make the icons, but i will leavi it here in case someone makes it faster than instatuna
+	UNSUPPORTED,
+	
+	OPENTUNA_VARIANTS_AMMOUNT
+};
+char* ICONTYPE_ALIAS[4] = {"190+","110+","170 ","100 "};
+
+int GetIconType(unsigned long int ROMVERSION)
+{
+	int icontype = UNSUPPORTED;
+
+	if (ROMVERSION >= 0x190)
+		icontype = SLIMS;
+
+	if ((ROMVERSION < 0x190) && (ROMVERSION >= 0x110))
+		icontype = FATS;
+
+	if (ROMVERSION == 0x170)
+		icontype = FAT170;
+
+	return icontype;
+}
+
 //--------------------------------------------------------------
 static int file_exists(char *filepath)
 {
@@ -144,14 +195,36 @@ static int write_embed(void *embed_file, const int embed_size, char* folder, cha
 #endif
 	return 0;
 }
+static int write_embed_replace(void *embed_file, const int embed_size, char* folder, char* filename, int mcport)
+{
+	int fd, ret;
+	char target[MAX_PATH];
+	sprintf(target, "mc%u:/%s/%s", mcport, folder, filename);
+		if ((fd = open(target, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
+			return -1;
+		}
+		ret = write(fd, embed_file, embed_size);
+		if (ret != embed_size) {
+			return -2;
+		}
+		close(fd);
+
+#ifdef __DEBUG_PRINTF__
+	printf("embed file written: %s\n", target);
+#endif
+	return 0;
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //return 0 = ok, return 1 = error
-static int install(int mcport)
+static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
 	scr_printf("Installing for memory card %u...\n",mcport);
-	
-	int ret, retorno;
+	char version_manifest_path[31];
+	char opl_settings_location[25];
+	sprintf(opl_settings_location, "mc%u:/OPL/conf_opl.cfg", mcport);
+	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport); 
+	int ret, fd, retorno;
 	static int mc_Type, mc_Free, mc_Format;
 
 	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
@@ -178,22 +251,74 @@ static int install(int mcport)
 	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.icn")) {return 4;}
 	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.sys")) {return 4;}
 	}
+	//FOLDERS
 	scr_printf("\tCreating Folders...\n");
 	scr_printf("\t\tBOOT\n");
 		ret = mcMkDir(mcport, 0, "BOOT");
 		mcSync(0, NULL, &ret);
-	scr_printf("\t\tBXEXEC-OPENTUNA\n");
-		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
-		mcSync(0, NULL, &ret);
 	scr_printf("\t\tAPPS\n");
 		ret = mcMkDir(mcport, 0, "APPS");
 		mcSync(0, NULL, &ret);
+	scr_printf("\t\tOPL\n");
+		ret = mcMkDir(mcport, 0, "OPL");
+		mcSync(0, NULL, &ret);
+	if (icon_variant != UNSUPPORTED){
+	scr_printf("\t\tBXEXEC-OPENTUNA\n");
+		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
+		mcSync(0, NULL, &ret);	
+	}
+	///FOLDERS
 	scr_printf("\tWriting Files\n");
-	scr_printf("\t\tOpentuna files\n");
-		retorno = write_embed(&exploit_bin, size_exploit_bin, "BXEXEC-OPENTUNA","icon.icn",mcport);
-		if (retorno < 0) {return 6;}
-		retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
-		if (retorno < 0) {return 6;}
+	//OPENTUNA
+	if (icon_variant != UNSUPPORTED) 
+	{
+		if (icon_variant == SLIMS)
+		{
+			retorno = write_embed(&opentuna_slims, size_opentuna_slims, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for SLIMS and SCPH-5XXXX with ROM 1.90\n");
+		}
+		else if (icon_variant == FATS)
+		{
+			retorno = write_embed(&opentuna_fats, size_opentuna_fats, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
+		}
+		else if (icon_variant == FAT170)
+		{
+			retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
+		}
+		
+		if (retorno < 0)
+		{
+			return 6;
+		}
+			retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
+			if (retorno < 0) {return 6;}
+			
+				if (! ((fd = open(version_manifest_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0)){
+				ret = write(fd, ICONTYPE_ALIAS[icon_variant], 4);
+				close(fd);
+				}
+		scr_printf("\t\tManipulating Opentuna icon timestamp\n");
+		static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
+		static sceMcStDateTime maximahora; //Maxium Timestamp, for the ones who does not speak Spanish
+	
+		maximahora.Resv2 = 0;
+		maximahora.Sec = 59;
+		maximahora.Min = 59;
+		maximahora.Hour = 23;
+		maximahora.Day = 31;
+		maximahora.Month = 12;
+		maximahora.Year = 2099;
+		mcDirAAA->_Modify = maximahora;
+		mcDirAAA->_Create = maximahora;
+		mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
+		mcSync(0, NULL, &ret);		
+				
+	} else {scr_printf("\t THIS PS2 IS NOT COMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");}
+	///OPENTUNA
+	
+	//FUNTUNA&APPS
 	scr_printf("\t\tAPPS folder icons\n");
 		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
 		if (retorno < 0) {return 6;}
@@ -223,23 +348,18 @@ static int install(int mcport)
 	scr_printf("\t\tPoweroff utility\n");
 		retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
 		if (retorno < 0) {return 6;}
-	//scr_printf("hi\n");
-	scr_printf("\t\tManipulating Opentuna icon timestamp");
-	static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
-	static sceMcStDateTime maximahora; //Maxium Timestamp, for the ones who does not speak Spanish
-
-	maximahora.Resv2 = 0;
-	maximahora.Sec = 59;
-	maximahora.Min = 59;
-	maximahora.Hour = 23;
-	maximahora.Day = 31;
-	maximahora.Month = 12;
-	maximahora.Year = 2099;
-	mcDirAAA->_Modify = maximahora;
-	mcDirAAA->_Create = maximahora;
-	mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
-	mcSync(0, NULL, &ret);
-
+	///FUNTUNA&APPS
+	if (!file_exists(opl_settings_location))//If no OPL config file...
+	{
+		scr_printf("\t\tNo OPL settings found!\n\t\t Loading Preconfigured OPL Folder...\n");
+		if (mcport==0)
+			write_embed_replace(&opl_cfg, size_opl_cfg, "OPL", "conf_opl.cfg", mcport);//main config file has two variants, each of them has IGR Path assigned according to mcport value
+		else write_embed_replace(&opl_cfg1, size_opl_cfg1, "OPL", "conf_opl.cfg", mcport);//
+		
+		write_embed_replace(&opl_icn, size_opl_icn, "OPL", "opl.icn", mcport);
+		write_embed_replace(&opl_sys, size_opl_sys, "OPL", "icon.sys", mcport);
+		write_embed_replace(&opl_dualshock, size_opl_dualshock, "OPL", "conf_game.cfg", mcport);
+	}
 	scr_printf("Installation Finished\n");
 	return 0;
 }
@@ -292,21 +412,24 @@ static void PS2_browser(void)
 int main (int argc, char *argv[])
 {
 	
-	int fdn;
-	char romver[16];
+	int fdn, icontype;
+	unsigned long int ROM_VERSION;
+	char romver[5];
 	VMode = NTSC;
 
 	// Loads Needed modules
 	InitPS2();
 
 	gs_reset(); // Reset GS
-	if((fdn = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
+	if ((fdn = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
 	{
-		read(fdn, romver, sizeof romver);
+		read(fdn, romver, 4);
 		close(fdn);
 
 		if (romver[4] == 'E')
 			VMode = PAL;
+		romver[4] = '\0';
+		ROM_VERSION = strtoul(romver, NULL, 16); //convert ROM version to unsigned long int for further use on automatic Install
 	}
 
 	if (VMode == PAL)
@@ -316,6 +439,7 @@ int main (int argc, char *argv[])
 
 	//display_bmp(640, 448, inst);
 	//display_bmp(640, 448, BG);
+	icontype = GetIconType(ROM_VERSION);
 	waitAnyPadReady();
 	pad_inited = 1;
 
@@ -330,7 +454,7 @@ int main (int argc, char *argv[])
 		if ( (new_pad & PAD_L1) && (menuactual == 101) ) {
 			menuactual = 102;
 			//display_bmp(640, 448, wait);
-			iz = install(0);
+			iz = install(0,icontype);
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);
@@ -344,7 +468,7 @@ int main (int argc, char *argv[])
 		else if ( (new_pad & PAD_R1) && (menuactual == 101) ) {
 			menuactual = 102;
 			//display_bmp(640, 448, wait);
-			iz = install(1);
+			iz = install(1,icontype);
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);

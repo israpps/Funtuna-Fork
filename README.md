@@ -13,6 +13,12 @@
 
 ## [main download link](https://github.com/israpps/Funtuna-Fork/releases/tag/latest)
 
+### Special thanks to anyone that collaborated trough testing:
+
+- GMV
+- Gustavo Parra
+- JuankyTutoriales
+
 you can find the instructions to install at the [__WIKI__](https://github.com/israpps/Funtuna-Fork/wiki)
 
 ## contact links:
