@@ -2,8 +2,8 @@ EE_BIN = Installer.elf
 EE_BIN_PACKED = FunTuna-Fork_Installer.ELF
 EE_BIN_STRIPPED = stripped.elf
 EE_OBJS = main.o gs.o pad.o  gs_asm.o ps2_asm.o dma_asm.o
-EE_OBJS += FMCB_ELF.o CFG_ELF.o opl_elf.o ule_elf.o apps_icn.o apps_sys.o poweroff_elf.o FUNTUNA_USBHDFSD.o FUNTUNA_USBD.o ule_cnf.o boot_sys.o boot_icn.o exploit_sys.o exploit_bin.o FMCB_CNF.o
-EE_SRC =   FMCB_ELF.s CFG_ELF.s opl_elf.s ule_elf.s apps_icn.s apps_sys.s poweroff_elf.s FUNTUNA_USBHDFSD.s FUNTUNA_USBD.s ule_cnf.s boot_sys.s boot_icn.s exploit_sys.s exploit_bin.s FMCB_CNF.s
+EE_OBJS += FMCB_ELF.o CFG_ELF.o opl_elf.o ule_elf.o apps_icn.o apps_sys.o poweroff_elf.o FUNTUNA_USBHDFSD.o FUNTUNA_USBD.o ule_cnf.o boot_sys.o boot_icn.o exploit_sys.o exploit_bin.o FMCB_CNF.o OpenTuna_SLIMS.o OpenTuna_FAT-170.o OpenTuna_FAT-110-120-150-160.o
+EE_SRC =   FMCB_ELF.s CFG_ELF.s opl_elf.s ule_elf.s apps_icn.s apps_sys.s poweroff_elf.s FUNTUNA_USBHDFSD.s FUNTUNA_USBD.s ule_cnf.s boot_sys.s boot_icn.s exploit_sys.s exploit_bin.s FMCB_CNF.s OpenTuna_SLIMS.s OpenTuna_FAT-170.s OpenTuna_FAT-110-120-150-160.s
 EE_LIBS = -ldebug -lcdvd -lpatches -lpad -lmc
 
 all:
@@ -55,6 +55,17 @@ opl_elf.s:
 # EXPLOIT
 exploit_bin.s:
 	bin2s INSTALLER_CONTENTS/ENTRYPOINT/exploit.bin exploit_bin.s exploit_bin
+	
+OpenTuna_SLIMS.s:
+	bin2s INSTALLER_CONTENTS/ENTRYPOINT/slims.bin OpenTuna_SLIMS.s opentuna_slims
+	
+OpenTuna_FAT-110-120-150-160.s:
+	bin2s INSTALLER_CONTENTS/ENTRYPOINT/fats.bin OpenTuna_FAT-110-120-150-160.s opentuna_fats
+	
+OpenTuna_FAT-170.s:
+	bin2s INSTALLER_CONTENTS/ENTRYPOINT/170.bin OpenTuna_FAT-170.s opentuna_fat170
+
+
 exploit_sys.s:
 	bin2s INSTALLER_CONTENTS/ENTRYPOINT/exploit.sys exploit_sys.s exploit_sys
 # /EXPLOIT
@@ -63,7 +74,7 @@ clean:
 	@echo ...objs and *.elf
 	@rm -fr *.o $(EE_BIN_PACKED) $(EE_BIN_STRIPPED) $(EE_BIN)
 	@echo ...embedded resources
-	@rm -fr FMCB_ELF.* FMCB_CNF.* CFG_ELF.* opl_elf.* ule_elf.* apps_icn.* apps_sys.* poweroff_elf.* FUNTUNA_USBHDFSD.* FUNTUNA_USBD.* ule_cnf.* boot_sys.* boot_icn.*
+	@rm -fr FMCB_ELF.* FMCB_CNF.* CFG_ELF.* opl_elf.* ule_elf.* apps_icn.* apps_sys.* poweroff_elf.* FUNTUNA_USBHDFSD.* FUNTUNA_USBD.* ule_cnf.* boot_sys.* boot_icn.* OpenTuna_SLIMS.* OpenTuna_FAT-170.* OpenTuna_FAT-110-120-150-160.*
 
 $(EE_BIN_STRIPPED): $(EE_BIN)
 	$(EE_STRIP) -o $@ $<

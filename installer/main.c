@@ -11,8 +11,14 @@
 
 
 //----------------------------------------//
-extern u8 exploit_bin[];
-extern int size_exploit_bin;
+extern u8 opentuna_slims[];
+extern int size_opentuna_slims;
+//----------------------------------------//
+extern u8 opentuna_fats[];
+extern int size_opentuna_fats;
+//----------------------------------------//
+extern u8 opentuna_fat170[];
+extern int size_opentuna_fat170;
 //----------------------------------------//
 extern u8 exploit_sys[];
 extern int size_exploit_sys;
@@ -72,7 +78,7 @@ enum OPENTUNA_VARIANTS
 	
 	OPENTUNA_VARIANTS_AMMOUNT
 };
-char* ICONTYPE_ALIAS[4] = {"190+","110+","170","100&101"};
+char* ICONTYPE_ALIAS[4] = {"190+","110+","170 ","100 "};
 
 int GetIconType(unsigned long int ROMVERSION)
 {
@@ -181,8 +187,9 @@ static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
 	scr_printf("Installing for memory card %u...\n",mcport);
+	char* version_manifest_path;
 	
-	int ret, retorno;
+	int ret, fd, retorno;
 	static int mc_Type, mc_Free, mc_Format;
 
 	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
@@ -209,41 +216,55 @@ static int install(int mcport, int icon_variant)
 	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.icn")) {return 4;}
 	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.sys")) {return 4;}
 	}
+	
+	if (icon_variant == UNSUPPORTED) {scr_printf("\t THIS PS2 IS NOT COMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");}
 	scr_printf("\tCreating Folders...\n");
 	scr_printf("\t\tBOOT\n");
 		ret = mcMkDir(mcport, 0, "BOOT");
 		mcSync(0, NULL, &ret);
-	scr_printf("\t\tBXEXEC-OPENTUNA\n");
-		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
-		mcSync(0, NULL, &ret);
 	scr_printf("\t\tAPPS\n");
 		ret = mcMkDir(mcport, 0, "APPS");
 		mcSync(0, NULL, &ret);
+	if (icon_variant != UNSUPPORTED){
+	scr_printf("\t\tBXEXEC-OPENTUNA\n");
+		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
+		mcSync(0, NULL, &ret);	
+	}
 	scr_printf("\tWriting Files\n");
 	//scr_printf("\t\tOpentuna files\n");
-	
-	if (icon_variant == SLIMS)
+	if (icon_variant != UNSUPPORTED) 
 	{
-		retorno = write_embed(&exploit_bin, size_exploit_bin, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-		scr_printf("\t\tWriting Opentuna for SLIMS and FAT 50k ROM 1.90\n");
+		sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport); 
+		if (icon_variant == SLIMS)
+		{
+			retorno = write_embed(&opentuna_slims, size_opentuna_slims, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for SLIMS and SCPH-5XXXX with ROM 1.90\n");
+		}
+		else if (icon_variant == FATS)
+		{
+			retorno = write_embed(&opentuna_fats, size_opentuna_fats, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
+		}
+		else if (icon_variant == FAT170)
+		{
+			retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
+			scr_printf("\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
+		}
+		
+		if (retorno < 0)
+		{
+			return 6;
+		}
+			retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
+			if (retorno < 0) {return 6;}
+			
+				if ((fd = open(version_manifest_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0){
+				ret = write(fd, ICONTYPE_ALIAS[icon_variant], 4);
+				close(fd);
+				}
+				
+			
 	}
-	else if (icon_variant == FATS)
-	{
-		retorno = write_embed(&opentuna_fats, size_opentuna_fats, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-		scr_printf("\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
-	}
-	else if (icon_variant == FAT170)
-	{
-		retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-		scr_printf("\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
-	}
-	
-	if (retorno < 0)
-	{
-		return 6;
-	}
-		retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
-		if (retorno < 0) {return 6;}
 	scr_printf("\t\tAPPS folder icons\n");
 		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
 		if (retorno < 0) {return 6;}
@@ -342,21 +363,24 @@ static void PS2_browser(void)
 int main (int argc, char *argv[])
 {
 	
-	int fdn;
-	char romver[16];
+	int fdn, icontype;
+	unsigned long int ROM_VERSION;
+	char romver[5];
 	VMode = NTSC;
 
 	// Loads Needed modules
 	InitPS2();
 
 	gs_reset(); // Reset GS
-	if((fdn = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
+	if ((fdn = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
 	{
-		read(fdn, romver, sizeof romver);
+		read(fdn, romver, 4);
 		close(fdn);
 
 		if (romver[4] == 'E')
 			VMode = PAL;
+		romver[4] = '\0';
+		ROM_VERSION = strtoul(romver, NULL, 16); //convert ROM version to unsigned long int for further use on automatic Install
 	}
 
 	if (VMode == PAL)
@@ -366,6 +390,7 @@ int main (int argc, char *argv[])
 
 	//display_bmp(640, 448, inst);
 	//display_bmp(640, 448, BG);
+	icontype = GetIconType(ROM_VERSION);
 	waitAnyPadReady();
 	pad_inited = 1;
 
@@ -380,7 +405,7 @@ int main (int argc, char *argv[])
 		if ( (new_pad & PAD_L1) && (menuactual == 101) ) {
 			menuactual = 102;
 			//display_bmp(640, 448, wait);
-			iz = install(0);
+			iz = install(0,icontype);
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);
@@ -394,7 +419,7 @@ int main (int argc, char *argv[])
 		else if ( (new_pad & PAD_R1) && (menuactual == 101) ) {
 			menuactual = 102;
 			//display_bmp(640, 448, wait);
-			iz = install(1);
+			iz = install(1,icontype);
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);
