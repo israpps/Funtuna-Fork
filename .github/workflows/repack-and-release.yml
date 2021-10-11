@@ -35,13 +35,17 @@ jobs:
         make clean
         make
 
-    - name: Zip Folder
+    - name: prepare Release package
       run: |
         SCH=${GITHUB_SHA::7}
         cp installer/Installer.elf __Release/FunTuna-Fork_installer-$SCH.ELF
         cp -r installer/INSTALLER_CONTENTS/BOOT/ __Release/MANUAL_INSTALL/BOOT/
         cp -r installer/INSTALLER_CONTENTS/APPS/ __Release/MANUAL_INSTALL/APPS/
         cp -r installer/INSTALLER_CONTENTS/OPL/ __Release/MANUAL_INSTALL/OPL/
+
+    - name: Zip Folder
+      run: |
+        SCH=${GITHUB_SHA::7}
         cd __Release
         echo commit $SCH >>commit.txt
         TARGET=FunTuna\[$SCH\].7z
