@@ -68,26 +68,13 @@ __Original Project by:__ [__Howling Wolf and Chelsea__](https://github.com/Howli
  + way to make profit of it (trough shorteners and any kind of similar service)
  + auto-promotion of your webpages or social media of your own
 
- 6. in addition to the term refered before, you're __not allowed__ to __upload this project__ at the website [__ps2-home.com__](https://www.ps2-home.com/) or __any other website or social media webpage related to it__.
-
-
-#### YouTube Tutorials:
- 7. any youtube tutorial must have previous authorization from me.
- 
-  if your petition is aproved you'll see your youtube channel name + link at the File [AUTH.TXT](https://github.com/israpps/Funtuna-Fork/blob/main/AUTH.TXT) 
-  
-  
-  you can find ways to contact me at [README.MD](https://github.com/israpps/Funtuna-Fork/blob/main/README.md)
- 
- 
- 
 #### modification of this project:
- 8. youre allowed to modify this project as long as:
+ 6. youre allowed to modify this project as long as:
    + the names ef the developers mentioned inside [CFG.ELF](https://github.com/israpps/Funtuna-Fork/tree/main/FreeMcBoot-Configurator) main menu arent Removed/Modified
    + provide a link to this [repositorium](https://github.com/israpps/Funtuna-Fork)
    + dont Bundle [Open Ps2 Loader Daily Build](https://github.com/Jay-Jay-OPL/OPL-Daily-Builds) or any other piece of software that provides/contains any copyrighted content
  
  #### Changes or aditions to this license:
- 9. we reserve the right to change the contents of this license without warning, and those changes WILL go into Effect 15 minutes after aplying those changes
+ 7. we reserve the right to change the contents of this license without warning, and those changes WILL go into Effect 15 minutes after aplying those changes
  
  
