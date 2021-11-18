@@ -335,6 +335,13 @@ static int install(int mcport, int icon_variant)
 	scr_printf("\t\tFreeMcBoot Configurator\n");
 		retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
+        
+        scr_printf("\t\tFreeMcBoot USB drivers\n");
+		retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
+		if (retorno < 0) {return 6;}
+                retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
+		if (retorno < 0) {return 6;}
+
 	scr_printf("\t\tBOOT icons\n");
 		retorno = write_embed(&boot_icn, size_boot_icn, "BOOT", "SYSTEM.icn",mcport);
 		if (retorno < 0) {return 6;}
