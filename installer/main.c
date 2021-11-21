@@ -82,6 +82,15 @@ static int pad_inited = 0;
 #include "FUNTUNA_FORK_INSTALLER_SUCESS.h"
 #include "FUNTUNA_FORK_INSTALLER_FAIL.h"
 
+#include "ERROR_MESSAGES/FOUND_APPS.h"
+#include "ERROR_MESSAGES/FOUND_BOOT.h"
+#include "ERROR_MESSAGES/FOUND_FORTUNA.h"
+#include "ERROR_MESSAGES/FOUND_FUNTUNA.h"
+#include "ERROR_MESSAGES/FOUND_OPENTUNA.h"
+#include "ERROR_MESSAGES/NOT_ENOUGH_SPACE.h"
+#include "ERROR_MESSAGES/NO_MEMORY_CARD.h"
+#include "ERROR_MESSAGES/NO_PS2_MC.h"
+
 enum OPENTUNA_VARIANTS
 {
 	SLIMS = 0,	  // fat 0x190 and every 0x2?? ROM
@@ -92,6 +101,23 @@ enum OPENTUNA_VARIANTS
 	
 	OPENTUNA_VARIANTS_AMMOUNT
 };
+
+enum INSTALL_ERRORS
+{
+	INST_SUCESS = 0,
+	NO_MEMORY_CARD,
+	NO_PS2_MEMORY_CARD,
+	NOT_ENOUGH_SPACE,
+	FORTUNA_FOUND,
+	OPENTUNA_FOUND,
+	FUNTUNA_FORK_FOUND,
+	BOOT_FOLDER_EXISTS,
+	APPS_FOLDER_EXISTS,
+	
+	
+	TOTAL_ERRORS
+};
+
 char* ICONTYPE_ALIAS[4] = {"190+","110+","170 ","100 "};
 
 int GetIconType(unsigned long int ROMVERSION)
@@ -231,25 +257,29 @@ static int install(int mcport, int icon_variant)
 	mcSync(0, NULL, &ret);
 
 	//If there's no MC, we have an error:
-	if (ret != -1){return 1;}
+	if (ret != -1){return NO_MEMORY_CARD;}
 
 	//If it is not a PS2 MC, we have an error:
-	if (mc_Type != 2){return 2;}
+	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
 
 	//If there's no free space, we have an error:
-	if (mc_Free < 2000){return 3;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
+	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 
 	//If the files exists, we have an error:
 	if (mcport == 0) {
-	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.icn")) {return 4;}
-	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.sys")) {return 4;}
-	if (file_exists("mc0:/BXEXEC-FUNTUNA/icon.icn")) {return 4;}
-	if (file_exists("mc0:/BXEXEC-FUNTUNA/icon.sys")) {return 4;}
+	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.icn")) {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.sys")) {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc0:/BXEXEC-FUNTUNA/icon.icn"))  {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc0:/BXEXEC-FUNTUNA/icon.sys"))  {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc0:/OPENTUNA/icon.sys"))        {return OPENTUNA_FOUND;}
+	if (file_exists("mc0:/FORTUNA/icon.sys"))         {return FORTUNA_FOUND;}
 	} else {
-	if (file_exists("mc1:/BXEXEC-OPENTUNA/icon.icn")) {return 4;}
-	if (file_exists("mc1:/BXEXEC-OPENTUNA/icon.sys")) {return 4;}
-	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.icn")) {return 4;}
-	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.sys")) {return 4;}
+	if (file_exists("mc1:/BXEXEC-OPENTUNA/icon.icn")) {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc1:/BXEXEC-OPENTUNA/icon.sys")) {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.icn"))  {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc1:/BXEXEC-FUNTUNA/icon.sys"))  {return FUNTUNA_FORK_FOUND;}
+	if (file_exists("mc1:/OPENTUNA/icon.sys"))        {return OPENTUNA_FOUND;}
+	if (file_exists("mc1:/FORTUNA/icon.sys"))         {return FORTUNA_FOUND;}
 	}
 	//FOLDERS
 	scr_printf("\tCreating Folders...\n");
@@ -407,7 +437,49 @@ static void CleanUp(void) //trimmed from FMCB
 	gs_set_fill_color(0, 0, 0);
 	gs_fill_rect(0, 0, gs_get_max_x(), gs_get_max_y());
 }
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void tell_the_user_wtf_happened(int retval)
+{
+	scr_clear();
+	switch (retval)
+	{
+		case NO_MEMORY_CARD:
+			display_bmp(640, 448, _NO_MEMORY_CARD);
+			break;
+			
+		case NO_PS2_MEMORY_CARD:
+			display_bmp(640, 448, NO_PS2_MC);
+			break;
+			
+		case NOT_ENOUGH_SPACE:
+			display_bmp(640, 448, _NOT_ENOUGH_SPACE);
+			break;
+			
+		case FORTUNA_FOUND:
+			display_bmp(640, 448, FOUND_FORTUNA);
+			break;
+			
+		case OPENTUNA_FOUND:
+			display_bmp(640, 448, FOUND_OPENTUNA);
+			break;
+			
+		case FUNTUNA_FORK_FOUND:
+			display_bmp(640, 448, FOUND_FUNTUNA);
+			break;
+			
+		case BOOT_FOLDER_EXISTS:
+			display_bmp(640, 448, FOUND_BOOT);
+			break;
+			
+		case APPS_FOLDER_EXISTS:
+			display_bmp(640, 448, FOUND_APPS);
+			break;
+			
+		default:
+			display_bmp(640, 448, FAIL);
+	}
+	scr_printf("\n\n\nERROR CODE: [%d]",retval);
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //close program and go to browser
 static void PS2_browser(void)
@@ -468,7 +540,7 @@ int main (int argc, char *argv[])
 			}
 			else {
 				menuactual = 103;
-				display_bmp(640,448,FAIL);
+				tell_the_user_wtf_happened(iz);
 				//error
 			}
 		}
@@ -482,7 +554,7 @@ int main (int argc, char *argv[])
 			}
 			else {
 				menuactual = 103;
-				display_bmp(640,448,FAIL);
+				tell_the_user_wtf_happened(iz);
 				//error
 			}
 		}

@@ -36,7 +36,7 @@ endif
 all: $(EE_BIN)
 
 clean:
-	rm -f -r $(EE_OBJS) $(EE_BIN)
+#	rm -f -r $(EE_OBJS) $(EE_BIN)
 
 include $(PS2SDKSRC)/Defs.make
 include Rules.make
