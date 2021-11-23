@@ -233,12 +233,12 @@ static void InitPS2(void)
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
-	sbv_patch_fileio();// THANKS fjtrujy
 	sbv_patch_disable_prefix_check();
 	SifLoadModule("rom0:SIO2MAN", 0, NULL);
 	SifLoadModule("rom0:MCMAN", 0, NULL);
 	SifLoadModule("rom0:MCSERV", 0, NULL);
 	SifLoadModule("rom0:PADMAN", 0, NULL);
+	sbv_patch_fileio();// THANKS fjtrujy
 
 	//Faltaba iniciar la MC (alexparrado)
 	mcInit(MC_TYPE_MC);
