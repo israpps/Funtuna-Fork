@@ -7,6 +7,7 @@ EE_SRC =   FMCB_ELF.s CFG_ELF.s opl_elf.s ule_elf.s apps_icn.s apps_sys.s powero
 EE_LIBS = -ldebug -lcdvd -lpatches -lpad -lmc
 
 all:
+	@echo Building FunTuna Fork Installer
 	$(MAKE) $(EE_BIN_PACKED)
 
 # BOOT

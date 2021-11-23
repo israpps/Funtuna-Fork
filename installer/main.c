@@ -233,7 +233,7 @@ static void InitPS2(void)
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
-
+	sbv_patch_fileio();// THANKS fjtrujy
 	sbv_patch_disable_prefix_check();
 	SifLoadModule("rom0:SIO2MAN", 0, NULL);
 	SifLoadModule("rom0:MCMAN", 0, NULL);
@@ -297,32 +297,52 @@ static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
 	scr_printf("Installing for memory card %u...\n",mcport);
-	char version_manifest_path[31];
-	char opl_settings_location[25];
-	char temp_path[128];
+	char version_manifest_path[32];
+	char opl_settings_location[32];
+	char opl_daily_bulshit_cnf[32];
+	char temp_path[32];
 	sprintf(opl_settings_location, "mc%u:/OPL/conf_opl.cfg", mcport);
-	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport); 
-	int ret, fd, retorno;
-	static int mc_Type, mc_Free, mc_Format;
+	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport);
+	int ret,
+		fd, 
+		retorno, 
+		must_kill_opl_folder = 0;
+	static int  mc_Type, 
+				mc_Free, 
+				mc_Format;
 
 	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
 	mcSync(0, NULL, &ret);
-
-	//If there's no MC, we have an error:
 	if (ret != -1){return NO_MEMORY_CARD;}
-
-	//If it is not a PS2 MC, we have an error:
 	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
-	sprintf(temp_path,"mc%u:/BOOT", mcport);
-	DeleteFolder(temp_path);
+	
+	sprintf(temp_path,"mc%u:BOOT", mcport);
+		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:APPS", mcport);
-	DeleteFolder(temp_path);
+		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
-	DeleteFolder(temp_path);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:BXEXEC-FUNTUNA", mcport);
+		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:FORTUNA", mcport);
-	DeleteFolder(temp_path);
+		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:OPENTUNA", mcport);
+		DeleteFolder(temp_path);
+	
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elm.cfg", mcport);// if OPL DB settings file found delete OPL directory to avoid problems when Official OPL reads the cfg files
+	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elmz.cfg", mcport);// same as above
+	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_game.cfg", mcport);//This isn't related to OPL DB, but the absensce of this file could indicate that OPL folder containts old settings (pre 1.1.0), delete to avoid famous black screen shit
+	if (!file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	
+	if (must_kill_opl_folder == 1)
+	{
+	sprintf(temp_path,"mc%u:OPL", mcport);
 	DeleteFolder(temp_path);
+	}
+	
 	//If there's no free space, we have an error:
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 
