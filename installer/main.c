@@ -175,19 +175,70 @@ static void display_bmp(u16 W, u16 H, u32 *data)
 	);
 }
 //=============================================================
+/// DeleteFolder(); function was obtained from softdev1 installer, wich is based on SP193's FreeMcBoot installer.
+//thanks to both alex parrado and SP193 for all their work
+static int DeleteFolder(const char *folder)
+{
+	DIR *d = opendir(folder);
+	size_t path_len = strlen(folder);
+	int r = -1;
 
+	if (d)
+	{
+		scr_printf("Detected [%s], deleting...\n",folder);
+		struct dirent *p;
+
+		r = 0;
+		while (!r && (p = readdir(d)))
+		{
+			int r2 = -1;
+			char *buf;
+			size_t len;
+
+			/* Skip the names "." and ".." as we don't want to recurse on them. */
+			if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
+				continue;
+
+			len = path_len + strlen(p->d_name) + 2;
+			buf = malloc(len);
+
+			if (buf)
+			{
+				struct stat statbuf;
+
+				snprintf(buf, len, "%s/%s", folder, p->d_name);
+				if (!stat(buf, &statbuf))
+				{
+					if (S_ISDIR(statbuf.st_mode))
+						r2 = DeleteFolder(buf);
+					else
+						r2 = unlink(buf);
+				}
+				free(buf);
+			}
+			r = r2;
+		}
+		closedir(d);
+	}
+
+	if (!r)
+		r = rmdir(folder);
+
+	return r;
+}
+//=============================================================
 static void InitPS2(void)
 {
 	Reset_IOP();
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
-
 	sbv_patch_disable_prefix_check();
 	SifLoadModule("rom0:SIO2MAN", 0, NULL);
 	SifLoadModule("rom0:MCMAN", 0, NULL);
 	SifLoadModule("rom0:MCSERV", 0, NULL);
 	SifLoadModule("rom0:PADMAN", 0, NULL);
+	sbv_patch_fileio();// THANKS fjtrujy
 
 	//Faltaba iniciar la MC (alexparrado)
 	mcInit(MC_TYPE_MC);
@@ -245,23 +296,53 @@ static int write_embed_replace(void *embed_file, const int embed_size, char* fol
 static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
-	scr_printf("Installing for memory card %u...\n",mcport);
-	char version_manifest_path[31];
-	char opl_settings_location[25];
+	scr_printf("\n\n\nInstalling for memory card %u...\n",mcport);
+	char version_manifest_path[32];
+	char opl_settings_location[32];
+	char opl_daily_bulshit_cnf[32];
+	char temp_path[32];
 	sprintf(opl_settings_location, "mc%u:/OPL/conf_opl.cfg", mcport);
-	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport); 
-	int ret, fd, retorno;
-	static int mc_Type, mc_Free, mc_Format;
+	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport);
+	int ret,
+		fd, 
+		retorno, 
+		must_kill_opl_folder = 0;
+	static int  mc_Type, 
+				mc_Free, 
+				mc_Format;
 
 	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
 	mcSync(0, NULL, &ret);
-
-	//If there's no MC, we have an error:
 	if (ret != -1){return NO_MEMORY_CARD;}
-
-	//If it is not a PS2 MC, we have an error:
 	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
-
+	
+	sprintf(temp_path,"mc%u:BOOT", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:APPS", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:BXEXEC-FUNTUNA", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:FORTUNA", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:OPENTUNA", mcport);
+		DeleteFolder(temp_path);
+	
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elm.cfg", mcport);// if OPL DB settings file found delete OPL directory to avoid problems when Official OPL reads the cfg files
+	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elmz.cfg", mcport);// same as above
+	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	
+	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_game.cfg", mcport);//This isn't related to OPL DB, but the absensce of this file could indicate that OPL folder containts old settings (pre 1.1.0), delete to avoid famous black screen shit
+	if (!file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
+	
+	if (must_kill_opl_folder == 1)
+	{
+	sprintf(temp_path,"mc%u:OPL", mcport);
+	DeleteFolder(temp_path);
+	}
+	
 	//If there's no free space, we have an error:
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 
