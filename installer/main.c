@@ -296,7 +296,7 @@ static int write_embed_replace(void *embed_file, const int embed_size, char* fol
 static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
-	scr_printf("Installing for memory card %u...\n",mcport);
+	scr_printf("\n\n\nInstalling for memory card %u...\n",mcport);
 	char version_manifest_path[32];
 	char opl_settings_location[32];
 	char opl_daily_bulshit_cnf[32];

@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include <unistd.h>
 //#include <osd_config.h>
 //#include <libcdvd.h>
 #include <debug.h>
