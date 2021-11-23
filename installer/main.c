@@ -175,7 +175,58 @@ static void display_bmp(u16 W, u16 H, u32 *data)
 	);
 }
 //=============================================================
+/// DeleteFolder(); function was obtained from softdev1 installer, wich is based on SP193's FreeMcBoot installer.
+//thanks to both alex parrado and SP193 for all their work
+static int DeleteFolder(const char *folder)
+{
+	DIR *d = opendir(folder);
+	size_t path_len = strlen(folder);
+	int r = -1;
 
+	if (d)
+	{
+		scr_printf("Detected [%s], deleting...\n",folder);
+		struct dirent *p;
+
+		r = 0;
+		while (!r && (p = readdir(d)))
+		{
+			int r2 = -1;
+			char *buf;
+			size_t len;
+
+			/* Skip the names "." and ".." as we don't want to recurse on them. */
+			if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
+				continue;
+
+			len = path_len + strlen(p->d_name) + 2;
+			buf = malloc(len);
+
+			if (buf)
+			{
+				struct stat statbuf;
+
+				snprintf(buf, len, "%s/%s", folder, p->d_name);
+				if (!stat(buf, &statbuf))
+				{
+					if (S_ISDIR(statbuf.st_mode))
+						r2 = DeleteFolder(buf);
+					else
+						r2 = unlink(buf);
+				}
+				free(buf);
+			}
+			r = r2;
+		}
+		closedir(d);
+	}
+
+	if (!r)
+		r = rmdir(folder);
+
+	return r;
+}
+//=============================================================
 static void InitPS2(void)
 {
 	Reset_IOP();
@@ -248,6 +299,7 @@ static int install(int mcport, int icon_variant)
 	scr_printf("Installing for memory card %u...\n",mcport);
 	char version_manifest_path[31];
 	char opl_settings_location[25];
+	char temp_path[128];
 	sprintf(opl_settings_location, "mc%u:/OPL/conf_opl.cfg", mcport);
 	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport); 
 	int ret, fd, retorno;
@@ -261,7 +313,16 @@ static int install(int mcport, int icon_variant)
 
 	//If it is not a PS2 MC, we have an error:
 	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
-
+	sprintf(temp_path,"mc%u:/BOOT", mcport);
+	DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:APPS", mcport);
+	DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
+	DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:FORTUNA", mcport);
+	DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:OPENTUNA", mcport);
+	DeleteFolder(temp_path);
 	//If there's no free space, we have an error:
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 
