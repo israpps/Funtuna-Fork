@@ -315,7 +315,7 @@ static int install(int mcport, int icon_variant)
 	mcSync(0, NULL, &ret);
 	if (ret != -1){return NO_MEMORY_CARD;}
 	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
-	
+	//  CLEANUP
 	sprintf(temp_path,"mc%u:BOOT", mcport);
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:APPS", mcport);
@@ -342,7 +342,7 @@ static int install(int mcport, int icon_variant)
 	sprintf(temp_path,"mc%u:OPL", mcport);
 	DeleteFolder(temp_path);
 	}
-	
+	// /CLEANUP
 	//If there's no free space, we have an error:
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 
