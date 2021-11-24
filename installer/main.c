@@ -175,8 +175,8 @@ static void display_bmp(u16 W, u16 H, u32 *data)
 	);
 }
 //=============================================================
-/// DeleteFolder(); function was obtained from softdev1 installer, wich is based on SP193's FreeMcBoot installer.
-//thanks to both alex parrado and SP193 for all their work
+/// DeleteFolder(); function was SP193's FreeMcBoot installer.
+//thanks to SP193 for all his work
 static int DeleteFolder(const char *folder)
 {
 	DIR *d = opendir(folder);
