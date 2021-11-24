@@ -6,6 +6,11 @@ EE_OBJS += FMCB_ELF.o CFG_ELF.o opl_elf.o ule_elf.o apps_icn.o apps_sys.o powero
 EE_SRC =   FMCB_ELF.s CFG_ELF.s opl_elf.s ule_elf.s apps_icn.s apps_sys.s poweroff_elf.s FUNTUNA_USBHDFSD.s FUNTUNA_USBD.s ule_cnf.s boot_sys.s boot_icn.s exploit_sys.s exploit_bin.s FMCB_CNF.s OpenTuna_SLIMS.s OpenTuna_FAT-170.s OpenTuna_FAT-110-120-150-160.s opl_icn.s opl_sys.s opl_cfg.s opl_cfg1.s opl_dualshock.s
 EE_LIBS = -ldebug -lcdvd -lpatches -lpad -lmc
 
+ifeq ($(BOOT_FUNTUNA_ON_SUCCESS),1)
+	EE_CFLAGS += -DBOOT_FUNTUNA_ON_SUCCESS -DELF_LAUNCHER
+endif
+
+
 all:
 	@echo Building FunTuna Fork Installer
 	$(MAKE) $(EE_BIN_PACKED)
@@ -96,6 +101,11 @@ clean:
 	@rm -fr *.o $(EE_BIN_PACKED) $(EE_BIN_STRIPPED) $(EE_BIN)
 	@echo ...embedded resources
 	@rm -fr FMCB_ELF.* FMCB_CNF.* CFG_ELF.* opl_elf.* ule_elf.* apps_icn.* apps_sys.* poweroff_elf.* FUNTUNA_USBHDFSD.* FUNTUNA_USBD.* ule_cnf.* boot_sys.* boot_icn.* OpenTuna_SLIMS.* OpenTuna_FAT-170.* OpenTuna_FAT-110-120-150-160.* opl_icn.* opl_sys.* opl_cfg.* opl_cfg1.* opl_dualshock.*
+
+clean-bin:
+	@rm $(EE_BIN_PACKED) 
+	@rm $(EE_BIN_STRIPPED) 
+	@rm $(EE_BIN)
 
 $(EE_BIN_STRIPPED): $(EE_BIN)
 	$(EE_STRIP) -o $@ $<
