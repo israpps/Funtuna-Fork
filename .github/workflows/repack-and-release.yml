@@ -60,7 +60,7 @@ jobs:
         name: FunTuna
         path: |
              __Release/*.7z
-#             installer/FunTuna-Fork_Installer.ELF
+             installer/FunTuna-Fork_Installer.ELF
  
     - name: Create release
       if: github.ref == 'refs/heads/main'
@@ -71,4 +71,4 @@ jobs:
         title: "Latest automated Repack"
         files: |
                 __Release/*.7z
-#                installer/FunTuna-Fork_Installer.ELF
+                installer/FunTuna-Fork_Installer.ELF
