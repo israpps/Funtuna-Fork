@@ -13,7 +13,7 @@ NEWLIB_NANO = 1
 KERNEL_NOPATCH = 1
 DUMMY_LIBC_INIT = 1
 
-EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib --gc-sections
+EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
 EE_CFLAGS := -mno-gpopt -G0 -ffunction-sections
 all: $(EE_BIN_PACKED)
