@@ -45,3 +45,5 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 - Installer based on Opentuna installer
 - FreeMcBoot and configurator are slightly smaller
 - Automatically updated if uLaunchELF or OPL are updated
+- FreeMcBoot Ported to latest SDK by [Alex Parrado](https://github.com/parrado)
+- FreeMcBoot Configurator Ported to lates SDK by [El_isra](https://github.com/israpps)
