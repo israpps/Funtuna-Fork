@@ -16,7 +16,7 @@ on:
 #   - cron: "0 15 * * 2,5"
 jobs:
   Build-FreeMcBoot-and-Configurator:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     container: ps2dev/ps2dev:latest
     steps:
 
