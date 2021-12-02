@@ -1,6 +1,7 @@
 name: Release Funtuna
 on:
   workflow_dispatch:
+  pull_request:
   repository_dispatch:
     types: [Component_update]
   push:
