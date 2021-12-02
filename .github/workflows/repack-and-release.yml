@@ -17,7 +17,7 @@ on:
 jobs:
   Build-FreeMcBoot-and-Configurator:
     runs-on: ubuntu-latest
-    container: ps2dev/ps2dev:latest
+    container: ps2dev/ps2dev:v1.2.0
     steps:
 
     - name: Install dependencies
