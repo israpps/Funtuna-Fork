@@ -2384,8 +2384,8 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 	fmcb->OSD_displayitems = 7;
 	strcpy(fmcb->OSD_cursor[0], "o009");
 	strcpy(fmcb->OSD_cursor[1], "o008");
-	strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60 v1.0.0r0.60]y-00");
-	strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99 based on FreeMcBoot 1.0 y-00r0.00");
+	strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60 %VER%r0.60]y-00");
+	strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99 based on FreeMcBoot 1.8 y-00r0.00");
 	//selected color
 	OSDSYS_selected_color[0] = strtol("0x10", NULL, 16);    // hex base
 	OSDSYS_selected_color[1] = strtol("0x80", NULL, 16);    // hex base

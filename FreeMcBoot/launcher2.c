@@ -53,11 +53,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <osd_config.h>
-#include <libcdvd.h>
+#include <libcdvdmod.h>
 #include <malloc.h>
 #include <debug.h>
 #include "splash.h"
 //#include "loading.h"
+
+void _ps2sdk_libc_init() {}
+void _ps2sdk_libc_deinit() {}
 
 #define MAX_PATH 260
 
@@ -414,10 +417,11 @@ char *replace_var(char *str, char *orig, char *rep)
 int loadConfig(void)
 {
 	char *CNF_LOADED;
-	char *version = "1.0.1";
+	char *version = "2.0.";
+	//char CFNBUFFER[64];
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
-	char tsts[20];
+	char tsts[64];
 	char path[MAX_PATH];
 	unsigned char *CNF_p, *name, *value;
 	char hexvalue_buf[4];
@@ -432,7 +436,8 @@ int loadConfig(void)
 		fd = -1;
 		if (boot_from_mc == 1)      //if booting from MC1
 			path[2] = '1';          //try with MC1 first
-		fd = open(path, O_RDONLY);  // Try to open cnf from the MC that FMCB was booted from
+		fd = open(path, O_RDONLY);  // Try to open cnf from the MC that FMCB was booted from	
+
 		if (fd < 0) {
 			if (boot_from_mc == 1)
 				path[2] = '0';
@@ -440,6 +445,9 @@ int loadConfig(void)
 				path[2] = '1';
 			fd = -1;
 			fd = open(path, O_RDONLY);  // Try to open cnf from the other MC
+			
+
+			
 			if (boot_from_mc == 1)
 				CNF_LOADED = "mc0";  //set  %CNF% wildcard
 			else
@@ -449,7 +457,8 @@ int loadConfig(void)
 			if (boot_from_mc == 1)
 				CNF_LOADED = "mc1";  //set  %CNF% wildcard
 			else
-				CNF_LOADED = "mc0";  //set  %CNF% wildcard
+				CNF_LOADED = "mc0";  //set  %CNF% wildcard				
+
 		}
 		if (fd < 0) {
 		failed_load:
@@ -478,6 +487,7 @@ int loadConfig(void)
 
 	CNF_RAM_p = (char *)malloc(CNF_size);
 	//scr_printf("\n\t CNF_RAM_p: %08x\n", (u32)CNF_RAM_p);
+	
 
 	if (dummy_p != NULL) {
 		free(dummy_p);
@@ -489,10 +499,13 @@ int loadConfig(void)
 		close(fd);
 		goto failed_load;
 	}
+	
+	
 
 	read(fd, CNF_p, CNF_size);  // Read CNF as one long string
 	close(fd);
 	CNF_p[CNF_size] = '\0';  // Terminate the CNF string
+	
 
 	CNF_version = 0;  // The CNF version is still unidentified
 	for (var_cnt = 0; get_CNF_string(&CNF_p, &name, &value); var_cnt++) {
@@ -568,21 +581,14 @@ int loadConfig(void)
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
 			version[strlen(version)] = '0';  // kill null terminator (besause the string might continue after wildcard)
-			value = replace_var(value, "%VER%", version);
-			OSDSYS.menu_top_delimiter = value;
+			//value = replace_var(value, "%VER%", version);
+			OSDSYS.menu_top_delimiter = replace_var(value, "%VER%", version);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
-			/*if (!strcmp(value, "@CNFPATH"))
-			{
-				char* vall = "c0r0.60y+99Loaded CNF %CNF%y-00r0.00";;
-
-				CNF_LOADED[strlen(CNF_LOADED)] = ':';
-				///sprintf(vall,"c0r0.60y+99Loaded CNF %%CNF%%y-00r0.00");
-				OSDSYS.menu_bottom_delimiter = replace_var(vall, "%CNF%", CNF_LOADED);
-				continue;
-			}//*/
 			OSDSYS.menu_bottom_delimiter = value;
+			
+			//OSDSYS.menu_bottom_delimiter = value;
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_num_displayed_items")) {
@@ -638,8 +644,8 @@ int loadConfig(void)
 			continue;
 		}
 		for (i = 0; i < NEWITEMS; i++) {
-			sprintf(tsts, "name_OSDSYS_ITEM_%d", i + 1);
-			if (!strcmp(name, tsts)) {
+			sprintf(tsts, "name_OSDSYS_ITEM_%d", i + 1);			
+			if (!strcmp(name, tsts)) {				
 				OSDSYS.item_name[i] = value;
 				item_cnt++;
 				break;
@@ -647,7 +653,7 @@ int loadConfig(void)
 		}
 		for (i = 0; i < NEWITEMS; i++) {
 			for (j = 0; j < 3; j++) {
-				sprintf(tsts, "path%1d_OSDSYS_ITEM_%d", j + 1, i + 1);
+				sprintf(tsts, "path%1d_OSDSYS_ITEM_%d", j + 1, i + 1);				
 				if (!strcmp(name, tsts)) {
 					OSDSYS.item_path[i][j] = value;
 					break;
@@ -966,7 +972,8 @@ void patch_menu(u8 *osd)
 
 	menuinfo->menu_ptr = osdmenu;          // store menu pointer
 	menuinfo->num_entries = 2 + item_cnt;  // store number of menu items
-	                                       //menuinfo->num_entries = 2 + NEWITEMS;
+	                                       //menuinfo->num_entries = 2 + NEWITEMS;	                                       
+
 }
 
 
@@ -1939,7 +1946,7 @@ void CleanUp(int iop_reset)
 	// de-Init cdvd, pads and Timer
 	if (iop_reset) {
 		if (!isEarlyJap) {
-			cdInit(CDVD_INIT_EXIT);
+			sceCdInit(CDVD_INIT_EXIT);
 			cdvdrpc_inited = 0;
 		}
 	}
@@ -1950,7 +1957,6 @@ void CleanUp(int iop_reset)
 			padPortClose(0, 0);
 			padPortClose(1, 0);
 			padEnd();
-			padReset();
 			pad_inited = 0;
 		}
 	}
@@ -2225,13 +2231,13 @@ void load_elf(char *elf_path)
 	SifLoadFileExit();
 
 	if (isEarlyJap) {
-		cdInit(CDVD_INIT_INIT);
+		sceCdInit(CDVD_INIT_INIT);
 		cdvdrpc_inited = 1;
 	}
 
 	// If here for DVDV check, wait disk is ready
 	if (!strcmp(elf_path, "DVDV_CHECK"))
-		cdDiskReady(0);
+		sceCdDiskReady(0);
 
 	ret = Check_ESR_Disc();
 
@@ -2255,12 +2261,12 @@ void load_elf(char *elf_path)
 
 	// PS2DVD launch handling
 	if (!strcmp(elf_path, "PS2DVD")) {
-		cdDiskReady(0);
+		sceCdDiskReady(0);
 		if (CNF_RAM_p != NULL)
 			free(CNF_RAM_p);
 		Read_SYSTEM_CNF(cdboot_path, ver);
 		args[0] = cdboot_path;
-		cdInit(CDVD_INIT_EXIT);
+		sceCdInit(CDVD_INIT_EXIT);
 		SifExitRpc();                          //some programs need it to be here
 		LoadExecPS2("rom0:PS2LOGO", 1, args);  // Launch PS2 Game with rom0:PS2LOGO
 	}
@@ -2295,7 +2301,7 @@ void load_elf(char *elf_path)
 					args[2] = "-m rom0:MCSERV";
 					sprintf(arg, "-x %s", dvdpl_path);  // -x :elf is encrypted for mc
 					args[3] = arg;
-					cdInit(CDVD_INIT_EXIT);
+					sceCdInit(CDVD_INIT_EXIT);
 					SifExitRpc();
 					LoadExecPS2("moduleload", 4, args);
 				}
@@ -2314,7 +2320,7 @@ void load_elf(char *elf_path)
 			}
 			if (CNF_RAM_p != NULL)
 				free(CNF_RAM_p);
-			cdInit(CDVD_INIT_EXIT);
+			sceCdInit(CDVD_INIT_EXIT);
 			SifExitRpc();
 			LoadExecPS2("moduleload2 rom1:UDNL rom1:DVDCNF", 3, args);
 		} else {
@@ -2355,7 +2361,7 @@ void load_elf(char *elf_path)
 
 	if (CNF_RAM_p != NULL)
 		free(CNF_RAM_p);
-	cdInit(CDVD_INIT_EXIT);
+	sceCdInit(CDVD_INIT_EXIT);
 	SifExitRpc();
 
 	// Execute Elf Loader
@@ -2398,19 +2404,19 @@ int FastBoot_Disc(void)
 
 	i = 0x20000;
 	while (i--)
-		asm("nop\nnop\nnop\nnop");  // small delay for cdStatus
+		asm("nop\nnop\nnop\nnop");  // small delay for sceCdStatus
 
-	if (cdStatus() == CDVD_STAT_OPEN)
+	if (sceCdStatus() == CDVD_STAT_OPEN)
 		return -1;  // If tray is open, no fastboot, return
 
-	while (cdGetDiscType() == CDVD_TYPE_DETECT) {
+	while (sceCdGetDiskType() == CDVD_TYPE_DETECT) {
 		;
 	}  // Trick : if tray is open before
-	if (cdGetDiscType() == CDVD_TYPE_NODISK)
+	if (sceCdGetDiskType() == CDVD_TYPE_NODISK)
 		return -1;  // startup it detects it as closed...
 
-	cdDiskReady(0);
-	cdmode = cdGetDiscType();  // If tray is closed, get disk type
+	sceCdDiskReady(0);
+	cdmode = sceCdGetDiskType();  // If tray is closed, get disk type
 
 	if (cdmode == CDVD_TYPE_NODISK) {
 		return -1;

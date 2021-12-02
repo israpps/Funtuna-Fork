@@ -1,5 +1,19 @@
+.ifdef .gasversion.
+.section .mdebug.abiN32
+.else
+.section .mdebug.eabi64
+.endif
+.previous
+.ifdef .gasversion.
+.nan legacy
+.module singlefloat
+.module oddspreg
+.endif
 .sdata
 
+.align 2
+.type size_init_irx,@object
+.size size_init_irx,4
 .globl size_init_irx
 size_init_irx:	.word 6909
 
@@ -8,6 +22,8 @@ size_init_irx:	.word 6909
 .balign 16
 
 .globl init_irx
+.type init_irx,@object
+.size init_irx,6909
 init_irx:
 
 

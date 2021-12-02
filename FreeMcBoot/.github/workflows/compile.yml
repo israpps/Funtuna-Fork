@@ -1,0 +1,36 @@
+name: Build FMCB ELF
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+  pull_request:
+    
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    container: ps2dev/ps2dev:latest
+    steps:
+    - name: Install dependencies
+      run: |
+        apk add build-base git zip
+    - uses: actions/checkout@v2
+    - run: |
+        git fetch --prune --unshallow
+    
+    - name: Compile
+      run: |
+        make 
+        
+    - name: Get short SHA
+      id: slug
+      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+        
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: FUNTUNA-FMCB
+        path: |
+              BOOT.ELF       	

@@ -15,7 +15,7 @@ DUMMY_LIBC_INIT = 1
 
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib --gc-sections
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
-EE_CFLAGS := -mno-gpopt -G0 -DDUMMY_TIMEZONE -DDUMMY_LIBC_INIT -fdata-sections -ffunction-sections
+EE_CFLAGS := -mno-gpopt -G0 -fdata-sections -ffunction-sections
 all: $(EE_BIN_PACKED)
 	@echo "================ Compiling FreeMcBoot-Configurator ==============="
 
@@ -28,7 +28,7 @@ $(EE_BIN_STRIPPED): $(EE_BIN)
 	$(EE_STRIP) -o $@ $<
 
 $(EE_BIN_PACKED): $(EE_BIN_STRIPPED)
-	ps2-packer $< $@ > /dev/null
+	ps2-packer $< $@
 
 loader.s:
 	@echo "--------------- compiling ELF loader ---------------"
