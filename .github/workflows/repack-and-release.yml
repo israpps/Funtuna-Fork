@@ -1,12 +1,15 @@
 name: Release Funtuna
 on:
   workflow_dispatch:
+  pull_request:
   repository_dispatch:
     types: [Component_update]
   push:
     paths:
       - '__Release/**'
       - 'installer/**'
+      - 'FreeMcBoot-Configurator/**'
+      - 'FreeMcBoot/**'
       - '.github/workflows/repack-and-release.yml'
 
 #  schedule:
@@ -16,26 +19,26 @@ jobs:
   runs-on: ubuntu-latest
     container: ps2dev/ps2dev:latest
     steps:
-    
+
     - name: Install dependencies
       run: |
         apk add build-base git
 
     - name: checkout code for release
       uses: actions/checkout@v1
-      
+
     - name: build FreeMcBoot
       run: |
         cd FreeMcBoot
         make
         cp BOOT.ELF ../BOOT.ELF
-        
+
     - name: build FreeMcBoot Configurator
       run: |
         cd FreeMcBoot-Configurator
         make
         cp CFG.ELF ../CFG.ELF
-      
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -43,24 +46,24 @@ jobs:
         path: |
             CFG.ELF
             BOOT.ELF
-            
+
   Repack_and_Release:
     runs-on: ubuntu-latest
     container: ps2dev/ps2dev:v1.2.0
     steps:
-    
+
     - name: Install dependencies
       run: |
         apk add build-base git zip p7zip
 
     - name: checkout code for release
       uses: actions/checkout@v1
-      
+
     - name: Update wLaunchELF_ISR
       run: |
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
-    
+
     - name: build installer
       run: |
         cd installer
@@ -83,7 +86,7 @@ jobs:
         TARGET=FunTuna\[$SCH\].7z
         echo TARGET is $TARGET
         7z a -t7z -r $TARGET *
-        ls -R 
+        ls -R
 
     - name: Upload artifacts
       if: ${{ success() }}
@@ -93,7 +96,7 @@ jobs:
         path: |
              __Release/*.7z
              installer/FunTuna-Fork_Installer.ELF
- 
+
     - name: Create release
       if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@latest
