@@ -60,15 +60,16 @@ jobs:
         name: FunTuna
         path: |
              __Release/*.7z
-#             installer/FunTuna-Fork_Installer.ELF
+             installer/FunTuna-Fork_Installer.ELF
  
     - name: Create release
       if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
         automatic_release_tag: "latest"
         title: "Latest automated Repack"
         files: |
                 __Release/*.7z
-#                installer/FunTuna-Fork_Installer.ELF
+                installer/FunTuna-Fork_Installer.ELF

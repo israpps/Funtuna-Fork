@@ -82,6 +82,12 @@ static int pad_inited = 0;
 #include "FUNTUNA_FORK_INSTALLER_SUCESS.h"
 #include "FUNTUNA_FORK_INSTALLER_FAIL.h"
 
+#include "ERROR_MESSAGES/INSTALL_QUERY.h"
+#include "ERROR_MESSAGES/ICONQUERY.h"
+#include "ERROR_MESSAGES/ICONQUERY_FAT170.h"
+#include "ERROR_MESSAGES/ICONQUERY_FATS.h"
+#include "ERROR_MESSAGES/ICONQUERY_SLIMS.h"
+
 #include "ERROR_MESSAGES/FOUND_APPS.h"
 #include "ERROR_MESSAGES/FOUND_BOOT.h"
 #include "ERROR_MESSAGES/FOUND_FORTUNA.h"
@@ -151,7 +157,7 @@ static int file_exists(char *filepath)
 }
 
 //--------------------------------------------------------------
-static void Reset_IOP(void)
+static void ResetIOP(void)
 {
 	//parrado
 	SifInitRpc(0);
@@ -164,6 +170,31 @@ static void Reset_IOP(void)
 	SifInitRpc(0);
 }
 //=============================================================
+#ifdef ELF_LAUNCHER
+	void LoadElf(char *filename, char *party)
+	{
+	
+		char *args[1];
+		t_ExecData exec;
+		SifLoadElf(filename, &exec);
+	
+		if (exec.epc > 0)
+		{
+			ResetIOP();
+	
+			if (party != 0)
+			{
+				args[0] = party;
+				ExecPS2((void *)exec.epc, (void *)exec.gp, 1, args);
+			}
+			else
+			{
+				ExecPS2((void *)exec.epc, (void *)exec.gp, 0, NULL);
+			}
+		}
+	}
+#endif
+//--------------------------------------------------------------
 static void display_bmp(u16 W, u16 H, u32 *data)
 {
 	gs_print_bitmap(
@@ -229,7 +260,7 @@ static int DeleteFolder(const char *folder)
 //=============================================================
 static void InitPS2(void)
 {
-	Reset_IOP();
+	ResetIOP();
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
@@ -320,13 +351,13 @@ static int install(int mcport, int icon_variant)
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:APPS", mcport);
 		DeleteFolder(temp_path);
-	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
-		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:BXEXEC-FUNTUNA", mcport);
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:FORTUNA", mcport);
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:OPENTUNA", mcport);
+		DeleteFolder(temp_path);
+	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
 		DeleteFolder(temp_path);
 	
 	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elm.cfg", mcport);// if OPL DB settings file found delete OPL directory to avoid problems when Official OPL reads the cfg files
@@ -426,18 +457,16 @@ static int install(int mcport, int icon_variant)
 		mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
 		mcSync(0, NULL, &ret);		
 				
-	} else {scr_printf("\t THIS PS2 IS NOT COMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");}
+	} else {scr_printf("\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");DeleteFolder(temp_path);}
 	///OPENTUNA
 	
 	//FUNTUNA&APPS
-	scr_printf("\t\tAPPS folder icons\n");
-		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
+	scr_printf("\t\tuLaunchELF\n");
+		retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&apps_icn, size_apps_icn, "APPS","funtuna_apps.icn",mcport);
+		retorno = write_embed(&ule_cnf, size_ule_cnf, "BOOT", "LAUNCHELF.CNF",mcport);
 		if (retorno < 0) {return 6;}
-	scr_printf("\t\tOPL\n");
-		retorno = write_embed(&opl_elf, size_opl_elf, "APPS","OPNPS2LD.ELF",mcport);
-		if (retorno < 0) {return 6;}
+
 	scr_printf("\t\tFreeMcBoot\n");
 		retorno = write_embed(&FMCB_ELF, size_FMCB_ELF, "BOOT", "BOOT.ELF",mcport);
 		if (retorno < 0) {return 6;}
@@ -447,7 +476,7 @@ static int install(int mcport, int icon_variant)
 		retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
         
-        scr_printf("\t\tFreeMcBoot USB drivers\n");
+    scr_printf("\t\tFreeMcBoot USB drivers\n");
 		retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
                 retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
@@ -458,15 +487,18 @@ static int install(int mcport, int icon_variant)
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&boot_sys, size_boot_sys, "BOOT", "icon.sys",mcport);
 		if (retorno < 0) {return 6;}
-	scr_printf("\t\tuLaunchELF\n");
-		retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
-		if (retorno < 0) {return 6;}
-		retorno = write_embed(&ule_cnf, size_ule_cnf, "BOOT", "LAUNCHELF.CNF",mcport);
-		if (retorno < 0) {return 6;}
 	scr_printf("\t\tPoweroff utility\n");
 		retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
 		if (retorno < 0) {return 6;}
 	///FUNTUNA&APPS
+	scr_printf("\t\tAPPS folder icons\n");
+		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
+		if (retorno < 0) {return 6;}
+		retorno = write_embed(&apps_icn, size_apps_icn, "APPS","funtuna_apps.icn",mcport);
+		if (retorno < 0) {return 6;}
+	scr_printf("\t\tOPL\n");
+		retorno = write_embed(&opl_elf, size_opl_elf, "APPS","OPNPS2LD.ELF",mcport);
+		if (retorno < 0) {return 6;}
 	if (!file_exists(opl_settings_location))//If no OPL config file...
 	{
 		scr_printf("\t\tNo OPL settings found!\n\t\t Loading Preconfigured OPL Folder...\n");
@@ -491,7 +523,7 @@ static void CleanUp(void) //trimmed from FMCB
 		padEnd(); 
 	}
 
-	Reset_IOP();
+	ResetIOP();
 
 	// Reloads common modules
 	SifLoadFileInit();
@@ -562,6 +594,44 @@ void tell_the_user_wtf_happened(int retval)
 	scr_printf("\n\n\nERROR CODE: [%d]",retval);
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+int IconQuery(int default_icon_type)
+{
+	switch (default_icon_type)
+	{
+		case SLIMS:
+			display_bmp(640, 448, ICONQUERY_SLIMS);
+			break;
+		case FATS:
+			display_bmp(640, 448, ICONQUERY_FATS);
+			break;
+		case FAT170:
+			display_bmp(640, 448, ICONQUERY_FAT170);
+			break;
+		default:
+			display_bmp(640, 448, ICONQUERY);
+	}
+	
+	while (1)
+	{
+		readPad();
+		if (new_pad & PAD_TRIANGLE)     return SLIMS;
+		if (new_pad & PAD_CROSS)  		return FATS;
+		if (new_pad & PAD_SQUARE) 		return FAT170;
+
+	}
+}
+int Choose_Install_Mode(int default_icon_type)
+{
+	display_bmp(640, 448, INSTALL_QUERY);
+	while (1)
+	{
+		readPad();
+		if (new_pad & PAD_R2) return default_icon_type;
+		
+		if (new_pad & PAD_L2) return IconQuery(default_icon_type);
+	}
+}
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //close program and go to browser
 static void PS2_browser(void)
 {
@@ -596,52 +666,59 @@ int main (int argc, char *argv[])
 		gs_init(PAL_640_512_32);
 	else
 		gs_init(NTSC_640_448_32);
-
-	//display_bmp(640, 448, inst);
-	//display_bmp(640, 448, BG);
 	icontype = GetIconType(ROM_VERSION);
 	waitAnyPadReady();
 	pad_inited = 1;
 
-	int iz = 1;
+	int iz = 1, mcport;
 	int menuactual = 101;//101: Initial Menu, 102: Installing (not needed), 103: Error, 104: Done
 	//printf("FunTuna Fork Installer\n\nPress L1 to install on memory card 1 | Press R1 to install on memory card 2");
 
-	display_bmp(640, 448, WELCOME);//Again, just in case of an old japanese console
+	display_bmp(640, 448, WELCOME);
 	while (1) {
 		readPad();
 
 		if ( (new_pad & PAD_L1) && (menuactual == 101) ) {
 			menuactual = 102;
-			//display_bmp(640, 448, wait);
-			iz = install(0,icontype);
+			mcport = 0;
+			//iz = install(mcport, icontype);
+			iz = install(mcport, Choose_Install_Mode(icontype));
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);
-			}
-			else {
-				menuactual = 103;
+			} else {
+				menuactual = 103;//error
 				tell_the_user_wtf_happened(iz);
-				//error
 			}
 		}
 		else if ( (new_pad & PAD_R1) && (menuactual == 101) ) {
 			menuactual = 102;
-			//display_bmp(640, 448, wait);
-			iz = install(1,icontype);
+			mcport = 1;
+			//iz = install(mcport, icontype);
+			iz = install(mcport, Choose_Install_Mode(icontype));
 			if(iz == 0){
 				menuactual = 104;
 				display_bmp(640, 448, SUCESS);
-			}
-			else {
-				menuactual = 103;
+			} else {
+				menuactual = 103;//error
 				tell_the_user_wtf_happened(iz);
-				//error
 			}
 		}
 
 		else if ((new_pad & PAD_START) && (menuactual == 103)) {PS2_browser();}
-		else if ((new_pad & PAD_START) && (menuactual == 104)) {PS2_browser();}
+		else if ((new_pad & PAD_START) && (menuactual == 104)) 
+		{
+#ifdef BOOT_FUNTUNA_ON_SUCCESS
+			if (mcport==0){
+				if (file_exists("mc0:/BOOT/BOOT.ELF")) 
+					LoadElf("mc0:/BOOT/BOOT.ELF", "mc0:/BOOT/");
+			} else {
+				if (file_exists("mc1:/BOOT/BOOT.ELF")) 
+					LoadElf("mc1:/BOOT/BOOT.ELF", "mc1:/BOOT/");
+			}
+#endif
+			PS2_browser();
+		}
 	}
 
 	return 0;
