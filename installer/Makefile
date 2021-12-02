@@ -15,9 +15,12 @@ all:
 	@echo Building FunTuna Fork Installer
 	$(MAKE) $(EE_BIN_PACKED)
 FREEMCBOOT:
+	test -f ../FreeMcBoot/BOOT.ELF || make -C ../FreeMcBoot clean all
 	cp ../FreeMcBoot/BOOT.ELF INSTALLER_CONTENTS/BOOT/BOOT.ELF
 FREEMCBOOT_CONFIGURATOR:
+	test -f ../FreeMcBoot-Configurator/CFG.ELF || make -C ../FreeMcBoot-Configurator clean all
 	cp ../FreeMcBoot-Configurator/CFG.ELF INSTALLER_CONTENTS/BOOT/CFG.ELF
+
 # BOOT
 FMCB_ELF.s: FREEMCBOOT
 	@bin2s INSTALLER_CONTENTS/BOOT/BOOT.ELF FMCB_ELF.s FMCB_ELF
@@ -104,6 +107,10 @@ clean:
 	@rm -fr *.o $(EE_BIN_PACKED) $(EE_BIN_STRIPPED) $(EE_BIN)
 	@echo ...embedded resources
 	@rm -fr FMCB_ELF.* FMCB_CNF.* CFG_ELF.* opl_elf.* ule_elf.* apps_icn.* apps_sys.* poweroff_elf.* FUNTUNA_USBHDFSD.* FUNTUNA_USBD.* ule_cnf.* boot_sys.* boot_icn.* OpenTuna_SLIMS.* OpenTuna_FAT-170.* OpenTuna_FAT-110-120-150-160.* opl_icn.* opl_sys.* opl_cfg.* opl_cfg1.* opl_dualshock.*
+
+clean-fmcb:
+	make -C ../FreeMcBoot-Configurator clean
+	make -C ../FreeMcBoot clean
 
 clean-bin:
 	@rm $(EE_BIN_PACKED) 

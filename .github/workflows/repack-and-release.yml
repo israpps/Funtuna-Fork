@@ -15,40 +15,41 @@ on:
 #  schedule:
 #   - cron: "0 15 * * 2,5"
 jobs:
-  Build-FreeMcBoot-and-Configurator:
-    runs-on: ubuntu-latest
-    container: ps2dev/ps2dev:v1.2.0
-    steps:
-
-    - name: Install dependencies
-      run: |
-        apk add build-base git
-
-    - name: checkout code for release
-      uses: actions/checkout@v1
-
-    - name: build FreeMcBoot
-      run: |
-        cd FreeMcBoot
-        make
-        cp BOOT.ELF ../BOOT.ELF
-
-    - name: build FreeMcBoot Configurator
-      run: |
-        cd FreeMcBoot-Configurator
-        make
-        cp CFG.ELF ../CFG.ELF
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ELFS
-        path: |
-            CFG.ELF
-            BOOT.ELF
-
+#  Build-FreeMcBoot-and-Configurator:
+#    runs-on: ubuntu-latest
+#    container: ps2dev/ps2dev:v1.2.0
+#    steps:
+#
+#    - name: Install dependencies
+#      run: |
+#        apk add build-base git
+#
+#    - name: checkout code for release
+#      uses: actions/checkout@v1
+#
+#    - name: build FreeMcBoot
+#      run: |
+#        cd FreeMcBoot
+#        make
+#        cp BOOT.ELF ../BOOT.ELF
+#
+#    - name: build FreeMcBoot Configurator
+#      run: |
+#        cd FreeMcBoot-Configurator
+#        make
+#        cp CFG.ELF ../CFG.ELF
+#
+#    - name: Upload artifacts
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: ELFS
+#        path: |
+#            CFG.ELF
+#            BOOT.ELF
+#
   Repack_and_Release:
     runs-on: ubuntu-latest
+#    needs: Build-FreeMcBoot-and-Configurator
     container: ps2dev/ps2dev:v1.2.0
     steps:
 
@@ -59,11 +60,28 @@ jobs:
     - name: checkout code for release
       uses: actions/checkout@v1
 
+#    - name: Download FreeMcBoot-and-Configurator artifacts
+#      uses: actions/download-artifact@v1
+#      with:
+#        name: ELFS
+
     - name: Update wLaunchELF_ISR
       run: |
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
-
+        
+    - name: Compile FreeMcBoot
+      run: |
+        cd FreeMcBoot
+        make clean
+        make
+        
+    - name: Compile FreeMcBoot-Configurator
+      run: |
+        cd FreeMcBoot-Configurator
+        make clean
+        make
+        
     - name: build installer
       run: |
         cd installer
