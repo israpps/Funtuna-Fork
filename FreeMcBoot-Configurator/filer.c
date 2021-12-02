@@ -736,7 +736,7 @@ int genFixPath(char *inp_path, char *gen_path)
 
 	genLimObjName(path, 0);
 	if(!strncmp(path, "pfs", 3)){
-		ret = fileXioRmdir(path);
+		ret = rmdir(path);
 	}else{
 		ret = fioRmdir(path);
 	}
@@ -774,10 +774,10 @@ int genOpen(char *path, int mode)
 		return -1;
 
 	/*if(!strncmp(path, "pfs", 3)){
-		fd = fileXioOpen(path, mode, fileMode);
+		fd = open(path, mode, fileMode);
 		io = 1;
 	}else{*/
-	fd = fioOpen(path, mode);
+	fd = open(path, mode);
 	io = 0;
 	//}
 	if (fd < 0)
@@ -811,7 +811,7 @@ int genDopen(char *path)
 		fd = fileXioDopen(tmp);
 		io = 3;
 	}else{*/
-	fd = fioDopen(path);
+	fd = fileXioDopen(path);
 	io = 2;
 	//	}
 	if (fd < 0) {
@@ -833,9 +833,9 @@ int genLseek(int fd, int where, int how)
 		return -1;
 
 	//if(gen_io[fd])
-	//	return fileXioLseek(gen_fd[fd], where, how);
+	//	return lseek(gen_fd[fd], where, how);
 	//	else
-	return fioLseek(gen_fd[fd], where, how);
+	return lseek(gen_fd[fd], where, how);
 }
 //------------------------------
 //endfunc genLseek
@@ -848,7 +848,7 @@ int genRead(int fd, void *buf, int size)
 	//	if(gen_io[fd])
 	//		return fileXioRead(gen_fd[fd], buf, size);
 	//	else
-	return fioRead(gen_fd[fd], buf, size);
+	return read(gen_fd[fd], buf, size);
 }
 //------------------------------
 //endfunc genRead
@@ -861,7 +861,7 @@ int genWrite(int fd, void *buf, int size)
 	//	if(gen_io[fd])
 	//		return fileXioWrite(gen_fd[fd], buf, size);
 	//	else
-	return fioWrite(gen_fd[fd], buf, size);
+	return write(gen_fd[fd], buf, size);
 }
 //------------------------------
 //endfunc genWrite
@@ -874,10 +874,10 @@ int genClose(int fd)
 		return -1;
 
 	/*	if(gen_io[fd]==1)
-		ret = fileXioClose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else*/
 	if (gen_io[fd] == 0)
-		ret = fioClose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else
 		return -1;
 	gen_fd[fd] = -1;
@@ -897,7 +897,7 @@ int genDclose(int fd)
 		ret = fileXioDclose(gen_fd[fd]);
 	else */
 	if (gen_io[fd] == 2)
-		ret = fioDclose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else
 		return -1;
 	gen_fd[fd] = -1;
@@ -967,14 +967,14 @@ int genDclose(int fd)
 //--------------------------------------------------------------
 int readMASS(const char *path, FILEINFO *info, int max)
 {
-	fio_dirent_t record;
+	iox_dirent_t record;
 	int n = 0, dd = -1;
 
 	loadUsbModules();
 
-	if ((dd = fioDopen(path)) < 0)
+	if ((dd = fileXioDopen(path)) < 0)
 		goto exit;  //exit if error opening directory
-	while (fioDread(dd, &record) > 0) {
+	while (fileXioDread(dd, &record) > 0) {
 		if ((FIO_SO_ISDIR(record.stat.mode)) && (!strcmp(record.name, ".") || !strcmp(record.name, "..")))
 			continue;  //Skip entry if pseudo-folder "." or ".."
 
@@ -999,7 +999,7 @@ int readMASS(const char *path, FILEINFO *info, int max)
 
 exit:
 	if (dd >= 0)
-		fioDclose(dd);  //Close directory if opened above
+		close(dd);  //Close directory if opened above
 	return n;
 }
 //------------------------------
@@ -1048,7 +1048,7 @@ exit:
 
 	load_ps2host();
 	host_error = 0;
-	if ((fd = fioOpen("host:elflist.txt", O_RDONLY)) >= 0)
+	if ((fd = open("host:elflist.txt", O_RDONLY)) >= 0)
 	{ fioClose(fd);
 		host_elflist = 1;
 	}
@@ -1064,7 +1064,7 @@ exit:
 //--------------------------------------------------------------
 /*int	readHOST(const char *path, FILEINFO *info, int max)
 {
-	fio_dirent_t hostcontent;
+	io_dirent_t hostcontent;
 	int hfd, rv, size, contentptr, hostcount = 0;
 	char *elflisttxt, elflistchar;
 	char	host_path[MAX_PATH], host_next[MAX_PATH];
@@ -1075,14 +1075,14 @@ exit:
 	if	(!strncmp(path, "host:/", 6))
 		strcpy(host_path+5, path+6);
 	if	((host_elflist) && !strcmp(host_path, "host:")){
-		if	((hfd = fioOpen("host:elflist.txt", O_RDONLY)) < 0)
+		if	((hfd = open("host:elflist.txt", O_RDONLY)) < 0)
 			return 0;
-		if	((size = fioLseek(hfd, 0, SEEK_END)) <= 0)
+		if	((size = lsee(hfd, 0, SEEK_END)) <= 0)
 		{	fioClose(hfd);
 			return 0;
 		}
 		elflisttxt = (char *)malloc(size);
-		fioLseek(hfd, 0, SEEK_SET);
+		lsee(hfd, 0, SEEK_SET);
 		fioRead(hfd, elflisttxt, size);
 		fioClose(hfd);
 		contentptr = 0;
@@ -1092,7 +1092,7 @@ exit:
 			{	host_next[contentptr] = 0;
 				snprintf(host_path, MAX_PATH-1, "%s%s", "host:", host_next);
 				clear_mcTable(&info[hostcount].stats);
-				if	((hfd = fioOpen(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0)
+				if	((hfd = open(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0)
 				{	fioClose(hfd);
 					info[hostcount].stats.attrFile = MC_ATTR_norm_file;
 					makeFslPath(info[hostcount++].name, host_next);
@@ -1586,12 +1586,12 @@ finish:
 		if	(!strncmp(dir, "host:/", 6))
 			makeHostPath(dir+5, dir+6);
 		if(!strncmp(path, "hdd", 3)){
-			fd = fileXioOpen(dir, O_RDONLY, fileMode);
-			size = fileXioLseek(fd,0,SEEK_END);
-			fileXioClose(fd);
+			fd = open(dir, O_RDONLY, fileMode);
+			size = lseek(fd,0,SEEK_END);
+			close(fd);
 		}else{
-			fd = fioOpen(dir, O_RDONLY);
-			size = fioLseek(fd,0,SEEK_END);
+			fd = open(dir, O_RDONLY);
+			size = lsee(fd,0,SEEK_END);
 			fioClose(fd);
 		}
 	}
@@ -1629,7 +1629,7 @@ finish:
 			mcDelete(dir[2]-'0', 0, &dir[4]);
 			mcSync(0, NULL, &ret);
 		}else if(!strncmp(path, "hdd", 3)){
-			ret = fileXioRmdir(hdddir);
+			ret = rmdir(hdddir);
 		}else if(!strncmp(path, "mass", 4)){
 			sprintf(dir, "mass0:%s%s", &path[5], file->name);
 			ret = fioRmdir(dir);
@@ -1678,7 +1678,7 @@ finish:
 		if((test=fioDopen(newPath))>=0){ //Does folder of same name exist ?
 			fioDclose(test);
 			ret = -17;
-		}else if((test=fioOpen(newPath, O_RDONLY))>=0){ //Does file of same name exist ?
+		}else if((test=open(newPath, O_RDONLY))>=0){ //Does file of same name exist ?
 			fioClose(test);
 			ret = -17;
 		}else{ //No file/folder of the same name exists
@@ -1710,7 +1710,7 @@ finish:
 				fioDclose(temp_fd);
 			}
 		} else if(file->stats.attrFile & MC_ATTR_FILE){ //Rename a file ?
-			ret = (temp_fd = fioOpen(oldPath, O_RDONLY));
+			ret = (temp_fd = open(oldPath, O_RDONLY));
 			if (temp_fd >= 0){
 				ret = fioIoctl(temp_fd, IOCTL_RENAME, (void *) newPath);
 				fioClose(temp_fd);
