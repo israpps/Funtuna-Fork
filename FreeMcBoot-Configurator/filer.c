@@ -432,10 +432,10 @@ int cmpFile(FILEINFO *a, FILEINFO *b)  //Used for directory sort
 	if ((a->stats.attrFile & MC_ATTR_OBJECT) == (b->stats.attrFile & MC_ATTR_OBJECT)) {
 		if (a->stats.attrFile & MC_ATTR_FILE) {
 			p = strrchr(a->name, '.');
-			if (p != NULL && !stricmp(p + 1, "ELF"))
+			if (p != NULL && !strcmp(p + 1, "ELF"))
 				aElf = TRUE;
 			p = strrchr(b->name, '.');
-			if (p != NULL && !stricmp(p + 1, "ELF"))
+			if (p != NULL && !strcmp(p + 1, "ELF"))
 				bElf = TRUE;
 			if (aElf && !bElf)
 				return -1;
@@ -1206,7 +1206,7 @@ int getDir(const char *path, FILEINFO *info)
 		//Here we know that the object needing a title is a file
 		strcpy(tmpdir, dir);				//Copy the pathname for file access
 		cp = strrchr(tmpdir, '.');  //Find the extension, if any
-		if((cp==NULL) || stricmp(cp, ".psu") ) //If it's anything other than a PSU file
+		if((cp==NULL) || strcmp(cp, ".psu") ) //If it's anything other than a PSU file
 			goto get_PS1_GameTitle;              //then it may be a PS1 save
 		//Here we know that the object needing a title is a PSU file
 		if((fd=genOpen(tmpdir, O_RDONLY)) < 0) goto finish;  //Abort if open fails
@@ -2147,7 +2147,7 @@ PSU_error:
 //and recursively call copy with higher recurse level to process the contents
 	if(PasteMode==PM_PSU_RESTORE && recurses==0){
 		cp = strrchr(in, '.');
-		if((cp==NULL) || stricmp(cp, ".psu") )
+		if((cp==NULL) || strcmp(cp, ".psu") )
 			goto non_PSU_RESTORE_init;  //if not a PSU file, go do normal pasting
 
 		in_fd = genOpen(in, O_RDONLY);
@@ -2973,7 +2973,7 @@ int setFileList(const char *path, const char *ext, FILEINFO *files, int cnfmode)
 					files[j++] = files[i];
 				else {
 					p = strrchr(files[i].name, '.');
-					if (p != NULL && !stricmp(ext, p + 1))
+					if (p != NULL && !strcmp(ext, p + 1))
 						files[j++] = files[i];
 				}
 			}
@@ -3461,7 +3461,7 @@ void getFilePath(char *out, int cnfmode)
 					}
 				} else if(new_pad & PAD_SELECT){  //Leaving the browser ?
 					unmountAll();
-					if (stricmp(setting->GUI_skin, "\0") != 0) {
+					if (strcmp(setting->GUI_skin, "\0") != 0) {
 						GUI_active = 1;
 						loadSkin(BACKGROUND_PIC, 0, 0);
 					}
