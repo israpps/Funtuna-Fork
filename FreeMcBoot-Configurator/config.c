@@ -4230,8 +4230,8 @@ void select_swapkeys()
 
 			drawPopSprite(setting->color[0], KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1);
 			drawFrame(KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1, setting->color[1]);
-			printXY("FMCB Configurator by suloku. mod by HWNJ, Thanks to alex parrado",      KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT    , setting->color[3], TRUE, 0);
-			printXY("Modified and Ported to latest SDK by Matías Israelson",                 KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 2, setting->color[2], TRUE, 0);
+			printXY("          Made originally by suloku. Thanks to alex parrado          ", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT    , setting->color[3], TRUE, 0);
+			printXY("        Modified and Ported to latest SDK by Matías Israelson        ", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 2, setting->color[2], TRUE, 0);
 			printXY("Based on uLaunchELF by E P and Dlanor, originally coded by Mirakichi.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 3, setting->color[3], TRUE, 0);
 
 		}  //ends if(event||post_event)
