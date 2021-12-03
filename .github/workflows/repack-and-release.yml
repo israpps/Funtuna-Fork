@@ -72,8 +72,8 @@ jobs:
         
     - name: Load new FMCB and configurator binaries
       run: |
-        cp BOOT.ELF installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF
-        cp CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF 
+        cp ELFS/BOOT.ELF installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF
+        cp ELFS/CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF 
         
     - name: build installer
       run: |
