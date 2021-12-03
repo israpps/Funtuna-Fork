@@ -70,17 +70,10 @@ jobs:
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
         
-#    - name: Compile FreeMcBoot
-#      run: |
-#        cd FreeMcBoot
-#        make clean
-#        make
-#        
-#    - name: Compile FreeMcBoot-Configurator
-#      run: |
-#        cd FreeMcBoot-Configurator
-#        make clean
-#        make
+    - name: Load new FMCB and configurator binaries
+      run: |
+        cp BOOT.ELF installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF
+        cp CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF 
         
     - name: build installer
       run: |
