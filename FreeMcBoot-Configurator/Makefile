@@ -9,9 +9,6 @@ PS2CLIENT_IP = 192.168.0.4
 
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
 
-NEWLIB_NANO = 1
-KERNEL_NOPATCH = 1
-DUMMY_LIBC_INIT = 1
 
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
