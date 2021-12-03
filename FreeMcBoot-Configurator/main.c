@@ -2038,11 +2038,11 @@ int main(int argc, char *argv[])
 	}*/
 	//----- End of main menu event loop -----
 }
-#ifdef SKIP_FTRUJY_ELF_REDUCTIONS
+#ifndef SKIP_FTRUJY_ELF_REDUCTIONS
    void _ps2sdk_timezone_update() {}
    void _ps2sdk_libc_init() {}
    void _ps2sdk_libc_deinit() {}
-//   void _ps2sdk_args_parse(int argc, char ** argv) {}
+   void _ps2sdk_args_parse(int argc, char ** argv) {}
 #endif
 //*/
 //------------------------------
