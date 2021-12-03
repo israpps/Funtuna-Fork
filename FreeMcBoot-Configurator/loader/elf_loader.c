@@ -75,7 +75,6 @@ void execute_elf(u8 *pexecPath)
 {   // Execute an elf with SifLoadElf + ExecPS2
 	t_ExecData exd;	
 	int r;
-	char *args[1];
 	
 	exd.epc = 0;
 	exd.gp = 0;
@@ -85,6 +84,7 @@ void execute_elf(u8 *pexecPath)
 	r = SifLoadElf(pexecPath, &exd);
 	if ((!r) && (exd.epc))
   	{
+		char *args[1];
   	    SifLoadFileExit();
   	  	fioExit();
   	  	SifExitRpc(); //some programs need it to be here
