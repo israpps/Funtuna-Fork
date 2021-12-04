@@ -12,7 +12,7 @@ EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd
 
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
-EE_CFLAGS := -mno-gpopt -G0 -ffunction-sections
+EE_CFLAGS += -G0 
 all: $(EE_BIN_PACKED)
 	@echo "================ Compiling FreeMcBoot-Configurator ==============="
 
