@@ -926,7 +926,7 @@ int loadUsbModules(void)
 		}
 		free(fileBase);
 	}
-	free(fileBase);
+	//free(fileBase);
 	if (!error) {
 		have_usbd = 1;
 		have_usb_mass = 1;
