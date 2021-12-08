@@ -5,8 +5,8 @@
 //*/
 #ifdef GS_DEBUG_ISRA
 #define DEBUG_PRINTF(arg...) scr_printf(arg...);
-#else 
-#define DEBUG_PRINTF(arg...)	
+#else
+#define DEBUG_PRINTF(arg...)
 #endif
 
 extern u8 opl_icn[];
@@ -100,7 +100,7 @@ enum OPENTUNA_VARIANTS
 	FAT170,		  // 0x170
 	PROTOKERNELS, // this corresponds to rom 0x100 and 0x101, parrado won´t make the icons, but i will leavi it here in case someone makes it faster than instatuna
 	UNSUPPORTED,
-	
+
 	OPENTUNA_VARIANTS_AMMOUNT
 };
 
@@ -115,8 +115,8 @@ enum INSTALL_ERRORS
 	FUNTUNA_FORK_FOUND,
 	BOOT_FOLDER_EXISTS,
 	APPS_FOLDER_EXISTS,
-	
-	
+
+
 	TOTAL_ERRORS
 };
 
@@ -169,15 +169,15 @@ static void ResetIOP(void)
 #ifdef ELF_LAUNCHER
 	void LoadElf(char *filename, char *party)
 	{
-	
+
 		char *args[1];
 		t_ExecData exec;
 		SifLoadElf(filename, &exec);
-	
+
 		if (exec.epc > 0)
 		{
 			ResetIOP();
-	
+
 			if (party != 0)
 			{
 				args[0] = party;
@@ -331,11 +331,11 @@ static int install(int mcport, int icon_variant)
 	sprintf(opl_settings_location, "mc%u:/OPL/conf_opl.cfg", mcport);
 	sprintf(version_manifest_path, "mc%u:/BXEXEC-OPENTUNA/icon.cnf", mcport);
 	int ret,
-		fd, 
-		retorno, 
+		fd,
+		retorno,
 		must_kill_opl_folder = 0;
-	static int  mc_Type, 
-				mc_Free, 
+	static int  mc_Type,
+				mc_Free,
 				mc_Format;
 
 	mcGetInfo( mcport, 0, &mc_Type, &mc_Free, &mc_Format);
@@ -355,15 +355,15 @@ static int install(int mcport, int icon_variant)
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
 		DeleteFolder(temp_path);
-	
+
 	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elm.cfg", mcport);// if OPL DB settings file found delete OPL directory to avoid problems when Official OPL reads the cfg files
 	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
 	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_elmz.cfg", mcport);// same as above
 	if (file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
-	
+
 	sprintf(opl_daily_bulshit_cnf, "mc%u:/OPL/conf_game.cfg", mcport);//This isn't related to OPL DB, but the absensce of this file could indicate that OPL folder containts old settings (pre 1.1.0), delete to avoid famous black screen shit
 	if (!file_exists(opl_daily_bulshit_cnf)) {must_kill_opl_folder = 1;}
-	
+
 	if (must_kill_opl_folder == 1)
 	{
 	sprintf(temp_path,"mc%u:OPL", mcport);
@@ -403,12 +403,12 @@ static int install(int mcport, int icon_variant)
 	if (icon_variant != UNSUPPORTED){
 	scr_printf("\t\t\tBXEXEC-OPENTUNA\n");
 		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
-		mcSync(0, NULL, &ret);	
+		mcSync(0, NULL, &ret);
 	}
 	///FOLDERS
 	scr_printf("\t\tWriting Files\n");
 	//OPENTUNA
-	if (icon_variant != UNSUPPORTED) 
+	if (icon_variant != UNSUPPORTED)
 	{
 		if (icon_variant == SLIMS)
 		{
@@ -425,14 +425,14 @@ static int install(int mcport, int icon_variant)
 			retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
 			scr_printf("\t\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
 		}
-		
+
 		if (retorno < 0)
 		{
 			return 6;
 		}
 			retorno = write_embed(&exploit_sys, size_exploit_sys, "BXEXEC-OPENTUNA","icon.sys",mcport);
 			if (retorno < 0) {return 6;}
-			
+
 				if (! ((fd = open(version_manifest_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0)){
 				ret = write(fd, ICONTYPE_ALIAS[icon_variant], 4);
 				close(fd);
@@ -440,7 +440,7 @@ static int install(int mcport, int icon_variant)
 		scr_printf("\t\t\tManipulating Opentuna icon timestamp\n");
 		static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
 		static sceMcStDateTime maximahora; //Maxium Timestamp, for the ones who does not speak Spanish
-	
+
 		maximahora.Resv2 = 0;
 		maximahora.Sec = 59;
 		maximahora.Min = 59;
@@ -451,11 +451,11 @@ static int install(int mcport, int icon_variant)
 		mcDirAAA->_Modify = maximahora;
 		mcDirAAA->_Create = maximahora;
 		mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
-		mcSync(0, NULL, &ret);		
-				
+		mcSync(0, NULL, &ret);
+
 	} else {scr_printf("\t\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");DeleteFolder(temp_path);}
 	///OPENTUNA
-	
+
 	//FUNTUNA&APPS
 	scr_printf("\t\t\tuLaunchELF\n");
 		retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
@@ -471,7 +471,7 @@ static int install(int mcport, int icon_variant)
 	scr_printf("\t\t\tFreeMcBoot Configurator\n");
 		retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
-        
+
     scr_printf("\t\t\tFreeMcBoot USB drivers\n");
 		retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
@@ -501,7 +501,7 @@ static int install(int mcport, int icon_variant)
 		if (mcport==0)
 			write_embed_replace(&opl_cfg, size_opl_cfg, "OPL", "conf_opl.cfg", mcport);//main config file has two variants, each of them has IGR Path assigned according to mcport value
 		else write_embed_replace(&opl_cfg1, size_opl_cfg1, "OPL", "conf_opl.cfg", mcport);//
-		
+
 		write_embed_replace(&opl_icn, size_opl_icn, "OPL", "opl.icn", mcport);
 		write_embed_replace(&opl_sys, size_opl_sys, "OPL", "icon.sys", mcport);
 		write_embed_replace(&opl_dualshock, size_opl_dualshock, "OPL", "conf_game.cfg", mcport);
@@ -516,7 +516,7 @@ static void CleanUp(void) //trimmed from FMCB
 	if (pad_inited) {
 		padPortClose(0,0);
 		padPortClose(1,0);
-		padEnd(); 
+		padEnd();
 	}
 
 	ResetIOP();
@@ -555,15 +555,15 @@ void tell_the_user_wtf_happened(int retval)
 		case NO_MEMORY_CARD:
 			display_bmp(640, 448, _NO_MEMORY_CARD);
 			break;
-			
+
 		case NO_PS2_MEMORY_CARD:
 			display_bmp(640, 448, NO_PS2_MC);
 			break;
-			
+
 		case NOT_ENOUGH_SPACE:
 			display_bmp(640, 448, _NOT_ENOUGH_SPACE);
 			break;
-			
+
 		case FORTUNA_FOUND:
 		case OPENTUNA_FOUND:
 		case FUNTUNA_FORK_FOUND:
@@ -571,7 +571,7 @@ void tell_the_user_wtf_happened(int retval)
 		case APPS_FOLDER_EXISTS:
 			display_bmp(640, 448, FILE_CONFLICT);
 			break;
-			
+
 		default:
 			display_bmp(640, 448, FAIL);
 	}
@@ -594,7 +594,7 @@ int IconQuery(int default_icon_type)
 		default:
 			display_bmp(640, 448, ICONQUERY);
 	}
-	
+
 	while (1)
 	{
 		readPad();
@@ -611,7 +611,7 @@ int Choose_Install_Mode(int default_icon_type)
 	{
 		readPad();
 		if (new_pad & PAD_R2) return default_icon_type;
-		
+
 		if (new_pad & PAD_L2) return IconQuery(default_icon_type);
 	}
 }
@@ -625,7 +625,7 @@ static void PS2_browser(void)
 
 int main (int argc, char *argv[])
 {
-	
+
 	int fdn, icontype;
 	unsigned long int ROM_VERSION;
 	char romver[5];
@@ -690,14 +690,14 @@ int main (int argc, char *argv[])
 		}
 
 		else if ((new_pad & PAD_START) && (menuactual == 103)) {PS2_browser();}
-		else if ((new_pad & PAD_START) && (menuactual == 104)) 
+		else if ((new_pad & PAD_START) && (menuactual == 104))
 		{
 #ifdef BOOT_FUNTUNA_ON_SUCCESS
 			if (mcport==0){
-				if (file_exists("mc0:/BOOT/BOOT.ELF")) 
+				if (file_exists("mc0:/BOOT/BOOT.ELF"))
 					LoadElf("mc0:/BOOT/BOOT.ELF", "mc0:/BOOT/");
 			} else {
-				if (file_exists("mc1:/BOOT/BOOT.ELF")) 
+				if (file_exists("mc1:/BOOT/BOOT.ELF"))
 					LoadElf("mc1:/BOOT/BOOT.ELF", "mc1:/BOOT/");
 			}
 #endif
