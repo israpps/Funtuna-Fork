@@ -73,8 +73,9 @@ jobs:
 
     - name: Update wLaunchELF_ISR
       run: |
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
+         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O ULE.ELF
+         cp ULE.ELF installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
+         mv ULE.ELF __Release/ULE_psu.ELF
         
     - name: Load new FMCB and configurator binaries
       run: |
