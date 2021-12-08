@@ -14,7 +14,7 @@ enum {
 	//	DEF_TIMEOUT = 10,
 	//	DEF_HIDE_PATHS = TRUE,
 	/**********************DEFAULT COLORS**********************/ /**
-   *DEF_COLOR1 = GS_SETREG_RGBA(128,128,128,0), //Backgr 
+   *DEF_COLOR1 = GS_SETREG_RGBA(128,128,128,0), //Backgr
    *DEF_COLOR2 = GS_SETREG_RGBA(64,64,64,0),    //Frame
    *DEF_COLOR3 = GS_SETREG_RGBA(96,0,0,0),      //Select
    *DEF_COLOR4 = GS_SETREG_RGBA(0,0,0,0),       //Text
@@ -563,7 +563,7 @@ void loadSkinBrowser(void)
 				sprintf(c, "mc%d:/SYS-CONF", LaunchElfDir[2]-'0');
 			else
 				sprintf(c, "mc%d:/SYS-CONF", CheckMC());
-	
+
 			if((fd=fioDopen(c)) >= 0){
 				fioDclose(fd);
 				char strtmp[MAX_PATH] = "/";
@@ -983,7 +983,7 @@ failed_load:
 				return;
 			}
 		} //end if(readpad())
-		
+
 		if(event||post_event){ //NB: We need to update two frame buffers per event
 
 			//Display section
@@ -1007,7 +1007,7 @@ failed_load:
 
 			x = Menu_start_x;
 			y = Menu_start_y;
-		
+
 			printXY(LNG(SKIN_SETTINGS), x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 
@@ -1101,7 +1101,7 @@ failed_load:
 	u64 rgb[8][3];
 	char c[MAX_PATH];
 	int space=((SCREEN_WIDTH-SCREEN_MARGIN-4*FONT_WIDTH)-(Menu_start_x+2*FONT_WIDTH))/8;
-	
+
 	event = 1;	//event = initial entry
 
 	for(i=0; i<8; i++) {
@@ -1109,7 +1109,7 @@ failed_load:
 		rgb[i][1] = setting->color[i] >> 8 & 0xFF;
 		rgb[i][2] = setting->color[i] >> 16 & 0xFF;
 	}
-	
+
 	s=0;
 	while(1)
 	{
@@ -1145,7 +1145,7 @@ failed_load:
 				else if(s>=31) s=28;
 				else if(s>=28) s=27;
 				else if(s>=27) s=25;
-				else if(s>=25) s=24; //at or 
+				else if(s>=25) s=24; //at or
 				else if(s>=24) s=21; //if s beyond color settings
 				else if(s>=3) s-=3;  //if s in a color beyond Color1 step to preceding color
 			}
@@ -1167,7 +1167,7 @@ failed_load:
 				if(s<24) {
 					if(rgb[s/3][s%3] > 0) {
 						rgb[s/3][s%3]--;
-						setting->color[s/3] = 
+						setting->color[s/3] =
 							GS_SETREG_RGBA(rgb[s/3][0], rgb[s/3][1], rgb[s/3][2], 0);
 					}
 				} else if(s==25) {
@@ -1190,7 +1190,7 @@ failed_load:
 				if(s<24) {
 					if(rgb[s/3][s%3] < 255) {
 						rgb[s/3][s%3]++;
-						setting->color[s/3] = 
+						setting->color[s/3] =
 							GS_SETREG_RGBA(rgb[s/3][0], rgb[s/3][1], rgb[s/3][2], 0);
 					}
 				}else if(s==24){
@@ -1243,7 +1243,7 @@ failed_load:
 					setting->Brightness = DEF_BRIGHT;
 					setting->Popup_Opaque = DEF_POPUP_OPAQUE;
 					updateScreenMode(0);
-					
+
 					for(i=0; i<8; i++) {
 						rgb[i][0] = setting->color[i] & 0xFF;
 						rgb[i][1] = setting->color[i] >> 8 & 0xFF;
@@ -2280,7 +2280,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 	strcat(icon_path, "icon.sys");
 	if (!exists(icon_path)){
 		if ((fd=genOpen(icon_path,O_CREAT|O_WRONLY|O_TRUNC)) < 0){
-			sprintf(fmcbMsg, "Failed to open %s", icon_path); 
+			sprintf(fmcbMsg, "Failed to open %s", icon_path);
 			return -1; //Failed open
 		}
 		ret = genWrite(fd,&icon_sys,size_icon_sys);
@@ -2289,7 +2289,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 			ret = -2; //Failed writing
 		}
 		genClose(fd);
-	
+
 	//FMCB.icn
 		icon_path[0]=0;
 		strncat(icon_path, CNF, 14);
@@ -2297,7 +2297,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 		strcat(icon_path, "sysconf.icn");
 		if (!exists(icon_path)){
 			if ((fd=genOpen(icon_path,O_CREAT|O_WRONLY|O_TRUNC)) < 0){
-				sprintf(fmcbMsg, "Failed to open %s", icon_path); 
+				sprintf(fmcbMsg, "Failed to open %s", icon_path);
 				return -1; //Failed open
 			}
 			ret = genWrite(fd,&icon_icn,size_icon_icn);
@@ -2307,7 +2307,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 			}
 			genClose(fd);
 		}
-	
+
 	}*/
 	}
 	//FREEMCB.CNF
@@ -2445,12 +2445,12 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 	strcpy(fmcb->LK_E1_Path[6], "mass:/BOOT/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E1_Path[7], "mass:/BOOT/BOOT4.ELF");//L2
 	strcpy(fmcb->LK_E1_Path[8], "mass:/BOOT/BOOT2.ELF");//R2
-	
+
 	strcpy(fmcb->LK_E2_Path[5], "mc?:/BOOT/BOOT3.ELF");//L1
 	strcpy(fmcb->LK_E2_Path[6], "mc?:/BOOT/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E2_Path[7], "mc?:/BOOT/BOOT4.ELF");//L2
 	strcpy(fmcb->LK_E2_Path[8], "mc?:/BOOT/BOOT2.ELF");//R2
-	
+
 	strcpy(fmcb->LK_E3_Path[5], "mc?:/B?DATA-SYSTEM/BOOT3.ELF");//L1
 	strcpy(fmcb->LK_E3_Path[6], "mc?:/B?DATA-SYSTEM/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E3_Path[7], "mc?:/B?DATA-SYSTEM/BOOT4.ELF");//L2
@@ -3593,7 +3593,7 @@ void Config_fmcb_OSDSYS()
 						osd_item = 98;
 					else
 						osd_item--;
-					
+
 				} else if (s > SEL_COL && s < UNSEL_COL)
 					s--;
 				else if (s > UNSEL_COL && s < UNSEL_COL + 5)
@@ -3632,7 +3632,7 @@ void Config_fmcb_OSDSYS()
 						osd_item = 0;
 					else
 						osd_item++;
-					
+
 				} else if (s > SEL_COL - 1 && s < UNSEL_COL - 1)
 					s++;
 				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 4)

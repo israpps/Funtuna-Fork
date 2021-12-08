@@ -12,7 +12,7 @@ EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd
 
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
-EE_CFLAGS += -G0 
+EE_CFLAGS += -G0
 all: $(EE_BIN_PACKED)
 	@echo "================ Compiling FreeMcBoot-Configurator ==============="
 
@@ -20,7 +20,7 @@ run: comp
 	ps2client -h $(PS2CLIENT_IP) -t 1 execee host:$(EE_BIN_PACKED)
 reset: clean
 	ps2client -h $(PS2CLIENT_IP) reset
-	
+
 $(EE_BIN_STRIPPED): $(EE_BIN)
 	$(EE_STRIP) -o $@ $<
 
@@ -32,31 +32,31 @@ loader.s:
 	@$(MAKE) -C loader > /dev/null
 	@echo "---------------"
 	@echo embedding loader
-	bin2s loader/elf_loader.elf loader.s loader_elf 
+	bin2s loader/elf_loader.elf loader.s loader_elf
 	@echo "---------------"
-	
-	
+
+
 format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
-	
+
 
 clean:
 	@echo "---------- Cleaning ----------"
 	@echo "--*.o "
-	@rm -f *.o 
+	@rm -f *.o
 	@echo "--*.a "
-	@rm -f *.a 
+	@rm -f *.a
 	@echo "--*.s "
-	@rm -f *.s 
+	@rm -f *.s
 	@echo "--EE_BIN "
-	@rm -f $(EE_BIN) 
+	@rm -f $(EE_BIN)
 	@echo "--EE_BIN_PACKED "
-	@rm -f $(EE_BIN_PACKED) 
+	@rm -f $(EE_BIN_PACKED)
 	@echo "--EE_BIN_STRIPPED "
-	@rm -f $(EE_BIN_STRIPPED) 
+	@rm -f $(EE_BIN_STRIPPED)
 	@echo "--ELF_LOADER"
 	@$(MAKE) -C loader clean
-	
+
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal

@@ -38,11 +38,12 @@ jobs:
         cd FreeMcBoot-Configurator
         make
         cp CFG.ELF ../CFG.ELF
-    - name: Copy USB drivers
-      run: |
-        cp $PS2SDK/iop/irx/usbd.irx ./USBD.IRX
-        cp $PS2SDK/iop/irx/usbhdfsd.irx ./USBHDFSD.IRX
-        
+
+#    - name: Copy USB drivers
+#      run: |
+#        cp $PS2SDK/iop/irx/usbd.irx ./USBD.IRX
+#        cp $PS2SDK/iop/irx/usbhdfsd.irx ./USBHDFSD.IRX
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -50,8 +51,8 @@ jobs:
         path: |
             CFG.ELF
             BOOT.ELF
-            USBD.IRX
-            USBHDFSD.IRX
+#            USBD.IRX
+#            USBHDFSD.IRX
 
   Repack_and_Release:
     runs-on: ubuntu-latest
@@ -76,14 +77,14 @@ jobs:
          wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O ULE.ELF
          cp ULE.ELF installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
          mv ULE.ELF __Release/ULE_psu.ELF
-        
+
     - name: Load new FMCB and configurator binaries
       run: |
         cp ELFS/BOOT.ELF installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF
-        cp ELFS/CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF 
-        cp ELFS/USBD.IRX installer/INSTALLER_CONTENTS/BOOT/USBD.IRX
-        cp ELFS/USBHDFSD.IRX installer/INSTALLER_CONTENTS/BOOT/USBHDFSD.IRX
-        
+        cp ELFS/CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF
+#        cp ELFS/USBD.IRX installer/INSTALLER_CONTENTS/BOOT/USBD.IRX
+#        cp ELFS/USBHDFSD.IRX installer/INSTALLER_CONTENTS/BOOT/USBHDFSD.IRX
+
     - name: build installer
       run: |
         cd installer
