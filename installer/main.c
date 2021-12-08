@@ -323,7 +323,7 @@ static int write_embed_replace(void *embed_file, const int embed_size, char* fol
 static int install(int mcport, int icon_variant)
 {
 	display_bmp(640, 448, BG);
-	scr_printf("\n\n\nInstalling for memory card %u...\n",mcport);
+	scr_printf("\n\n\n\n\t\tInstalling for memory card %u...\n",mcport);
 	char version_manifest_path[32];
 	char opl_settings_location[32];
 	char opl_daily_bulshit_cnf[32];
@@ -390,40 +390,40 @@ static int install(int mcport, int icon_variant)
 	if (file_exists("mc1:/FORTUNA/icon.sys"))         {return FORTUNA_FOUND;}
 	}
 	//FOLDERS
-	scr_printf("\tCreating Folders...\n");
-	scr_printf("\t\tBOOT\n");
+	scr_printf("\t\tCreating Folders...\n");
+	scr_printf("\t\t\tBOOT\n");
 		ret = mcMkDir(mcport, 0, "BOOT");
 		mcSync(0, NULL, &ret);
-	scr_printf("\t\tAPPS\n");
+	scr_printf("\t\t\tAPPS\n");
 		ret = mcMkDir(mcport, 0, "APPS");
 		mcSync(0, NULL, &ret);
-	scr_printf("\t\tOPL\n");
+	scr_printf("\t\t\tOPL\n");
 		ret = mcMkDir(mcport, 0, "OPL");
 		mcSync(0, NULL, &ret);
 	if (icon_variant != UNSUPPORTED){
-	scr_printf("\t\tBXEXEC-OPENTUNA\n");
+	scr_printf("\t\t\tBXEXEC-OPENTUNA\n");
 		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
 		mcSync(0, NULL, &ret);	
 	}
 	///FOLDERS
-	scr_printf("\tWriting Files\n");
+	scr_printf("\t\tWriting Files\n");
 	//OPENTUNA
 	if (icon_variant != UNSUPPORTED) 
 	{
 		if (icon_variant == SLIMS)
 		{
 			retorno = write_embed(&opentuna_slims, size_opentuna_slims, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-			scr_printf("\t\tWriting Opentuna for SLIMS and SCPH-5XXXX with ROM 1.90\n");
+			scr_printf("\t\t\tWriting Opentuna for SLIMS and SCPH-5XXXX with ROM 1.90\n");
 		}
 		else if (icon_variant == FATS)
 		{
 			retorno = write_embed(&opentuna_fats, size_opentuna_fats, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-			scr_printf("\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
+			scr_printf("\t\t\tWriting Opentuna for FATS (from SCPH-18000 to SCPH-39XXX)\n");
 		}
 		else if (icon_variant == FAT170)
 		{
 			retorno = write_embed(&opentuna_fat170, size_opentuna_fat170, "BXEXEC-OPENTUNA", "icon.icn", mcport);
-			scr_printf("\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
+			scr_printf("\t\t\tWriting Opentuna for SCPH-5XXXX with ROM 1.70\n");
 		}
 		
 		if (retorno < 0)
@@ -437,7 +437,7 @@ static int install(int mcport, int icon_variant)
 				ret = write(fd, ICONTYPE_ALIAS[icon_variant], 4);
 				close(fd);
 				}
-		scr_printf("\t\tManipulating Opentuna icon timestamp\n");
+		scr_printf("\t\t\tManipulating Opentuna icon timestamp\n");
 		static sceMcTblGetDir mcDirAAA[64] __attribute__((aligned(64)));
 		static sceMcStDateTime maximahora; //Maxium Timestamp, for the ones who does not speak Spanish
 	
@@ -453,51 +453,51 @@ static int install(int mcport, int icon_variant)
 		mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
 		mcSync(0, NULL, &ret);		
 				
-	} else {scr_printf("\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");DeleteFolder(temp_path);}
+	} else {scr_printf("\t\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");DeleteFolder(temp_path);}
 	///OPENTUNA
 	
 	//FUNTUNA&APPS
-	scr_printf("\t\tuLaunchELF\n");
+	scr_printf("\t\t\tuLaunchELF\n");
 		retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&ule_cnf, size_ule_cnf, "BOOT", "LAUNCHELF.CNF",mcport);
 		if (retorno < 0) {return 6;}
 
-	scr_printf("\t\tFreeMcBoot\n");
+	scr_printf("\t\t\tFreeMcBoot\n");
 		retorno = write_embed(&FMCB_ELF, size_FMCB_ELF, "BOOT", "BOOT.ELF",mcport);
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&FMCB_CNF, size_FMCB_CNF, "BOOT", "FUNTUNA.CNF",mcport);
 		if (retorno < 0) {return 6;}
-	scr_printf("\t\tFreeMcBoot Configurator\n");
+	scr_printf("\t\t\tFreeMcBoot Configurator\n");
 		retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
         
-    scr_printf("\t\tFreeMcBoot USB drivers\n");
+    scr_printf("\t\t\tFreeMcBoot USB drivers\n");
 		retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
                 retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
 		if (retorno < 0) {return 6;}
 
-	scr_printf("\t\tBOOT icons\n");
+	scr_printf("\t\t\tBOOT icons\n");
 		retorno = write_embed(&boot_icn, size_boot_icn, "BOOT", "SYSTEM.icn",mcport);
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&boot_sys, size_boot_sys, "BOOT", "icon.sys",mcport);
 		if (retorno < 0) {return 6;}
-	scr_printf("\t\tPoweroff utility\n");
+	scr_printf("\t\t\tPoweroff utility\n");
 		retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
 		if (retorno < 0) {return 6;}
 	///FUNTUNA&APPS
-	scr_printf("\t\tAPPS folder icons\n");
+	scr_printf("\t\t\tAPPS folder icons\n");
 		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
 		if (retorno < 0) {return 6;}
 		retorno = write_embed(&apps_icn, size_apps_icn, "APPS","funtuna_apps.icn",mcport);
 		if (retorno < 0) {return 6;}
-	scr_printf("\t\tOPL\n");
+	scr_printf("\t\t\tOPL\n");
 		retorno = write_embed(&opl_elf, size_opl_elf, "APPS","OPNPS2LD.ELF",mcport);
 		if (retorno < 0) {return 6;}
 	if (!file_exists(opl_settings_location))//If no OPL config file...
 	{
-		scr_printf("\t\tNo OPL settings found!\n\t\t Loading Preconfigured OPL Folder...\n");
+		scr_printf("\t\t\tNo OPL settings found!\n\t\t Loading Preconfigured OPL Folder...\n");
 		if (mcport==0)
 			write_embed_replace(&opl_cfg, size_opl_cfg, "OPL", "conf_opl.cfg", mcport);//main config file has two variants, each of them has IGR Path assigned according to mcport value
 		else write_embed_replace(&opl_cfg1, size_opl_cfg1, "OPL", "conf_opl.cfg", mcport);//
@@ -506,7 +506,7 @@ static int install(int mcport, int icon_variant)
 		write_embed_replace(&opl_sys, size_opl_sys, "OPL", "icon.sys", mcport);
 		write_embed_replace(&opl_dualshock, size_opl_dualshock, "OPL", "conf_game.cfg", mcport);
 	}
-	scr_printf("Installation Finished\n");
+	scr_printf("\t\tInstallation Finished\n");
 	return 0;
 }
 //--------------------------------------------------------------
@@ -575,7 +575,7 @@ void tell_the_user_wtf_happened(int retval)
 		default:
 			display_bmp(640, 448, FAIL);
 	}
-	scr_printf("\n\n\nERROR CODE: [%d]",retval);
+	scr_printf("\n\n\n\nERROR CODE: [%d]",retval);
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 int IconQuery(int default_icon_type)
