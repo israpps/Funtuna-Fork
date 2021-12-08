@@ -2520,14 +2520,14 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 
 	CNF_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
-	RAM_p = (char *)malloc(CNF_size);
+	RAM_p = (char *)malloc(CNF_size+1);
 	CNF_p = RAM_p;
 	if (CNF_p == NULL) {
 		goto failed_load;
 	}
 	read(fd, CNF_p, CNF_size);  // Read CNF as one long string
 	close(fd);
-	CNF_p[CNF_size] = '\0';  // Terminate the CNF string
+	CNF_p[CNF_size+1] = '\0';  // Terminate the CNF string
 
 	CNF_version = 0;  // The CNF version is still unidentified
 	for (var_cnt = 0; get_CNF_string(&CNF_p, &name, &value); var_cnt++) {
