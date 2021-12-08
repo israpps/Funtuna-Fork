@@ -453,7 +453,7 @@ static int install(int mcport, int icon_variant)
 		mcSetFileInfo(mcport, 0, "BXEXEC-OPENTUNA", mcDirAAA, 0x02);
 		mcSync(0, NULL, &ret);
 
-	} else {scr_printf("\t\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSKIPPING OPENTUNA FILES!\n");DeleteFolder(temp_path);}
+	} else {scr_printf("\t\t THIS PS2 IS INCOMPATIBLE WITH OPENTUNA\n\tSOPENTUNA FILES SKIPPED!\n");}
 	///OPENTUNA
 
 	//FUNTUNA&APPS
@@ -511,7 +511,7 @@ static int install(int mcport, int icon_variant)
 }
 //--------------------------------------------------------------
 
-static void CleanUp(void) //trimmed from FMCB
+static void CleanUp(void) //trimmed from FMCB 1.9??? installer
 {
 	if (pad_inited) {
 		padPortClose(0,0);
