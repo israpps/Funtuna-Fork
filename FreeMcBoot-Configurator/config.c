@@ -2492,7 +2492,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 {
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
-	char tsts[20];
+	char tsts[64];
 	char hexvalue_buf[20];
 	unsigned char *RAM_p, *CNF_p, *name, *value;
 
