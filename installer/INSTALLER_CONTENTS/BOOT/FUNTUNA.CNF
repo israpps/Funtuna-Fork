@@ -1,5 +1,3 @@
-# Funtuna Config file
-# must be in mc?:/BOOT/FUNTUNA.CNF or mass:/FUNTUNA.CNF
 CNF_version = 1
 Debug_Screen = 0
 FastBoot = 1
@@ -61,7 +59,7 @@ path1_OSDSYS_ITEM_97 = FASTBOOT
 name_OSDSYS_ITEM_98 = Reboot FunTuna
 path1_OSDSYS_ITEM_98 = mass:/FUNTUNA/BOOT.ELF
 path2_OSDSYS_ITEM_98 = mc?:/BOOT/BOOT.ELF
-path3_OSDSYS_ITEM_98 = mc?:/APPS/BOOT.ELF
+path3_OSDSYS_ITEM_98 = OSDSYS
 name_OSDSYS_ITEM_99 = Configure FunTuna
 path1_OSDSYS_ITEM_99 = mc?:/BOOT/CFG.ELF
 path2_OSDSYS_ITEM_99 = mass:/FUNTUNA/CFG.ELF
