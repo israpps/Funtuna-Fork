@@ -88,11 +88,7 @@ static int pad_inited = 0;
 #include "ERROR_MESSAGES/ICONQUERY_FATS.h"
 #include "ERROR_MESSAGES/ICONQUERY_SLIMS.h"
 
-#include "ERROR_MESSAGES/FOUND_APPS.h"
-#include "ERROR_MESSAGES/FOUND_BOOT.h"
-#include "ERROR_MESSAGES/FOUND_FORTUNA.h"
-#include "ERROR_MESSAGES/FOUND_FUNTUNA.h"
-#include "ERROR_MESSAGES/FOUND_OPENTUNA.h"
+#include "ERROR_MESSAGES/FILE_CONFLICT.h"
 #include "ERROR_MESSAGES/NOT_ENOUGH_SPACE.h"
 #include "ERROR_MESSAGES/NO_MEMORY_CARD.h"
 #include "ERROR_MESSAGES/NO_PS2_MC.h"
@@ -569,23 +565,11 @@ void tell_the_user_wtf_happened(int retval)
 			break;
 			
 		case FORTUNA_FOUND:
-			display_bmp(640, 448, FOUND_FORTUNA);
-			break;
-			
 		case OPENTUNA_FOUND:
-			display_bmp(640, 448, FOUND_OPENTUNA);
-			break;
-			
 		case FUNTUNA_FORK_FOUND:
-			display_bmp(640, 448, FOUND_FUNTUNA);
-			break;
-			
 		case BOOT_FOLDER_EXISTS:
-			display_bmp(640, 448, FOUND_BOOT);
-			break;
-			
 		case APPS_FOLDER_EXISTS:
-			display_bmp(640, 448, FOUND_APPS);
+			display_bmp(640, 448, FILE_CONFLICT);
 			break;
 			
 		default:
