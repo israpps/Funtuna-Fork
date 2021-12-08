@@ -2532,6 +2532,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 	CNF_version = 0;  // The CNF version is still unidentified
 	for (var_cnt = 0; get_CNF_string(&CNF_p, &name, &value); var_cnt++) {
 		// A variable was found, now we dispose of its value.
+		//printf("name[%s] value[%s]\n",name,value);
 		if (!strcmp(name, "CNF_version")) {
 			CNF_version = atoi(value);
 			continue;
@@ -2540,19 +2541,23 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "Debug_Screen")) {
 			fmcb->Debug = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Debug);
 			continue;
 		}
 		if (!strcmp(name, "FastBoot")) {
 			fmcb->Fastboot = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Fastboot);
 			continue;
 		}
 		if (!strcmp(name, "pad_delay")) {
 			fmcb->pad_delay = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->pad_delay);
 			continue;
 		}
 		//OSD settings
 		if (!strcmp(name, "hacked_OSDSYS")) {
 			fmcb->hacked_OSDSYS = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->hacked_OSDSYS);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_video_mode")) {
@@ -2561,14 +2566,17 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "OSDSYS_Skip_Disc")) {
 			fmcb->Skip_Disc = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Skip_Disc);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_Skip_Logo")) {
 			fmcb->Skip_Logo = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Skip_Logo);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_Inner_Browser")) {
 			fmcb->Inner_Browser = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Inner_Browser);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_selected_color")) {
@@ -2597,6 +2605,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "OSDSYS_menu_x")) {
 			fmcb->OSDSYS_menu_x = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->OSDSYS_menu_x);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_y")) {

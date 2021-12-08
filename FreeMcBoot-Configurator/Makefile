@@ -52,6 +52,8 @@ clean:
 	@rm -f $(EE_BIN) 
 	@echo "--EE_BIN_PACKED "
 	@rm -f $(EE_BIN_PACKED) 
+	@echo "--EE_BIN_STRIPPED "
+	@rm -f $(EE_BIN_STRIPPED) 
 	@echo "--ELF_LOADER"
 	@$(MAKE) -C loader clean
 	
