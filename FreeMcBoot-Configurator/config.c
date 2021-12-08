@@ -3580,9 +3580,11 @@ void Config_fmcb_OSDSYS()
 				event |= 2;  //event |= valid pad command
 				if (s == 1) {
 					//osd_item = osd_item--;
-					osd_item--;
-					if (osd_item < 0)
+					if (osd_item == 0)
 						osd_item = 99;
+					else
+						osd_item--;
+					
 				} else if (s > SEL_COL && s < UNSEL_COL)
 					s--;
 				else if (s > UNSEL_COL && s < UNSEL_COL + 5)
@@ -3617,9 +3619,11 @@ void Config_fmcb_OSDSYS()
 				event |= 2;  //event |= valid pad command
 				if (s == 1) {
 					//osd_item = osd_item++;
-					osd_item++;
-					if (osd_item > 99)
+					if (osd_item == 99)
 						osd_item = 0;
+					else
+						osd_item++;
+					
 				} else if (s > SEL_COL - 1 && s < UNSEL_COL - 1)
 					s++;
 				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 4)
