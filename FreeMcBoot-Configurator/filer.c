@@ -189,9 +189,9 @@ void clear_mcTable(mcTable *mcT)
 /*int getHddParty(const char *path, const FILEINFO *file, char *party, char *dir)
 {
 	char fullpath[MAX_PATH], *p;
-	
+
 	if(strncmp(path,"hdd",3)) return -1;
-	
+
 	strcpy(fullpath, path);
 	if(file!=NULL){
 		strcat(fullpath, file->name);
@@ -201,7 +201,7 @@ void clear_mcTable(mcTable *mcT)
 	if(dir!=NULL) sprintf(dir, "pfs0:%s", p);
 	*p=0;
 	if(party!=NULL) sprintf(party, "hdd0:%s", &fullpath[6]);
-	
+
 	return 0;
 }*/
 //--------------------------------------------------------------
@@ -286,9 +286,9 @@ return_i:
 	int sel=0, a=6, b=4, c=2, n, tw;
 	int i, x, len, ret;
 	int event, post_event=0;
-	
+
 	strcpy(msg, message);
-	
+
 	for(i=0,n=1; msg[i]!=0; i++){ //start with one string at pos zero
 		if(msg[i]=='\n'){           //line separator at current pos ?
 			msg[i]=0;                 //split old line to separate string
@@ -301,13 +301,13 @@ return_i:
 		len+=strlen(&msg[len])+1;    //len = pos of next string start
 	}
 	if(tw<96) tw=96;
-	
+
 	dh = FONT_HEIGHT*(n+1)+2*2+a+b+c;
 	dw = 2*2+a*2+tw;
 	dx = (SCREEN_WIDTH-dw)/2;
 	dy = (SCREEN_HEIGHT-dh)/2;
 //	printf("tw=%d\ndh=%d\ndw=%d\ndx=%d\ndy=%d\n", tw,dh,dw,dx,dy);
-	
+
 	event = 1;  //event = initial entry
 	while(1){
 		//Pad response section
@@ -330,7 +330,7 @@ return_i:
 				break;
 			}
 		}
-		
+
 		if(event||post_event){ //NB: We need to update two frame buffers per event
 
 			//Display section
@@ -551,13 +551,13 @@ int readMC(const char *path, FILEINFO *info, int max)
 	static struct TocEntry TocEntryList[MAX_ENTRY];
 	char dir[MAX_PATH];
 	int i, j, n;
-	
+
 	loadCdModules();
-	
+
 	strcpy(dir, &path[5]);
 	CDVD_FlushCache();
 	n = CDVD_GetDir(dir, NULL, CDVD_GET_FILES_AND_DIRS, TocEntryList, MAX_ENTRY, dir);
-	
+
 	for(i=j=0; i<n; i++)
 	{
 		if(TocEntryList[i].fileProperties & 0x02 &&
@@ -587,16 +587,16 @@ int readMC(const char *path, FILEINFO *info, int max)
 {
 	iox_dirent_t dirEnt;
 	int hddFd;
-	
+
 	nparties=0;
-	
+
 	if((hddFd=fileXioDopen("hdd0:")) < 0)
 		return;
 	while(fileXioDread(hddFd, &dirEnt) > 0)
 	{
 		if(nparties >= MAX_PARTITIONS)
 			break;
-		if((dirEnt.stat.attr != ATTR_MAIN_PARTITION) 
+		if((dirEnt.stat.attr != ATTR_MAIN_PARTITION)
 				|| (dirEnt.stat.mode != FS_TYPE_PFS))
 			continue;
 
@@ -615,7 +615,7 @@ int readMC(const char *path, FILEINFO *info, int max)
 			strcmp(dirEnt.name, "__sysconf") &&
 			strcmp(dirEnt.name, "__common"))
 			continue;
-		
+
 		strcpy(parties[nparties++], dirEnt.name);
 	}
 	fileXioDclose(hddFd);
@@ -911,12 +911,12 @@ int genDclose(int fd)
 	iox_dirent_t dirbuf;
 	char party[MAX_PATH], dir[MAX_PATH];
 	int i=0, fd, ret;
-	
+
 	if(nparties==0){
 		loadHddModules();
 		setPartyList();
 	}
-	
+
 	if(!strcmp(path, "hdd0:/")){
 		for(i=0; i<nparties; i++){
 			strcpy(info[i].name, parties[i]);
@@ -924,19 +924,19 @@ int genDclose(int fd)
 		}
 		return nparties;
 	}
-	
+
 	getHddParty(path,NULL,party,dir);
 	ret = mountParty(party);
 	if(ret<0) return 0;
 	dir[3] = ret+'0';
-	
+
 	if((fd=fileXioDopen(dir)) < 0) return 0;
-	
+
 	while(fileXioDread(fd, &dirbuf) > 0){
 		if(dirbuf.stat.mode & FIO_S_IFDIR &&
 		(!strcmp(dirbuf.name,".") || !strcmp(dirbuf.name,"..")))
 			continue;  //Skip pseudopaths "." and ".."
-		
+
 		strcpy(info[i].name, dirbuf.name);
 		clear_mcTable(&info[i].stats);
 		if(dirbuf.stat.mode & FIO_S_IFDIR){
@@ -954,7 +954,7 @@ int genDclose(int fd)
 		i++;
 		if(i==max) break;
 	}
-	
+
 	fileXioDclose(fd);
 
 	size_valid = 1;
@@ -1273,7 +1273,7 @@ finish:
 	int event, post_event = 0;
 	int menu_disabled = 0;
 	int write_disabled = 0;
-	
+
 	int menu_len=strlen(LNG(Copy))>strlen(LNG(Cut))?
 		strlen(LNG(Copy)):strlen(LNG(Cut));
 	menu_len=strlen(LNG(Paste))>menu_len? strlen(LNG(Paste)):menu_len;
@@ -1302,7 +1302,7 @@ finish:
 
 	if(	!strcmp(path,"hdd0:/") || path[0]==0) //No menu cmds in partition/device lists
 		menu_disabled = 1;
-	
+
 	if(menu_disabled) {
 		enable[COPY] = FALSE;
 		enable[GETSIZE] = FALSE;
@@ -1362,7 +1362,7 @@ finish:
 
 	for(sel=0; sel<NUM_MENU; sel++) //loop to preselect the first enabled menu entry
 		if(enable[sel]==TRUE) break;  //break loop if sel is at an enabled menu entry
-	
+
 	event = 1;  //event = initial entry
 	while(1){
 		//Pad response section
@@ -1460,7 +1460,7 @@ finish:
 	dw = tw+2*2+a*2;     //Width in pixels of entire frame
 	dx = (SCREEN_WIDTH-dw)/2;  //X position of frame (centred)
 	dy = (SCREEN_HEIGHT-dh)/2; //Y position of frame (centred)
-	
+
 	sel_x=0; sel_y=0;
 	event = 1;  //event = initial entry
 	while(1){
@@ -1566,7 +1566,7 @@ finish:
 	FILEINFO files[MAX_ENTRY];
 	char dir[MAX_PATH], party[MAX_NAME];
 	int nfiles, i, ret, fd;
-	
+
 	if(file->stats.attrFile & MC_ATTR_SUBDIR){
 		sprintf(dir, "%s%s/", path, file->name);
 		nfiles = getDir(dir, files);
@@ -1605,7 +1605,7 @@ finish:
 	FILEINFO files[MAX_ENTRY];
 	char party[MAX_NAME], dir[MAX_PATH], hdddir[MAX_PATH];
 	int nfiles, i, ret;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		getHddParty(path,file,party,hdddir);
 		ret = mountParty(party);
@@ -1616,7 +1616,7 @@ finish:
 	genLimObjName(dir, 0);
 	if	(!strncmp(dir, "host:/", 6))
 		makeHostPath(dir+5, dir+6);
-	
+
 	if(file->stats.attrFile & MC_ATTR_SUBDIR){ //Is the object to delete a folder ?
 		strcat(dir,"/");
 		nfiles = getDir(dir, files);
@@ -1659,18 +1659,18 @@ finish:
 {
 	char party[MAX_NAME], oldPath[MAX_PATH], newPath[MAX_PATH];
 	int test, ret=0;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		sprintf(party, "hdd0:%s", &path[6]);
 		*strchr(party, '/')=0;
 		sprintf(oldPath, "pfs0:%s", strchr(&path[6], '/')+1);
 		sprintf(newPath, "%s%s", oldPath, name);
 		strcat(oldPath, file->name);
-		
+
 		ret = mountParty(party);
 		if(ret<0) return -1;
 		oldPath[3] = newPath[3] = ret+'0';
-		
+
 		ret=fileXioRename(oldPath, newPath);
 	}else if(!strncmp(path, "mc", 2)){
 		sprintf(oldPath, "%s%s", path, file->name);
@@ -1719,7 +1719,7 @@ finish:
 			return -1;
 	} else  //The device was not recognized
 		return -1;
-		
+
 	return ret;
 }
 */
@@ -1728,7 +1728,7 @@ finish:
 {
 	char party[MAX_NAME], dir[MAX_PATH];
 	int ret=0;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		getHddParty(path,NULL,party,dir);
 		ret = mountParty(party);
@@ -2735,7 +2735,7 @@ int keyboard2(char *out, int max)
 	int cur=0, sel=0, i=0, x, y, t=0;
 	char tmp[256], *p;
 	unsigned char KeyPress;
-	
+
 	p=strrchr(out, '.');
 	if(p==NULL)	cur=strlen(out);
 	else		cur=(int)(p-out);
@@ -2854,7 +2854,7 @@ int keyboard2(char *out, int max)
 			y = Menu_tooltip_y;
 			drawSprite(setting->color[0], 0, y-1, SCREEN_WIDTH, y+FONT_HEIGHT);
 
-			if (swapKeys) 
+			if (swapKeys)
 				printXY("ÿ1:OK ÿ0:Back L1:Left R1:Right START:Enter",
 					x, y, setting->color[2], TRUE, 0);
 			else
@@ -3260,7 +3260,7 @@ void getFilePath(char *out, int cnfmode)
 				}else{
 					//pushed R3 for a file (treat as uLE-related)
 					sprintf(out, "%s%s", path, files[browser_sel].name);
-					// Must to include a function for check IRX Header 
+					// Must to include a function for check IRX Header
 					if( ((cnfmode==LK_ELF_CNF) || (cnfmode==NON_CNF))
 						&&(checkELFheader(out)<0)){
 						browser_pushed=FALSE;
@@ -3329,7 +3329,7 @@ void getFilePath(char *out, int cnfmode)
 							ret = ynDialog(tmp);
 						}else
 							ret = ynDialog(LNG(Mark_Files_Delete));
-						
+
 						if(ret>0){
 							int first_deleted = 0;
 							if(nmarks==0){
@@ -3404,7 +3404,7 @@ void getFilePath(char *out, int cnfmode)
 						strcpy(tmp, LNG(Icon_Title));
 						if(keyboard(tmp, 36) <= 0)
 							goto DoneIcon;
-						genFixPath(path, tmp1); 
+						genFixPath(path, tmp1);
 						strcat(tmp1, "icon.sys");
 						if((ret = genOpen(tmp1, O_RDONLY))>=0){ //if old "icon.sys" file exists
 							genClose(ret);
@@ -3419,7 +3419,7 @@ void getFilePath(char *out, int cnfmode)
 						browser_cd=TRUE;
 						strcpy(tmp, LNG(IconText));
 						keyboard(tmp, 36);
-						genFixPath(path, tmp1); 
+						genFixPath(path, tmp1);
 						strcat(tmp1, "icon.icn");
 						if((ret = genOpen(tmp1, O_RDONLY))>=0){ //if old "icon.icn" file exists
 							genClose(ret);
@@ -3687,7 +3687,7 @@ void getFilePath(char *out, int cnfmode)
 				//sprintf(tmp, " R2:%s", LNG(PathPad));
 				//strcat(msg1, tmp);
 			} /*else{ // cnfmode == FALSE
-				if (swapKeys) 
+				if (swapKeys)
 					sprintf(msg1, "ÿ1:%s ÿ3:%s ÿ0:%s ÿ2:%s L1:%s R1:%s R2:%s Sel:%s",
 						LNG(OK), LNG(Up), LNG(Mark), LNG(RevMark),
 						LNG(Mode), LNG(Menu), LNG(PathPad), LNG(Exit));
@@ -3826,12 +3826,12 @@ void getFilePath(char *out, int cnfmode)
 {
 	char tmp[MAX_PATH], tmp1[MAX_PATH];
 	int i, ret=-1;
-	
+
 	written_size = 0;
 	PasteTime = Timer();	      //Note initial pasting time
 	drawMsg(LNG(Pasting));
 	if(!strcmp(path,clipPath)) goto finished;
-	
+
 	for(i=0; i<nclipFiles; i++){
 		strcpy(tmp, clipFiles[i].name);
 		if(clipFiles[i].stats.attrFile & MC_ATTR_SUBDIR) strcat(tmp,"/");
