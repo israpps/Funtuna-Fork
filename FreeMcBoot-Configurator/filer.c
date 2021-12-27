@@ -432,10 +432,10 @@ int cmpFile(FILEINFO *a, FILEINFO *b)  //Used for directory sort
 	if ((a->stats.attrFile & MC_ATTR_OBJECT) == (b->stats.attrFile & MC_ATTR_OBJECT)) {
 		if (a->stats.attrFile & MC_ATTR_FILE) {
 			p = strrchr(a->name, '.');
-			if (p != NULL && !strcmp(p + 1, "ELF"))
+			if (p != NULL && !strcasecmp(p + 1, "ELF"))
 				aElf = TRUE;
 			p = strrchr(b->name, '.');
-			if (p != NULL && !strcmp(p + 1, "ELF"))
+			if (p != NULL && !strcasecmp(p + 1, "ELF"))
 				bElf = TRUE;
 			if (aElf && !bElf)
 				return -1;
