@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <libmc.h>
 //#include "libmc-common.h"
+
 enum {
 	//	DEF_TIMEOUT = 10,
 	//	DEF_HIDE_PATHS = TRUE,
@@ -2057,8 +2058,9 @@ typedef struct
 u32 OSDSYS_selected_color[4];
 u32 OSDSYS_unselected_color[4];
 
-FMCB *fmcb = NULL;
-FMCB *tmpfmcb;
+FMCB fmcb_data;
+FMCB *fmcb = &fmcb_data;
+
 
 //Launch Keys identifiers
 char LK_ID_fmcb[17][10] = {
@@ -2356,9 +2358,9 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 {
 	int i;
 
-	if (fmcb != NULL)
-		free(fmcb);
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//if (fmcb != NULL)
+	//	free(fmcb);
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
 
 	fmcb->Fastboot = 1;
 	fmcb->Debug = 0;
@@ -2813,9 +2815,9 @@ void Config_fmcb_key(int LKN)
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -2871,7 +2873,7 @@ void Config_fmcb_key(int LKN)
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
 				//free(tmpfmcb);
-				free(fmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			} else if (new_pad & PAD_START) {
@@ -3070,9 +3072,9 @@ void Config_fmcb_OSDSYS_item(int item)
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3155,7 +3157,7 @@ void Config_fmcb_OSDSYS_item(int item)
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
 				//free(tmpfmcb);
-				free(fmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -3243,9 +3245,9 @@ void Config_fmcb_OSDSYS_scroll()
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3378,7 +3380,7 @@ void Config_fmcb_OSDSYS_scroll()
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
 				//free(tmpfmcb);
-				free(fmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -3539,9 +3541,9 @@ void Config_fmcb_OSDSYS()
 	int event, post_event = 0;
 	int osd_item = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3854,7 +3856,7 @@ void Config_fmcb_OSDSYS()
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
 				//free(tmpfmcb);
-				free(fmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -4065,9 +4067,9 @@ void Config_ESR_path()
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -4136,7 +4138,7 @@ void Config_ESR_path()
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
 				//free(tmpfmcb);
-				free(fmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
