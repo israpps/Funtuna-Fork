@@ -2973,7 +2973,7 @@ int setFileList(const char *path, const char *ext, FILEINFO *files, int cnfmode)
 					files[j++] = files[i];
 				else {
 					p = strrchr(files[i].name, '.');
-					if (p != NULL && !strcmp(ext, p + 1))
+					if (p != NULL && !stricmp(ext, p + 1))
 						files[j++] = files[i];
 				}
 			}

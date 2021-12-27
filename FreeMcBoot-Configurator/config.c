@@ -3029,7 +3029,7 @@ void setOSD(int item, int mode, int epath)
 	char c[MAX_PATH];
 
 	if (epath == 1) {
-		getFilePath(fmcb->OSD_E1_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E1_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E1_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E1_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E1_Path[item][6] = '?';
@@ -3039,7 +3039,7 @@ void setOSD(int item, int mode, int epath)
 			}
 		}
 	} else if (epath == 2) {
-		getFilePath(fmcb->OSD_E2_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E2_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E2_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E2_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E2_Path[item][6] = '?';
@@ -3049,7 +3049,7 @@ void setOSD(int item, int mode, int epath)
 			}
 		}
 	} else if (epath == 3) {
-		getFilePath(fmcb->OSD_E3_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E3_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E3_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E3_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E3_Path[item][6] = '?';
