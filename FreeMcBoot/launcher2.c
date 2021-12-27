@@ -59,6 +59,8 @@
 #include "splash.h"
 //#include "loading.h"
 
+#define FUNTUNA_FORK_VERSION "2.0.0"
+
 void _ps2sdk_libc_init() {}
 void _ps2sdk_libc_deinit() {}
 
@@ -392,7 +394,7 @@ start_line:
 //---------------------------------------------------------------------------------------
 char *replace_var(char *str, char *orig, char *rep)
 {
-	static char buffer[60];
+	static char buffer[128];
 	char *p;
 
 	if (!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
@@ -416,8 +418,7 @@ char *replace_var(char *str, char *orig, char *rep)
 //----------------------------------------------------------------
 int loadConfig(void)
 {
-	char *CNF_LOADED;
-	char *version = "2.0.";
+	char *CNF_LOADED;	
 	//char CFNBUFFER[64];
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
@@ -579,10 +580,8 @@ int loadConfig(void)
 			OSDSYS.right_cursor = value;
 			continue;
 		}
-		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {
-			version[strlen(version)-1] = '0';  // kill null terminator (besause the string might continue after wildcard)
-			//value = replace_var(value, "%VER%", version);
-			OSDSYS.menu_top_delimiter = replace_var(value, "%VER%", version);
+		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {						
+			OSDSYS.menu_top_delimiter = replace_var(value, "%VER%", FUNTUNA_FORK_VERSION);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
