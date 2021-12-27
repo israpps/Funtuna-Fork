@@ -2870,7 +2870,7 @@ void Config_fmcb_key(int LKN)
 
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
+				//free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
@@ -3154,7 +3154,7 @@ void Config_fmcb_OSDSYS_item(int item)
 				}
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
+				//free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
@@ -3377,7 +3377,7 @@ void Config_fmcb_OSDSYS_scroll()
 					strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99Based on FreeMcBoot 1.8y-00r0.00");
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
+				//free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
@@ -3853,7 +3853,7 @@ void Config_fmcb_OSDSYS()
 				}
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
+				//free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
@@ -4135,7 +4135,7 @@ void Config_ESR_path()
 
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
+				//free(tmpfmcb);
 				free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
