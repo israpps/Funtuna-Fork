@@ -1,6 +1,7 @@
 name: Update uLaunchELF
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [Component_update]
 
