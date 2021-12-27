@@ -85,6 +85,22 @@ jobs:
 #        cp ELFS/USBD.IRX installer/INSTALLER_CONTENTS/BOOT/USBD.IRX
 #        cp ELFS/USBHDFSD.IRX installer/INSTALLER_CONTENTS/BOOT/USBHDFSD.IRX
 
+    - name: add comment on main CNF with commit hash
+      run: |
+        SCH=${GITHUB_SHA::7}
+        DATEE=`date '+[%Y-%m-%d]'`
+        REPO=${GITHUB_REPOSITORY}
+        cd installer
+        cd INSTALLER_CONTENTS
+        cd BOOT
+        mv FUNTUNA.CNF FUNTUNA.TMP
+        echo "#FunTuna Fork configuration file - commit: $SCH - compiled on $DATEE" > FUNTUNA.CNF
+        echo "#Compiled on GitHub Actions by runner: $REPO" >> FUNTUNA.CNF
+        echo "#FunTuna Fork configuration file - commit: $SCH - compiled on $DATEE"
+        echo "#Compiled on GitHub Actions by runner: $REPO"
+        cat FUNTUNA.TMP >> FUNTUNA.CNF
+        rm FUNTUNA.TMP
+        
     - name: build installer
       run: |
         cd installer
