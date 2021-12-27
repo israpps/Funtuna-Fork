@@ -37,7 +37,7 @@
 ---------------------------------------------------------------------------
 
 */
-#define FMCBVER "1.0.0"
+#define FUNTUNA_FORK_VERSION "2.0.0"
 
 
 
@@ -59,7 +59,6 @@
 #include "splash.h"
 //#include "loading.h"
 
-#define FUNTUNA_FORK_VERSION "2.0.0"
 
 void _ps2sdk_libc_init() {}
 void _ps2sdk_libc_deinit() {}
