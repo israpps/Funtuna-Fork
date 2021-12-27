@@ -189,9 +189,9 @@ void clear_mcTable(mcTable *mcT)
 /*int getHddParty(const char *path, const FILEINFO *file, char *party, char *dir)
 {
 	char fullpath[MAX_PATH], *p;
-	
+
 	if(strncmp(path,"hdd",3)) return -1;
-	
+
 	strcpy(fullpath, path);
 	if(file!=NULL){
 		strcat(fullpath, file->name);
@@ -201,7 +201,7 @@ void clear_mcTable(mcTable *mcT)
 	if(dir!=NULL) sprintf(dir, "pfs0:%s", p);
 	*p=0;
 	if(party!=NULL) sprintf(party, "hdd0:%s", &fullpath[6]);
-	
+
 	return 0;
 }*/
 //--------------------------------------------------------------
@@ -286,9 +286,9 @@ return_i:
 	int sel=0, a=6, b=4, c=2, n, tw;
 	int i, x, len, ret;
 	int event, post_event=0;
-	
+
 	strcpy(msg, message);
-	
+
 	for(i=0,n=1; msg[i]!=0; i++){ //start with one string at pos zero
 		if(msg[i]=='\n'){           //line separator at current pos ?
 			msg[i]=0;                 //split old line to separate string
@@ -301,13 +301,13 @@ return_i:
 		len+=strlen(&msg[len])+1;    //len = pos of next string start
 	}
 	if(tw<96) tw=96;
-	
+
 	dh = FONT_HEIGHT*(n+1)+2*2+a+b+c;
 	dw = 2*2+a*2+tw;
 	dx = (SCREEN_WIDTH-dw)/2;
 	dy = (SCREEN_HEIGHT-dh)/2;
 //	printf("tw=%d\ndh=%d\ndw=%d\ndx=%d\ndy=%d\n", tw,dh,dw,dx,dy);
-	
+
 	event = 1;  //event = initial entry
 	while(1){
 		//Pad response section
@@ -330,7 +330,7 @@ return_i:
 				break;
 			}
 		}
-		
+
 		if(event||post_event){ //NB: We need to update two frame buffers per event
 
 			//Display section
@@ -432,10 +432,10 @@ int cmpFile(FILEINFO *a, FILEINFO *b)  //Used for directory sort
 	if ((a->stats.attrFile & MC_ATTR_OBJECT) == (b->stats.attrFile & MC_ATTR_OBJECT)) {
 		if (a->stats.attrFile & MC_ATTR_FILE) {
 			p = strrchr(a->name, '.');
-			if (p != NULL && !stricmp(p + 1, "ELF"))
+			if (p != NULL && !strcasecmp(p + 1, "ELF"))
 				aElf = TRUE;
 			p = strrchr(b->name, '.');
-			if (p != NULL && !stricmp(p + 1, "ELF"))
+			if (p != NULL && !strcasecmp(p + 1, "ELF"))
 				bElf = TRUE;
 			if (aElf && !bElf)
 				return -1;
@@ -551,13 +551,13 @@ int readMC(const char *path, FILEINFO *info, int max)
 	static struct TocEntry TocEntryList[MAX_ENTRY];
 	char dir[MAX_PATH];
 	int i, j, n;
-	
+
 	loadCdModules();
-	
+
 	strcpy(dir, &path[5]);
 	CDVD_FlushCache();
 	n = CDVD_GetDir(dir, NULL, CDVD_GET_FILES_AND_DIRS, TocEntryList, MAX_ENTRY, dir);
-	
+
 	for(i=j=0; i<n; i++)
 	{
 		if(TocEntryList[i].fileProperties & 0x02 &&
@@ -587,16 +587,16 @@ int readMC(const char *path, FILEINFO *info, int max)
 {
 	iox_dirent_t dirEnt;
 	int hddFd;
-	
+
 	nparties=0;
-	
+
 	if((hddFd=fileXioDopen("hdd0:")) < 0)
 		return;
 	while(fileXioDread(hddFd, &dirEnt) > 0)
 	{
 		if(nparties >= MAX_PARTITIONS)
 			break;
-		if((dirEnt.stat.attr != ATTR_MAIN_PARTITION) 
+		if((dirEnt.stat.attr != ATTR_MAIN_PARTITION)
 				|| (dirEnt.stat.mode != FS_TYPE_PFS))
 			continue;
 
@@ -615,7 +615,7 @@ int readMC(const char *path, FILEINFO *info, int max)
 			strcmp(dirEnt.name, "__sysconf") &&
 			strcmp(dirEnt.name, "__common"))
 			continue;
-		
+
 		strcpy(parties[nparties++], dirEnt.name);
 	}
 	fileXioDclose(hddFd);
@@ -736,7 +736,7 @@ int genFixPath(char *inp_path, char *gen_path)
 
 	genLimObjName(path, 0);
 	if(!strncmp(path, "pfs", 3)){
-		ret = fileXioRmdir(path);
+		ret = rmdir(path);
 	}else{
 		ret = fioRmdir(path);
 	}
@@ -774,10 +774,10 @@ int genOpen(char *path, int mode)
 		return -1;
 
 	/*if(!strncmp(path, "pfs", 3)){
-		fd = fileXioOpen(path, mode, fileMode);
+		fd = open(path, mode, fileMode);
 		io = 1;
 	}else{*/
-	fd = fioOpen(path, mode);
+	fd = open(path, mode);
 	io = 0;
 	//}
 	if (fd < 0)
@@ -811,7 +811,7 @@ int genDopen(char *path)
 		fd = fileXioDopen(tmp);
 		io = 3;
 	}else{*/
-	fd = fioDopen(path);
+	fd = fileXioDopen(path);
 	io = 2;
 	//	}
 	if (fd < 0) {
@@ -833,9 +833,9 @@ int genLseek(int fd, int where, int how)
 		return -1;
 
 	//if(gen_io[fd])
-	//	return fileXioLseek(gen_fd[fd], where, how);
+	//	return lseek(gen_fd[fd], where, how);
 	//	else
-	return fioLseek(gen_fd[fd], where, how);
+	return lseek(gen_fd[fd], where, how);
 }
 //------------------------------
 //endfunc genLseek
@@ -848,7 +848,7 @@ int genRead(int fd, void *buf, int size)
 	//	if(gen_io[fd])
 	//		return fileXioRead(gen_fd[fd], buf, size);
 	//	else
-	return fioRead(gen_fd[fd], buf, size);
+	return read(gen_fd[fd], buf, size);
 }
 //------------------------------
 //endfunc genRead
@@ -861,7 +861,7 @@ int genWrite(int fd, void *buf, int size)
 	//	if(gen_io[fd])
 	//		return fileXioWrite(gen_fd[fd], buf, size);
 	//	else
-	return fioWrite(gen_fd[fd], buf, size);
+	return write(gen_fd[fd], buf, size);
 }
 //------------------------------
 //endfunc genWrite
@@ -874,10 +874,10 @@ int genClose(int fd)
 		return -1;
 
 	/*	if(gen_io[fd]==1)
-		ret = fileXioClose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else*/
 	if (gen_io[fd] == 0)
-		ret = fioClose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else
 		return -1;
 	gen_fd[fd] = -1;
@@ -897,7 +897,7 @@ int genDclose(int fd)
 		ret = fileXioDclose(gen_fd[fd]);
 	else */
 	if (gen_io[fd] == 2)
-		ret = fioDclose(gen_fd[fd]);
+		ret = close(gen_fd[fd]);
 	else
 		return -1;
 	gen_fd[fd] = -1;
@@ -911,12 +911,12 @@ int genDclose(int fd)
 	iox_dirent_t dirbuf;
 	char party[MAX_PATH], dir[MAX_PATH];
 	int i=0, fd, ret;
-	
+
 	if(nparties==0){
 		loadHddModules();
 		setPartyList();
 	}
-	
+
 	if(!strcmp(path, "hdd0:/")){
 		for(i=0; i<nparties; i++){
 			strcpy(info[i].name, parties[i]);
@@ -924,19 +924,19 @@ int genDclose(int fd)
 		}
 		return nparties;
 	}
-	
+
 	getHddParty(path,NULL,party,dir);
 	ret = mountParty(party);
 	if(ret<0) return 0;
 	dir[3] = ret+'0';
-	
+
 	if((fd=fileXioDopen(dir)) < 0) return 0;
-	
+
 	while(fileXioDread(fd, &dirbuf) > 0){
 		if(dirbuf.stat.mode & FIO_S_IFDIR &&
 		(!strcmp(dirbuf.name,".") || !strcmp(dirbuf.name,"..")))
 			continue;  //Skip pseudopaths "." and ".."
-		
+
 		strcpy(info[i].name, dirbuf.name);
 		clear_mcTable(&info[i].stats);
 		if(dirbuf.stat.mode & FIO_S_IFDIR){
@@ -954,7 +954,7 @@ int genDclose(int fd)
 		i++;
 		if(i==max) break;
 	}
-	
+
 	fileXioDclose(fd);
 
 	size_valid = 1;
@@ -967,14 +967,14 @@ int genDclose(int fd)
 //--------------------------------------------------------------
 int readMASS(const char *path, FILEINFO *info, int max)
 {
-	fio_dirent_t record;
+	iox_dirent_t record;
 	int n = 0, dd = -1;
 
 	loadUsbModules();
 
-	if ((dd = fioDopen(path)) < 0)
+	if ((dd = fileXioDopen(path)) < 0)
 		goto exit;  //exit if error opening directory
-	while (fioDread(dd, &record) > 0) {
+	while (fileXioDread(dd, &record) > 0) {
 		if ((FIO_SO_ISDIR(record.stat.mode)) && (!strcmp(record.name, ".") || !strcmp(record.name, "..")))
 			continue;  //Skip entry if pseudo-folder "." or ".."
 
@@ -999,7 +999,7 @@ int readMASS(const char *path, FILEINFO *info, int max)
 
 exit:
 	if (dd >= 0)
-		fioDclose(dd);  //Close directory if opened above
+		close(dd);  //Close directory if opened above
 	return n;
 }
 //------------------------------
@@ -1048,7 +1048,7 @@ exit:
 
 	load_ps2host();
 	host_error = 0;
-	if ((fd = fioOpen("host:elflist.txt", O_RDONLY)) >= 0)
+	if ((fd = open("host:elflist.txt", O_RDONLY)) >= 0)
 	{ fioClose(fd);
 		host_elflist = 1;
 	}
@@ -1064,7 +1064,7 @@ exit:
 //--------------------------------------------------------------
 /*int	readHOST(const char *path, FILEINFO *info, int max)
 {
-	fio_dirent_t hostcontent;
+	io_dirent_t hostcontent;
 	int hfd, rv, size, contentptr, hostcount = 0;
 	char *elflisttxt, elflistchar;
 	char	host_path[MAX_PATH], host_next[MAX_PATH];
@@ -1075,14 +1075,14 @@ exit:
 	if	(!strncmp(path, "host:/", 6))
 		strcpy(host_path+5, path+6);
 	if	((host_elflist) && !strcmp(host_path, "host:")){
-		if	((hfd = fioOpen("host:elflist.txt", O_RDONLY)) < 0)
+		if	((hfd = open("host:elflist.txt", O_RDONLY)) < 0)
 			return 0;
-		if	((size = fioLseek(hfd, 0, SEEK_END)) <= 0)
+		if	((size = lsee(hfd, 0, SEEK_END)) <= 0)
 		{	fioClose(hfd);
 			return 0;
 		}
 		elflisttxt = (char *)malloc(size);
-		fioLseek(hfd, 0, SEEK_SET);
+		lsee(hfd, 0, SEEK_SET);
 		fioRead(hfd, elflisttxt, size);
 		fioClose(hfd);
 		contentptr = 0;
@@ -1092,7 +1092,7 @@ exit:
 			{	host_next[contentptr] = 0;
 				snprintf(host_path, MAX_PATH-1, "%s%s", "host:", host_next);
 				clear_mcTable(&info[hostcount].stats);
-				if	((hfd = fioOpen(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0)
+				if	((hfd = open(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0)
 				{	fioClose(hfd);
 					info[hostcount].stats.attrFile = MC_ATTR_norm_file;
 					makeFslPath(info[hostcount++].name, host_next);
@@ -1206,7 +1206,7 @@ int getDir(const char *path, FILEINFO *info)
 		//Here we know that the object needing a title is a file
 		strcpy(tmpdir, dir);				//Copy the pathname for file access
 		cp = strrchr(tmpdir, '.');  //Find the extension, if any
-		if((cp==NULL) || stricmp(cp, ".psu") ) //If it's anything other than a PSU file
+		if((cp==NULL) || strcmp(cp, ".psu") ) //If it's anything other than a PSU file
 			goto get_PS1_GameTitle;              //then it may be a PS1 save
 		//Here we know that the object needing a title is a PSU file
 		if((fd=genOpen(tmpdir, O_RDONLY)) < 0) goto finish;  //Abort if open fails
@@ -1273,7 +1273,7 @@ finish:
 	int event, post_event = 0;
 	int menu_disabled = 0;
 	int write_disabled = 0;
-	
+
 	int menu_len=strlen(LNG(Copy))>strlen(LNG(Cut))?
 		strlen(LNG(Copy)):strlen(LNG(Cut));
 	menu_len=strlen(LNG(Paste))>menu_len? strlen(LNG(Paste)):menu_len;
@@ -1302,7 +1302,7 @@ finish:
 
 	if(	!strcmp(path,"hdd0:/") || path[0]==0) //No menu cmds in partition/device lists
 		menu_disabled = 1;
-	
+
 	if(menu_disabled) {
 		enable[COPY] = FALSE;
 		enable[GETSIZE] = FALSE;
@@ -1362,7 +1362,7 @@ finish:
 
 	for(sel=0; sel<NUM_MENU; sel++) //loop to preselect the first enabled menu entry
 		if(enable[sel]==TRUE) break;  //break loop if sel is at an enabled menu entry
-	
+
 	event = 1;  //event = initial entry
 	while(1){
 		//Pad response section
@@ -1460,7 +1460,7 @@ finish:
 	dw = tw+2*2+a*2;     //Width in pixels of entire frame
 	dx = (SCREEN_WIDTH-dw)/2;  //X position of frame (centred)
 	dy = (SCREEN_HEIGHT-dh)/2; //Y position of frame (centred)
-	
+
 	sel_x=0; sel_y=0;
 	event = 1;  //event = initial entry
 	while(1){
@@ -1566,7 +1566,7 @@ finish:
 	FILEINFO files[MAX_ENTRY];
 	char dir[MAX_PATH], party[MAX_NAME];
 	int nfiles, i, ret, fd;
-	
+
 	if(file->stats.attrFile & MC_ATTR_SUBDIR){
 		sprintf(dir, "%s%s/", path, file->name);
 		nfiles = getDir(dir, files);
@@ -1586,12 +1586,12 @@ finish:
 		if	(!strncmp(dir, "host:/", 6))
 			makeHostPath(dir+5, dir+6);
 		if(!strncmp(path, "hdd", 3)){
-			fd = fileXioOpen(dir, O_RDONLY, fileMode);
-			size = fileXioLseek(fd,0,SEEK_END);
-			fileXioClose(fd);
+			fd = open(dir, O_RDONLY, fileMode);
+			size = lseek(fd,0,SEEK_END);
+			close(fd);
 		}else{
-			fd = fioOpen(dir, O_RDONLY);
-			size = fioLseek(fd,0,SEEK_END);
+			fd = open(dir, O_RDONLY);
+			size = lsee(fd,0,SEEK_END);
 			fioClose(fd);
 		}
 	}
@@ -1605,7 +1605,7 @@ finish:
 	FILEINFO files[MAX_ENTRY];
 	char party[MAX_NAME], dir[MAX_PATH], hdddir[MAX_PATH];
 	int nfiles, i, ret;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		getHddParty(path,file,party,hdddir);
 		ret = mountParty(party);
@@ -1616,7 +1616,7 @@ finish:
 	genLimObjName(dir, 0);
 	if	(!strncmp(dir, "host:/", 6))
 		makeHostPath(dir+5, dir+6);
-	
+
 	if(file->stats.attrFile & MC_ATTR_SUBDIR){ //Is the object to delete a folder ?
 		strcat(dir,"/");
 		nfiles = getDir(dir, files);
@@ -1629,7 +1629,7 @@ finish:
 			mcDelete(dir[2]-'0', 0, &dir[4]);
 			mcSync(0, NULL, &ret);
 		}else if(!strncmp(path, "hdd", 3)){
-			ret = fileXioRmdir(hdddir);
+			ret = rmdir(hdddir);
 		}else if(!strncmp(path, "mass", 4)){
 			sprintf(dir, "mass0:%s%s", &path[5], file->name);
 			ret = fioRmdir(dir);
@@ -1659,18 +1659,18 @@ finish:
 {
 	char party[MAX_NAME], oldPath[MAX_PATH], newPath[MAX_PATH];
 	int test, ret=0;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		sprintf(party, "hdd0:%s", &path[6]);
 		*strchr(party, '/')=0;
 		sprintf(oldPath, "pfs0:%s", strchr(&path[6], '/')+1);
 		sprintf(newPath, "%s%s", oldPath, name);
 		strcat(oldPath, file->name);
-		
+
 		ret = mountParty(party);
 		if(ret<0) return -1;
 		oldPath[3] = newPath[3] = ret+'0';
-		
+
 		ret=fileXioRename(oldPath, newPath);
 	}else if(!strncmp(path, "mc", 2)){
 		sprintf(oldPath, "%s%s", path, file->name);
@@ -1678,7 +1678,7 @@ finish:
 		if((test=fioDopen(newPath))>=0){ //Does folder of same name exist ?
 			fioDclose(test);
 			ret = -17;
-		}else if((test=fioOpen(newPath, O_RDONLY))>=0){ //Does file of same name exist ?
+		}else if((test=open(newPath, O_RDONLY))>=0){ //Does file of same name exist ?
 			fioClose(test);
 			ret = -17;
 		}else{ //No file/folder of the same name exists
@@ -1710,7 +1710,7 @@ finish:
 				fioDclose(temp_fd);
 			}
 		} else if(file->stats.attrFile & MC_ATTR_FILE){ //Rename a file ?
-			ret = (temp_fd = fioOpen(oldPath, O_RDONLY));
+			ret = (temp_fd = open(oldPath, O_RDONLY));
 			if (temp_fd >= 0){
 				ret = fioIoctl(temp_fd, IOCTL_RENAME, (void *) newPath);
 				fioClose(temp_fd);
@@ -1719,7 +1719,7 @@ finish:
 			return -1;
 	} else  //The device was not recognized
 		return -1;
-		
+
 	return ret;
 }
 */
@@ -1728,7 +1728,7 @@ finish:
 {
 	char party[MAX_NAME], dir[MAX_PATH];
 	int ret=0;
-	
+
 	if(!strncmp(path, "hdd", 3)){
 		getHddParty(path,NULL,party,dir);
 		ret = mountParty(party);
@@ -2147,7 +2147,7 @@ PSU_error:
 //and recursively call copy with higher recurse level to process the contents
 	if(PasteMode==PM_PSU_RESTORE && recurses==0){
 		cp = strrchr(in, '.');
-		if((cp==NULL) || stricmp(cp, ".psu") )
+		if((cp==NULL) || strcmp(cp, ".psu") )
 			goto non_PSU_RESTORE_init;  //if not a PSU file, go do normal pasting
 
 		in_fd = genOpen(in, O_RDONLY);
@@ -2735,7 +2735,7 @@ int keyboard2(char *out, int max)
 	int cur=0, sel=0, i=0, x, y, t=0;
 	char tmp[256], *p;
 	unsigned char KeyPress;
-	
+
 	p=strrchr(out, '.');
 	if(p==NULL)	cur=strlen(out);
 	else		cur=(int)(p-out);
@@ -2854,7 +2854,7 @@ int keyboard2(char *out, int max)
 			y = Menu_tooltip_y;
 			drawSprite(setting->color[0], 0, y-1, SCREEN_WIDTH, y+FONT_HEIGHT);
 
-			if (swapKeys) 
+			if (swapKeys)
 				printXY("ÿ1:OK ÿ0:Back L1:Left R1:Right START:Enter",
 					x, y, setting->color[2], TRUE, 0);
 			else
@@ -2973,7 +2973,7 @@ int setFileList(const char *path, const char *ext, FILEINFO *files, int cnfmode)
 					files[j++] = files[i];
 				else {
 					p = strrchr(files[i].name, '.');
-					if (p != NULL && !stricmp(ext, p + 1))
+					if (p != NULL && !strcasecmp(ext, p + 1))
 						files[j++] = files[i];
 				}
 			}
@@ -3260,7 +3260,7 @@ void getFilePath(char *out, int cnfmode)
 				}else{
 					//pushed R3 for a file (treat as uLE-related)
 					sprintf(out, "%s%s", path, files[browser_sel].name);
-					// Must to include a function for check IRX Header 
+					// Must to include a function for check IRX Header
 					if( ((cnfmode==LK_ELF_CNF) || (cnfmode==NON_CNF))
 						&&(checkELFheader(out)<0)){
 						browser_pushed=FALSE;
@@ -3329,7 +3329,7 @@ void getFilePath(char *out, int cnfmode)
 							ret = ynDialog(tmp);
 						}else
 							ret = ynDialog(LNG(Mark_Files_Delete));
-						
+
 						if(ret>0){
 							int first_deleted = 0;
 							if(nmarks==0){
@@ -3404,7 +3404,7 @@ void getFilePath(char *out, int cnfmode)
 						strcpy(tmp, LNG(Icon_Title));
 						if(keyboard(tmp, 36) <= 0)
 							goto DoneIcon;
-						genFixPath(path, tmp1); 
+						genFixPath(path, tmp1);
 						strcat(tmp1, "icon.sys");
 						if((ret = genOpen(tmp1, O_RDONLY))>=0){ //if old "icon.sys" file exists
 							genClose(ret);
@@ -3419,7 +3419,7 @@ void getFilePath(char *out, int cnfmode)
 						browser_cd=TRUE;
 						strcpy(tmp, LNG(IconText));
 						keyboard(tmp, 36);
-						genFixPath(path, tmp1); 
+						genFixPath(path, tmp1);
 						strcat(tmp1, "icon.icn");
 						if((ret = genOpen(tmp1, O_RDONLY))>=0){ //if old "icon.icn" file exists
 							genClose(ret);
@@ -3461,7 +3461,7 @@ void getFilePath(char *out, int cnfmode)
 					}
 				} else if(new_pad & PAD_SELECT){  //Leaving the browser ?
 					unmountAll();
-					if (stricmp(setting->GUI_skin, "\0") != 0) {
+					if (strcmp(setting->GUI_skin, "\0") != 0) {
 						GUI_active = 1;
 						loadSkin(BACKGROUND_PIC, 0, 0);
 					}
@@ -3687,7 +3687,7 @@ void getFilePath(char *out, int cnfmode)
 				//sprintf(tmp, " R2:%s", LNG(PathPad));
 				//strcat(msg1, tmp);
 			} /*else{ // cnfmode == FALSE
-				if (swapKeys) 
+				if (swapKeys)
 					sprintf(msg1, "ÿ1:%s ÿ3:%s ÿ0:%s ÿ2:%s L1:%s R1:%s R2:%s Sel:%s",
 						LNG(OK), LNG(Up), LNG(Mark), LNG(RevMark),
 						LNG(Mode), LNG(Menu), LNG(PathPad), LNG(Exit));
@@ -3826,12 +3826,12 @@ void getFilePath(char *out, int cnfmode)
 {
 	char tmp[MAX_PATH], tmp1[MAX_PATH];
 	int i, ret=-1;
-	
+
 	written_size = 0;
 	PasteTime = Timer();	      //Note initial pasting time
 	drawMsg(LNG(Pasting));
 	if(!strcmp(path,clipPath)) goto finished;
-	
+
 	for(i=0; i<nclipFiles; i++){
 		strcpy(tmp, clipFiles[i].name);
 		if(clipFiles[i].stats.attrFile & MC_ATTR_SUBDIR) strcat(tmp,"/");

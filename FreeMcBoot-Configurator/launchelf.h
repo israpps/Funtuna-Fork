@@ -12,7 +12,7 @@
 #include <libhdd.h>
 #include <libmc.h>
 #include <libpad.h>
-#include <fileio.h>
+///#include <fileio.h>
 #include <sys/stat.h>
 #include <iopheap.h>
 #include <errno.h>
@@ -23,7 +23,12 @@
 #include <slib.h>
 #include <smem.h>
 #include <smod.h>
-#include <sys/fcntl.h>
+///#include <sys/fcntl.h>
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
+
 #include <debug.h>
 #include <gsKit.h>
 #include <dmaKit.h>
@@ -33,8 +38,12 @@
 #include "iopmod_name.h"
 //#include <libjpg.h>
 //#include <libkbd.h>
-#include <floatlib.h>
+///#include <floatlib.h>
 //#include "hdl_rpc.h"
+
+#define NEWLIB_PORT_AWARE
+#include <fileXio_rpc.h>
+#include <io_common.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -196,7 +205,7 @@ extern int PicRotate, FullScreen;
 extern u8 *FontBuffer;
 
 void setScrTmp(const char *msg0, const char *msg1);
-//void drawSprite( u64 color, int x1, int y1, int x2, int y2 );
+void drawSprite( u64 color, int x1, int y1, int x2, int y2 );
 void drawPopSprite(u64 color, int x1, int y1, int x2, int y2);
 void drawOpSprite(u64 color, int x1, int y1, int x2, int y2);
 void drawMsg(const char *msg);

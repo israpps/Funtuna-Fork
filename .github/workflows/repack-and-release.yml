@@ -1,35 +1,106 @@
 name: Release Funtuna
 on:
   workflow_dispatch:
-  pull_request:
+#  pull_request:
   repository_dispatch:
     types: [Component_update]
   push:
     paths:
       - '__Release/**'
       - 'installer/**'
+      - 'FreeMcBoot-Configurator/**'
+      - 'FreeMcBoot/**'
       - '.github/workflows/repack-and-release.yml'
 
 #  schedule:
 #   - cron: "0 15 * * 2,5"
 jobs:
+  Build-FreeMcBoot-and-Configurator:
+    runs-on: ubuntu-latest
+    container: ps2dev/ps2dev:latest
+    steps:
+
+    - name: Install dependencies
+      run: |
+        apk add build-base git
+
+    - name: checkout code for release
+      uses: actions/checkout@v1
+
+    - name: build FreeMcBoot
+      run: |
+        cd FreeMcBoot
+        make
+        cp BOOT.ELF ../BOOT.ELF
+
+    - name: build FreeMcBoot Configurator
+      run: |
+        cd FreeMcBoot-Configurator
+        make
+        cp CFG.ELF ../CFG.ELF
+
+#    - name: Copy USB drivers
+#      run: |
+#        cp $PS2SDK/iop/irx/usbd.irx ./USBD.IRX
+#        cp $PS2SDK/iop/irx/usbhdfsd.irx ./USBHDFSD.IRX
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: ELFS
+        path: |
+            CFG.ELF
+            BOOT.ELF
+#            USBD.IRX
+#            USBHDFSD.IRX
+
   Repack_and_Release:
     runs-on: ubuntu-latest
+    needs: Build-FreeMcBoot-and-Configurator
     container: ps2dev/ps2dev:v1.2.0
     steps:
-    
+
     - name: Install dependencies
       run: |
         apk add build-base git zip p7zip
 
     - name: checkout code for release
       uses: actions/checkout@v1
-      
+
+    - name: Download FreeMcBoot-and-Configurator artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: ELFS
+
     - name: Update wLaunchELF_ISR
       run: |
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
-    
+         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O ULE.ELF
+         cp ULE.ELF installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
+         mv ULE.ELF __Release/ULE_psu.ELF
+
+    - name: Load new FMCB and configurator binaries
+      run: |
+        cp ELFS/BOOT.ELF installer/INSTALLER_CONTENTS/BOOT/BOOT.ELF
+        cp ELFS/CFG.ELF installer/INSTALLER_CONTENTS/BOOT/CFG.ELF
+#        cp ELFS/USBD.IRX installer/INSTALLER_CONTENTS/BOOT/USBD.IRX
+#        cp ELFS/USBHDFSD.IRX installer/INSTALLER_CONTENTS/BOOT/USBHDFSD.IRX
+
+    - name: add comment on main CNF with commit hash
+      run: |
+        SCH=${GITHUB_SHA::7}
+        DATEE=`date '+[%Y-%m-%d]'`
+        REPO=${GITHUB_REPOSITORY}
+        cd installer
+        cd INSTALLER_CONTENTS
+        cd BOOT
+        mv FUNTUNA.CNF FUNTUNA.TMP
+        echo "#FunTuna Fork configuration file - commit: $SCH - compiled on $DATEE" > FUNTUNA.CNF
+        echo "#Compiled on GitHub Actions by runner: $REPO" >> FUNTUNA.CNF
+        echo "#FunTuna Fork configuration file - commit: $SCH - compiled on $DATEE"
+        echo "#Compiled on GitHub Actions by runner: $REPO"
+        cat FUNTUNA.TMP >> FUNTUNA.CNF
+        rm FUNTUNA.TMP
+        
     - name: build installer
       run: |
         cd installer
@@ -52,17 +123,22 @@ jobs:
         TARGET=FunTuna\[$SCH\].7z
         echo TARGET is $TARGET
         7z a -t7z -r $TARGET *
-        ls -R 
+        ls -R
+
+    - name: Extract branch name
+#      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
 
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: FunTuna
+        name: FunTuna-${{ steps.extract_branch.outputs.branch }}
         path: |
              __Release/*.7z
              installer/FunTuna-Fork_Installer.ELF
- 
+
     - name: Create release
       if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@latest

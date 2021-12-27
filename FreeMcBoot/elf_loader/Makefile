@@ -6,21 +6,36 @@
 # Licenced under Academic Free License version 2.0
 # Review ps2sdk README & LICENSE files for further details.
 
-EE_OBJS = src/elf.o src/loader.o
+### Adjust these three, for PS2Link compatibility tests
+### Old LaunchELF used LA=0x90000, SA=0xB0000, SS=0x08000
+LOADADDR  = 0x90000
+STACKADDR = 0xA8000
+STACKSIZE = 0x04000
 
-all:: prepareLoader $(EE_LIB)
+ifeq ($(DEBUG),1)
+LOADADDR  = 0x1700000
+STACKADDR = 0x1720000
+STACKSIZE = 0x08000
+endif
 
-clean:: cleanLoader
+LDPARAMS := -Wl,--defsym -Wl,_stack_size=$(STACKSIZE) -Wl,--defsym -Wl,_stack=$(STACKADDR)
 
-prepareLoader:
-	mkdir -p lib
-	$(MAKE) -C src/loader
-	bin2c src/loader/loader.elf src/loader.c loader_elf
+EE_LDFLAGS += -Wl,-Ttext -Wl,$(LOADADDR) -s $(LDPARAMS)
 
-cleanLoader:
-	$(MAKE) -C src/loader clean
+EE_BIN = elf_loader.elf
 
-include $(PS2SDKSRC)/Defs.make
-include $(PS2SDKSRC)/ee/Rules.lib.make
-include $(PS2SDKSRC)/ee/Rules.make
-include $(PS2SDKSRC)/ee/Rules.release
+EE_OBJS = elf_loader.o
+
+EE_LIBS =
+ifeq ($(DEBUG),1)
+EE_LIBS += -ldebug
+endif
+
+all: $(EE_BIN)
+
+clean:
+	rm -f -r $(EE_OBJS) $(EE_BIN)
+
+# Include makefiles
+include $(PS2SDK)/samples/Makefile.pref
+include $(PS2SDK)/samples/Makefile.eeglobal

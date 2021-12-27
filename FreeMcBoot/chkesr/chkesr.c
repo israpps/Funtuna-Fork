@@ -102,7 +102,7 @@ void *Check_ESR_Disc(void *Data)
 	sceCdSync(0);
 	
  	if (r <= 0) *ret = -1;
- 	else if (!strncmp(buf + offs + 25, "+NSR", 4))
+ 	else if (!strncmp((char*)(buf + offs + 25), "+NSR", 4))
  	     	*ret = 1;
 
  	SysFree(buf); 	

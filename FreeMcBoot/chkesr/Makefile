@@ -33,7 +33,8 @@
 
 IOP_BIN  = chkesr.irx
 IOP_OBJS = chkesr.o imports.o
-
+IOP_SRC_DIR = 
+IOP_OBJS_DIR = 
 IOP_CFLAGS  += -Wall -fno-builtin -D_IOP
 IOP_LDFLAGS += -s
 IOP_INCS += -I$(PS2SDK)/iop/include -I$(PS2SDK)/common/include
@@ -47,4 +48,4 @@ copy:
 	cp chkesr.irx ../chkesr.irx
 
 include $(PS2SDK)/Defs.make
-include Rules.make
+include $(PS2SDK)/samples/Makefile.iopglobal

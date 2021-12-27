@@ -10,11 +10,12 @@
 #include <stdbool.h>
 #include <libmc.h>
 //#include "libmc-common.h"
+
 enum {
 	//	DEF_TIMEOUT = 10,
 	//	DEF_HIDE_PATHS = TRUE,
 	/**********************DEFAULT COLORS**********************/ /**
-   *DEF_COLOR1 = GS_SETREG_RGBA(128,128,128,0), //Backgr 
+   *DEF_COLOR1 = GS_SETREG_RGBA(128,128,128,0), //Backgr
    *DEF_COLOR2 = GS_SETREG_RGBA(64,64,64,0),    //Frame
    *DEF_COLOR3 = GS_SETREG_RGBA(96,0,0,0),      //Select
    *DEF_COLOR4 = GS_SETREG_RGBA(0,0,0,0),       //Text
@@ -563,7 +564,7 @@ void loadSkinBrowser(void)
 				sprintf(c, "mc%d:/SYS-CONF", LaunchElfDir[2]-'0');
 			else
 				sprintf(c, "mc%d:/SYS-CONF", CheckMC());
-	
+
 			if((fd=fioDopen(c)) >= 0){
 				fioDclose(fd);
 				char strtmp[MAX_PATH] = "/";
@@ -983,7 +984,7 @@ failed_load:
 				return;
 			}
 		} //end if(readpad())
-		
+
 		if(event||post_event){ //NB: We need to update two frame buffers per event
 
 			//Display section
@@ -1007,7 +1008,7 @@ failed_load:
 
 			x = Menu_start_x;
 			y = Menu_start_y;
-		
+
 			printXY(LNG(SKIN_SETTINGS), x, y, setting->color[3], TRUE, 0);
 			y += FONT_HEIGHT;
 
@@ -1101,7 +1102,7 @@ failed_load:
 	u64 rgb[8][3];
 	char c[MAX_PATH];
 	int space=((SCREEN_WIDTH-SCREEN_MARGIN-4*FONT_WIDTH)-(Menu_start_x+2*FONT_WIDTH))/8;
-	
+
 	event = 1;	//event = initial entry
 
 	for(i=0; i<8; i++) {
@@ -1109,7 +1110,7 @@ failed_load:
 		rgb[i][1] = setting->color[i] >> 8 & 0xFF;
 		rgb[i][2] = setting->color[i] >> 16 & 0xFF;
 	}
-	
+
 	s=0;
 	while(1)
 	{
@@ -1145,7 +1146,7 @@ failed_load:
 				else if(s>=31) s=28;
 				else if(s>=28) s=27;
 				else if(s>=27) s=25;
-				else if(s>=25) s=24; //at or 
+				else if(s>=25) s=24; //at or
 				else if(s>=24) s=21; //if s beyond color settings
 				else if(s>=3) s-=3;  //if s in a color beyond Color1 step to preceding color
 			}
@@ -1167,7 +1168,7 @@ failed_load:
 				if(s<24) {
 					if(rgb[s/3][s%3] > 0) {
 						rgb[s/3][s%3]--;
-						setting->color[s/3] = 
+						setting->color[s/3] =
 							GS_SETREG_RGBA(rgb[s/3][0], rgb[s/3][1], rgb[s/3][2], 0);
 					}
 				} else if(s==25) {
@@ -1190,7 +1191,7 @@ failed_load:
 				if(s<24) {
 					if(rgb[s/3][s%3] < 255) {
 						rgb[s/3][s%3]++;
-						setting->color[s/3] = 
+						setting->color[s/3] =
 							GS_SETREG_RGBA(rgb[s/3][0], rgb[s/3][1], rgb[s/3][2], 0);
 					}
 				}else if(s==24){
@@ -1243,7 +1244,7 @@ failed_load:
 					setting->Brightness = DEF_BRIGHT;
 					setting->Popup_Opaque = DEF_POPUP_OPAQUE;
 					updateScreenMode(0);
-					
+
 					for(i=0; i<8; i++) {
 						rgb[i][0] = setting->color[i] & 0xFF;
 						rgb[i][1] = setting->color[i] >> 8 & 0xFF;
@@ -2057,8 +2058,9 @@ typedef struct
 u32 OSDSYS_selected_color[4];
 u32 OSDSYS_unselected_color[4];
 
-FMCB *fmcb = NULL;
-FMCB *tmpfmcb;
+FMCB fmcb_data;
+FMCB *fmcb = &fmcb_data;
+
 
 //Launch Keys identifiers
 char LK_ID_fmcb[17][10] = {
@@ -2280,7 +2282,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 	strcat(icon_path, "icon.sys");
 	if (!exists(icon_path)){
 		if ((fd=genOpen(icon_path,O_CREAT|O_WRONLY|O_TRUNC)) < 0){
-			sprintf(fmcbMsg, "Failed to open %s", icon_path); 
+			sprintf(fmcbMsg, "Failed to open %s", icon_path);
 			return -1; //Failed open
 		}
 		ret = genWrite(fd,&icon_sys,size_icon_sys);
@@ -2289,7 +2291,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 			ret = -2; //Failed writing
 		}
 		genClose(fd);
-	
+
 	//FMCB.icn
 		icon_path[0]=0;
 		strncat(icon_path, CNF, 14);
@@ -2297,7 +2299,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 		strcat(icon_path, "sysconf.icn");
 		if (!exists(icon_path)){
 			if ((fd=genOpen(icon_path,O_CREAT|O_WRONLY|O_TRUNC)) < 0){
-				sprintf(fmcbMsg, "Failed to open %s", icon_path); 
+				sprintf(fmcbMsg, "Failed to open %s", icon_path);
 				return -1; //Failed open
 			}
 			ret = genWrite(fd,&icon_icn,size_icon_icn);
@@ -2307,7 +2309,7 @@ int saveFmcbCNF(char *fmcbMsg, char *CNF)
 			}
 			genClose(fd);
 		}
-	
+
 	}*/
 	}
 	//FREEMCB.CNF
@@ -2356,9 +2358,9 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 {
 	int i;
 
-	if (fmcb != NULL)
-		free(fmcb);
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//if (fmcb != NULL)
+	//	free(fmcb);
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
 
 	fmcb->Fastboot = 1;
 	fmcb->Debug = 0;
@@ -2384,8 +2386,8 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 	fmcb->OSD_displayitems = 7;
 	strcpy(fmcb->OSD_cursor[0], "o009");
 	strcpy(fmcb->OSD_cursor[1], "o008");
-	strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60 v1.0.0r0.60]y-00");
-	strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99 based on FreeMcBoot 1.0 y-00r0.00");
+	strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60 %VER%r0.60]y-00");
+	strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99 based on FreeMcBoot 1.8 y-00r0.00");
 	//selected color
 	OSDSYS_selected_color[0] = strtol("0x10", NULL, 16);    // hex base
 	OSDSYS_selected_color[1] = strtol("0x80", NULL, 16);    // hex base
@@ -2445,12 +2447,12 @@ void initConfig_fmcb(int mode)  //mode 0 = failed init, mode 1 = succesful init
 	strcpy(fmcb->LK_E1_Path[6], "mass:/BOOT/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E1_Path[7], "mass:/BOOT/BOOT4.ELF");//L2
 	strcpy(fmcb->LK_E1_Path[8], "mass:/BOOT/BOOT2.ELF");//R2
-	
+
 	strcpy(fmcb->LK_E2_Path[5], "mc?:/BOOT/BOOT3.ELF");//L1
 	strcpy(fmcb->LK_E2_Path[6], "mc?:/BOOT/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E2_Path[7], "mc?:/BOOT/BOOT4.ELF");//L2
 	strcpy(fmcb->LK_E2_Path[8], "mc?:/BOOT/BOOT2.ELF");//R2
-	
+
 	strcpy(fmcb->LK_E3_Path[5], "mc?:/B?DATA-SYSTEM/BOOT3.ELF");//L1
 	strcpy(fmcb->LK_E3_Path[6], "mc?:/B?DATA-SYSTEM/BOOT1.ELF");//R1
 	strcpy(fmcb->LK_E3_Path[7], "mc?:/B?DATA-SYSTEM/BOOT4.ELF");//L2
@@ -2492,7 +2494,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 {
 	int i, j, fd, var_cnt, CNF_version;
 	size_t CNF_size;
-	char tsts[20];
+	char tsts[64];
 	char hexvalue_buf[20];
 	unsigned char *RAM_p, *CNF_p, *name, *value;
 
@@ -2520,7 +2522,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 
 	CNF_size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
-	RAM_p = (char *)malloc(CNF_size);
+	RAM_p = (char *)malloc(CNF_size+1);
 	CNF_p = RAM_p;
 	if (CNF_p == NULL) {
 		goto failed_load;
@@ -2532,6 +2534,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 	CNF_version = 0;  // The CNF version is still unidentified
 	for (var_cnt = 0; get_CNF_string(&CNF_p, &name, &value); var_cnt++) {
 		// A variable was found, now we dispose of its value.
+		//printf("name[%s] value[%s]\n",name,value);
 		if (!strcmp(name, "CNF_version")) {
 			CNF_version = atoi(value);
 			continue;
@@ -2540,19 +2543,23 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "Debug_Screen")) {
 			fmcb->Debug = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Debug);
 			continue;
 		}
 		if (!strcmp(name, "FastBoot")) {
 			fmcb->Fastboot = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Fastboot);
 			continue;
 		}
 		if (!strcmp(name, "pad_delay")) {
 			fmcb->pad_delay = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->pad_delay);
 			continue;
 		}
 		//OSD settings
 		if (!strcmp(name, "hacked_OSDSYS")) {
 			fmcb->hacked_OSDSYS = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->hacked_OSDSYS);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_video_mode")) {
@@ -2561,14 +2568,17 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "OSDSYS_Skip_Disc")) {
 			fmcb->Skip_Disc = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Skip_Disc);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_Skip_Logo")) {
 			fmcb->Skip_Logo = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Skip_Logo);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_Inner_Browser")) {
 			fmcb->Inner_Browser = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->Inner_Browser);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_selected_color")) {
@@ -2597,6 +2607,7 @@ int loadConfig_fmcb(char *fmcbMsg, char *path)
 		}
 		if (!strcmp(name, "OSDSYS_menu_x")) {
 			fmcb->OSDSYS_menu_x = atoi(value);
+			//printf("\tAfter atoi -> [%d]\n\t stored value [%d]\n", atoi(value), fmcb->OSDSYS_menu_x);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_y")) {
@@ -2804,9 +2815,9 @@ void Config_fmcb_key(int LKN)
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -2861,8 +2872,8 @@ void Config_fmcb_key(int LKN)
 
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
-				free(fmcb);
+				//free(tmpfmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			} else if (new_pad & PAD_START) {
@@ -3018,7 +3029,7 @@ void setOSD(int item, int mode, int epath)
 	char c[MAX_PATH];
 
 	if (epath == 1) {
-		getFilePath(fmcb->OSD_E1_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E1_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E1_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E1_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E1_Path[item][6] = '?';
@@ -3028,7 +3039,7 @@ void setOSD(int item, int mode, int epath)
 			}
 		}
 	} else if (epath == 2) {
-		getFilePath(fmcb->OSD_E2_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E2_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E2_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E2_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E2_Path[item][6] = '?';
@@ -3038,7 +3049,7 @@ void setOSD(int item, int mode, int epath)
 			}
 		}
 	} else if (epath == 3) {
-		getFilePath(fmcb->OSD_E3_Path[item], TRUE);
+		getFilePath(fmcb->OSD_E3_Path[item], LK_ELF_CNF);
 		if (!strncmp(fmcb->OSD_E3_Path[item], "mc", 2)) {
 			if (!strncmp(fmcb->OSD_E3_Path[item] + 7, "DATA-SYSTEM", 11))
 				fmcb->OSD_E3_Path[item][6] = '?';
@@ -3061,9 +3072,9 @@ void Config_fmcb_OSDSYS_item(int item)
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3145,8 +3156,8 @@ void Config_fmcb_OSDSYS_item(int item)
 				}
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
-				free(fmcb);
+				//free(tmpfmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -3234,9 +3245,9 @@ void Config_fmcb_OSDSYS_scroll()
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3365,11 +3376,11 @@ void Config_fmcb_OSDSYS_scroll()
 				if (s == 7)
 					strcpy(fmcb->OSD_delimiter[0], "y-99r0.00FunTuna  r0.60c1[r0.60Free McBoot v1.8 for Fortunar0.60]y-00");
 				if (s == 8)
-					strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99Howling Wolf & Chelseay-00r0.00");
+					strcpy(fmcb->OSD_delimiter[1], "c0r0.60y+99Based on FreeMcBoot 1.8y-00r0.00");
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
-				free(fmcb);
+				//free(tmpfmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -3530,9 +3541,9 @@ void Config_fmcb_OSDSYS()
 	int event, post_event = 0;
 	int osd_item = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -3579,9 +3590,12 @@ void Config_fmcb_OSDSYS()
 			} else if (new_pad & PAD_LEFT) {
 				event |= 2;  //event |= valid pad command
 				if (s == 1) {
-					osd_item = osd_item--;
-					if (osd_item < 0)
-						osd_item = 99;
+					//osd_item = osd_item--;
+					if (osd_item == 0)
+						osd_item = 98;
+					else
+						osd_item--;
+
 				} else if (s > SEL_COL && s < UNSEL_COL)
 					s--;
 				else if (s > UNSEL_COL && s < UNSEL_COL + 5)
@@ -3615,9 +3629,12 @@ void Config_fmcb_OSDSYS()
 			} else if (new_pad & PAD_RIGHT) {
 				event |= 2;  //event |= valid pad command
 				if (s == 1) {
-					osd_item = osd_item++;
-					if (osd_item > 99)
+					//osd_item = osd_item++;
+					if (osd_item == 98)
 						osd_item = 0;
+					else
+						osd_item++;
+
 				} else if (s > SEL_COL - 1 && s < UNSEL_COL - 1)
 					s++;
 				else if (s > UNSEL_COL - 1 && s < UNSEL_COL + 4)
@@ -3838,8 +3855,8 @@ void Config_fmcb_OSDSYS()
 				}
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
-				free(fmcb);
+				//free(tmpfmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -4050,9 +4067,9 @@ void Config_ESR_path()
 	int x, y;
 	int event, post_event = 0;
 
-	tmpfmcb = fmcb;
-	fmcb = (FMCB *)malloc(sizeof(FMCB));
-	*fmcb = *tmpfmcb;
+	//tmpfmcb = fmcb;
+	//fmcb = (FMCB *)malloc(sizeof(FMCB));
+	//*fmcb = *tmpfmcb;
 
 	event = 1;  //event = initial entry
 	s = 0;
@@ -4120,8 +4137,8 @@ void Config_ESR_path()
 
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:
-				free(tmpfmcb);
-				free(fmcb);
+				//free(tmpfmcb);
+				//free(fmcb);
 				fmcbMsg[0] = 0;
 				return;
 			}
@@ -4230,9 +4247,9 @@ void select_swapkeys()
 
 			drawPopSprite(setting->color[0], KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1);
 			drawFrame(KEY_X2, KEY_Y2, KEY_X2 + KEY_W2 - 1, KEY_Y2 + KEY_H2 - 1, setting->color[1]);
-			printXY("FMCB Configurator by suloku. mod by HWNJ, modified by Matias Israelson", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT, setting->color[3], TRUE, 0);
-			printXY("Based on uLaunchELF by E P and Dlanor, originally coded by Mirakichi.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 2, setting->color[3], TRUE, 0);
-			printXY("Free McBoot by Jimmikaelkael and Neme 2008. Special thanks to uyjulian.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 3, setting->color[3], TRUE, 0);
+			printXY("          Made originally by suloku. Thanks to alex parrado          ", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT    , setting->color[3], TRUE, 0);
+			printXY("        Modified and Ported to latest SDK by Matías Israelson        ", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 2, setting->color[2], TRUE, 0);
+			printXY("Based on uLaunchELF by E P and Dlanor, originally coded by Mirakichi.", KEY_X2 + FONT_WIDTH * 2, KEY_Y2 + FONT_HEIGHT * 3, setting->color[3], TRUE, 0);
 
 		}  //ends if(event||post_event)
 		drawScr();

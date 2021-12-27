@@ -31,13 +31,15 @@
 #
 # ------------------------------------------------------------------------
 
+LOADADDR=0x000b0000
 EE_BIN = BOOT-UNC.ELF
 EE_BIN_PACKED = BOOT.ELF
 EE_BIN_STRIPPED = BOOT-STRIPPED.ELF
 
 EE_INCS = -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include -I$(PS2SDK)/sbv/include
-EE_LDFLAGS = -nostartfiles -Tlinkfile -L$(PS2SDK)/sbv/lib -L. -Lelf_loader/lib -s 
-EE_LIBS = -ldebug -lcdvd -lpad -lpatches -lc -lkernel -lelf_loader 
+EE_LDFLAGS = -Wl,-Ttext -Wl,$(LOADADDR)   -L$(PS2SDK)/sbv/lib -L. 
+EE_LIBS = -lcdvd -lpad -lpatches -lc -lkernel -ldebug
+EE_CFLAGS +=  -DNEWLIB_PORT_AWARE
 
 EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
 
@@ -55,17 +57,17 @@ $(EE_BIN_STRIPPED): $(EE_BIN)
 	
 $(EE_BIN_PACKED): $(EE_BIN_STRIPPED)
 	@echo "--------------- PS2-Packer ---------------"
-	../tools/ps2_packer/ps2_packer.exe -v $< $@
+	ps2-packer -v $< $@
 
 clean:
 	@echo "="
 	@echo "================ Cleaning FreeMcBoot ============================="
 	@echo "--------------- Cleaning init ---------------"
-	@$(MAKE) -C init clean >nul
+	@$(MAKE) -C init clean 
 	@echo "--------------- Cleaning chkesr--------------- "	
-	@$(MAKE) -C chkesr clean >nul
+	@$(MAKE) -C chkesr clean 
 	@echo "--------------- Cleaning elf_loader ---------------"
-	@$(MAKE) -C elf_loader clean >nul
+	@$(MAKE) -C elf_loader clean 
 	@echo "--------------- Cleaning files ---------------"
 	
 	@echo "--crt0.o"
@@ -104,21 +106,21 @@ iomanx.s:
 #	usbhdfsd.s usb_mass_irx
 init.s:
 	@echo "--------------- init ---------------"
-	@$(MAKE) -C init >nul
+	@$(MAKE) -C init 
 	@echo "converting with bin2s"
 	@bin2s init.irx init.s init_irx
 chkesr.s:
 	@echo "--------------- chkesr ---------------"
-	@$(MAKE) -C chkesr >nul
+	@$(MAKE) -C chkesr 
 	@echo "converting with bin2s"
 	@bin2s chkesr.irx chkesr.s chkesr_irx
 elf_loader.s:
 	@echo "--------------- elf_loader ---------------"
-	@$(MAKE) -C elf_loader >nul
+	@$(MAKE) -C elf_loader 
 	@echo "converting with bin2s"
-	@bin2s elf_loader/src/loader/loader.elf elf_loader.s elf_loader
+	@bin2s elf_loader/elf_loader.elf elf_loader.s elf_loader
 
-include Makefile.pref
-include Makefile.eeglobal
+include $(PS2SDK)/samples/Makefile.pref
+include $(PS2SDK)/samples/Makefile.eeglobal
 
 
