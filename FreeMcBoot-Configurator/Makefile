@@ -3,7 +3,7 @@ EE_BIN_PACKED = CFG.ELF
 EE_BIN_STRIPPED = CFG_STRIPPED.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader.o  filer.o\
 	timer.o \
-	font_uLE.o
+	font_uLE.o iomanx_irx.o filexio_irx.o
 PS2CLIENT_IP = 192.168.0.4
 
 
@@ -34,6 +34,12 @@ loader.s:
 	@echo embedding loader
 	bin2s loader/elf_loader.elf loader.s loader_elf
 	@echo "---------------"
+
+iomanx_irx.s: $(PS2SDK)/iop/irx/iomanX.irx
+	bin2s $(PS2SDK)/iop/irx/iomanX.irx iomanx_irx.s iomanx_irx
+
+filexio_irx.s: $(PS2SDK)/iop/irx/fileXio.irx
+	bin2s $(PS2SDK)/iop/irx/fileXio.irx filexio_irx.s filexio_irx
 
 
 format-check:

@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <iopheap.h>
 #include <errno.h>
+#include <dirent.h>
 //#include <fileXio_rpc.h>
 #include <iopcontrol.h>
 #include <stdarg.h>
