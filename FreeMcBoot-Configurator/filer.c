@@ -790,6 +790,7 @@ int genOpen(char *path, int mode)
 //------------------------------
 //endfunc genOpen
 //--------------------------------------------------------------
+#if 0
 int genDopen(char *path)
 {
 	int i, fd, io;
@@ -824,6 +825,8 @@ int genDopen(char *path)
 	//printf("genDopen(\"%s\") =>dd = %d\r\n", path, i);
 	return i;
 }
+#endif
+
 //------------------------------
 //endfunc genDopen
 //--------------------------------------------------------------
@@ -965,41 +968,81 @@ int genDclose(int fd)
 //------------------------------
 //endfunc readHDD
 //--------------------------------------------------------------
-int readMASS(const char *path, FILEINFO *info, int max)
+int readMASS( char *path, FILEINFO *info, int max)
 {
-	iox_dirent_t record;
-	int n = 0, dd = -1;
+	struct dirent *record;
+	struct tm *local_time;
+	DIR *dd;
+	struct stat statbuf;
+	int n = 0;
+	char *buf;
+	size_t len;
+	size_t path_len = strlen(path);
 
 	loadUsbModules();
+	//Required for readdir
+	load_iomanx();
+	load_filexio();	
+	
+	dd = opendir(path);	
+		
+	if (dd==NULL)
+		goto exit;  //exit if error opening directory	
+	
+	while ((record = readdir(dd))) {	       
+		/* Skip the names "." and ".." as we don't want to recurse on them. */
+		if (!strcmp(record->d_name, ".") || !strcmp(record->d_name, ".."))
+			continue;
+				
+		len = path_len + strlen(record->d_name) + 2;
+		buf = malloc(len);
 
-	if ((dd = fileXioDopen(path)) < 0)
-		goto exit;  //exit if error opening directory
-	while (fileXioDread(dd, &record) > 0) {
-		if ((FIO_SO_ISDIR(record.stat.mode)) && (!strcmp(record.name, ".") || !strcmp(record.name, "..")))
-			continue;  //Skip entry if pseudo-folder "." or ".."
-
-		strcpy(info[n].name, record.name);
-		clear_mcTable(&info[n].stats);
-		if (FIO_SO_ISDIR(record.stat.mode)) {
-			info[n].stats.attrFile = MC_ATTR_norm_folder;
-		} else if (FIO_SO_ISREG(record.stat.mode)) {
-			info[n].stats.attrFile = MC_ATTR_norm_file;
-			info[n].stats.fileSizeByte = record.stat.size;
-		} else
-			continue;  //Skip entry which is neither a file nor a folder
-		strncpy(info[n].stats.name, info[n].name, 32);
-		memcpy((void *)&info[n].stats._create, record.stat.ctime, 8);
-		memcpy((void *)&info[n].stats._modify, record.stat.mtime, 8);
+		if(buf){
+			snprintf(buf, len, "%s%s", path, record->d_name);
+			strcpy(info[n].name,record->d_name);
+			clear_mcTable(&info[n].stats);
+			if (!stat(buf, &statbuf)){
+				if (S_ISDIR(statbuf.st_mode)){
+					info[n].stats.attrFile = MC_ATTR_norm_folder;
+					}
+				else if (S_ISREG(statbuf.st_mode)){
+					info[n].stats.attrFile = MC_ATTR_norm_file;
+					info[n].stats.fileSizeByte = statbuf.st_size;
+					}
+				strncpy(info[n].stats.name, info[n].name, 32);
+			
+				local_time=localtime(&statbuf.st_ctime);
+				info[n].stats._create.sec=local_time->tm_sec;
+				info[n].stats._create.min=local_time->tm_min;
+				info[n].stats._create.hour=local_time->tm_hour;
+				info[n].stats._create.day=local_time->tm_mday;				
+				info[n].stats._create.month=local_time->tm_mon;		
+				info[n].stats._create.year=local_time->tm_year+1900;
+				
+				local_time=localtime(&statbuf.st_mtime);
+				info[n].stats._modify.sec=local_time->tm_sec;
+				info[n].stats._modify.min=local_time->tm_min;
+				info[n].stats._modify.hour=local_time->tm_hour;
+				info[n].stats._modify.day=local_time->tm_mday;				
+				info[n].stats._modify.month=local_time->tm_mon;		
+				info[n].stats._modify.year=local_time->tm_year+1900;					
+			}		
+				
+		free(buf);	
+		
 		n++;
 		if (n == max)
-			break;
+			break;	
+		
+		}		
+			
 	}  //ends while
+		
 	size_valid = 1;
 	time_valid = 1;
-
 exit:
-	if (dd >= 0)
-		close(dd);  //Close directory if opened above
+	if (dd)
+		closedir(dd);  //Close directory if opened above
 	return n;
 }
 //------------------------------
@@ -1159,6 +1202,7 @@ int getDir(const char *path, FILEINFO *info)
 	//	else if(!strncmp(path, "hdd", 3))	n=readHDD(path, info, max);
 	else if (!strncmp(path, "mass", 4))
 		n = readMASS(path, info, max);
+		
 	//	else if(!strncmp(path, "cdfs", 4))	n=readCD(path, info, max);
 	//	else if(!strncmp(path, "host", 4))	n=readHOST(path, info, max);
 	else

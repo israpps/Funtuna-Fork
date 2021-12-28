@@ -47,6 +47,11 @@ extern int  size_ps2kbd_irx;
 extern void hdl_info_irx;
 extern int  size_hdl_info_irx;
 */
+extern unsigned char iomanx_irx[];
+extern unsigned int size_iomanx_irx;
+
+extern unsigned char filexio_irx[];
+extern unsigned int size_filexio_irx;
 //#define DEBUG
 #ifdef DEBUG
 #define dbgprintf(args...) scr_printf(args)
@@ -584,13 +589,14 @@ void initsbv_patches(void)
 		dbgprintf("Init MrBrown sbv_patches\n");
 		sbv_patch_enable_lmb();
 		sbv_patch_disable_prefix_check();
+		sbv_patch_fileio();
 		have_sbv_patches = 1;
 	}
 }
 //------------------------------
 //endfunc initsbv_patches
 //--------------------------------------------------------------
-/*void	load_iomanx(void)
+void	load_iomanx(void)
 {
 	int ret;
 
@@ -598,11 +604,11 @@ void initsbv_patches(void)
 	{	SifExecModuleBuffer(&iomanx_irx, size_iomanx_irx, 0, NULL, &ret);
 		have_iomanx = 1;
 	}
-}*/
+}
 //------------------------------
 //endfunc load_iomanx
 //--------------------------------------------------------------
-/*void	load_filexio(void)
+void	load_filexio(void)
 {
 	int ret;
 
@@ -610,7 +616,7 @@ void initsbv_patches(void)
 	{	SifExecModuleBuffer(&filexio_irx, size_filexio_irx, 0, NULL, &ret);
 		have_filexio = 1;
 	}
-}*/
+}
 //------------------------------
 //endfunc load_filexio
 //--------------------------------------------------------------
@@ -900,6 +906,7 @@ int loadUsbModules(void)
 			strcpy(filePath, "mc0:/BOOT/USBD.IRX");
 		else if (i == 2)
 			strcpy(filePath, "mc0:/BOOT/USBHDFSD.IRX");
+
 		if (!exists(filePath))
 			filePath[2] ^= 1;
 		if (!exists(filePath)) {
@@ -920,6 +927,7 @@ int loadUsbModules(void)
 			}
 			fclose(File);
 		}
+		
 		if ((SifExecModuleBuffer(fileBase, fileSize, 0, NULL, &dummy)) < 0) {
 			error = -i;  // -1 = error usbd, -2 = error usbhdfsd
 			break;
@@ -931,7 +939,7 @@ int loadUsbModules(void)
 		have_usbd = 1;
 		have_usb_mass = 1;
 	}
-
+	
 	return error;
 }
 //------------------------------
