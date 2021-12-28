@@ -585,7 +585,7 @@ int loadConfig(void)
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
-			OSDSYS.menu_bottom_delimiter = replace_var(value, "%VER%", CNF_LOADED);
+			OSDSYS.menu_bottom_delimiter = value;
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_num_displayed_items")) {
