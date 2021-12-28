@@ -581,12 +581,11 @@ int loadConfig(void)
 		}
 		if (!strcmp(name, "OSDSYS_menu_top_delimiter")) {						
 			OSDSYS.menu_top_delimiter = replace_var(value, "%VER%", FUNTUNA_FORK_VERSION);
+			//OSDSYS.menu_top_delimiter = value;
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_menu_bottom_delimiter")) {
-			OSDSYS.menu_bottom_delimiter = value;
-			
-			//OSDSYS.menu_bottom_delimiter = value;
+			OSDSYS.menu_bottom_delimiter = replace_var(value, "%VER%", CNF_LOADED);
 			continue;
 		}
 		if (!strcmp(name, "OSDSYS_num_displayed_items")) {
