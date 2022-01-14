@@ -67,6 +67,11 @@ jobs:
     - name: checkout code for release
       uses: actions/checkout@v1
 
+    - name: Get short SHA
+      id: slug
+      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+
     - name: Download FreeMcBoot-and-Configurator artifacts
       uses: actions/download-artifact@v1
       with:
@@ -134,7 +139,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: FunTuna-${{ steps.extract_branch.outputs.branch }}
+        name: FunTuna-${{ steps.extract_branch.outputs.branch }}-${{ steps.slug.outputs.sha8 }}
         path: |
              __Release/*.7z
              installer/FunTuna-Fork_Installer.ELF
