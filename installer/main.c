@@ -157,19 +157,14 @@ static void ResetIOP(void)
 {
 	//parrado
 	SifInitRpc(0);
-	while (!SifIopReset("", 0))
-	{
-	};
-	while (!SifIopSync())
-	{
-	};
+	while (!SifIopReset("", 0)) {};
+	while (!SifIopSync()) {};
 	SifInitRpc(0);
 }
 //=============================================================
 #ifdef ELF_LAUNCHER
 	void LoadElf(char *filename, char *party)
 	{
-
 		char *args[1];
 		t_ExecData exec;
 		SifLoadElf(filename, &exec);
@@ -177,7 +172,7 @@ static void ResetIOP(void)
 		if (exec.epc > 0)
 		{
 			ResetIOP();
-
+			
 			if (party != 0)
 			{
 				args[0] = party;
@@ -221,7 +216,6 @@ static int DeleteFolder(const char *folder)
 			int r2 = -1;
 			char *buf;
 			size_t len;
-
 			/* Skip the names "." and ".." as we don't want to recurse on them. */
 			if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, ".."))
 				continue;
@@ -232,7 +226,6 @@ static int DeleteFolder(const char *folder)
 			if (buf)
 			{
 				struct stat statbuf;
-
 				snprintf(buf, len, "%s/%s", folder, p->d_name);
 				if (!stat(buf, &statbuf))
 				{
@@ -266,10 +259,7 @@ static void InitPS2(void)
 	SifLoadModule("rom0:MCSERV", 0, NULL);
 	SifLoadModule("rom0:PADMAN", 0, NULL);
 	sbv_patch_fileio();// THANKS fjtrujy
-
-	//Faltaba iniciar la MC (alexparrado)
-	mcInit(MC_TYPE_MC);
-
+	mcInit(MC_TYPE_MC); //Faltaba iniciar la MC (alexparrado)
 	setupPad();
 	waitAnyPadReady();
 }
@@ -601,7 +591,6 @@ int IconQuery(int default_icon_type)
 		if (new_pad & PAD_TRIANGLE)     return SLIMS;
 		if (new_pad & PAD_CROSS)  		return FATS;
 		if (new_pad & PAD_SQUARE) 		return FAT170;
-
 	}
 }
 int Choose_Install_Mode(int default_icon_type)
@@ -630,10 +619,8 @@ int main (int argc, char *argv[])
 	unsigned long int ROM_VERSION;
 	char romver[5];
 	VMode = NTSC;
-
 	// Loads Needed modules
 	InitPS2();
-
 	gs_reset(); // Reset GS
 	if ((fdn = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
 	{
@@ -656,7 +643,6 @@ int main (int argc, char *argv[])
 
 	int iz = 1, mcport;
 	int menuactual = 101;//101: Initial Menu, 102: Installing (not needed), 103: Error, 104: Done
-	//printf("FunTuna Fork Installer\n\nPress L1 to install on memory card 1 | Press R1 to install on memory card 2");
 
 	display_bmp(640, 448, WELCOME);
 	while (1) {
