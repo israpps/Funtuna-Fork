@@ -3,13 +3,14 @@ EE_BIN_PACKED = CFG.ELF
 EE_BIN_STRIPPED = CFG_STRIPPED.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader.o  filer.o\
 	timer.o \
-	font_uLE.o iomanx_irx.o filexio_irx.o
+	font_uLE.o \
+	iomanx_irx.o
+ifeq ($(EMBED_FILEXIO),1)
+EE_OBJS += filexio_irx.o 
+endif
+	
 PS2CLIENT_IP = 192.168.0.4
-
-
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
-
-
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib
 EE_LIBS = -lpad -lgskit -ldmakit -lmc -lpatches -ldebug -lc -lm -lfileXio
 EE_CFLAGS += -G0
@@ -37,9 +38,12 @@ loader.s:
 
 iomanx_irx.s: $(PS2SDK)/iop/irx/iomanX.irx
 	bin2s $(PS2SDK)/iop/irx/iomanX.irx iomanx_irx.s iomanx_irx
-
+ifeq ($(EMBED_FILEXIO),1)
 filexio_irx.s: $(PS2SDK)/iop/irx/fileXio.irx
 	bin2s $(PS2SDK)/iop/irx/fileXio.irx filexio_irx.s filexio_irx
+else
+EE_CFLAGS += -DEXTERNAL_FILEXIO
+endif
 
 
 format-check:

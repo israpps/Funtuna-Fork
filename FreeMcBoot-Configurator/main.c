@@ -49,9 +49,10 @@ extern int  size_hdl_info_irx;
 */
 extern unsigned char iomanx_irx[];
 extern unsigned int size_iomanx_irx;
-
+#ifdef EXTERNAL_FILEXIO
 extern unsigned char filexio_irx[];
 extern unsigned int size_filexio_irx;
+#endif
 //#define DEBUG
 #ifdef DEBUG
 #define dbgprintf(args...) scr_printf(args)
@@ -159,68 +160,7 @@ char boot_path[MAX_PATH];
 //--------------------------------------------------------------
 //Function to print a text row to the 'gs' screen
 //------------------------------
-/*int	PrintRow(int row_f, char *text_p)
-{	static int row;
-	int x = (Menu_start_x + 4);
-	int y;
 
-	if(row_f >= 0) row = row_f;
-	y = (Menu_start_y + FONT_HEIGHT*row++);
-	printXY(text_p, x, y, setting->color[3], TRUE, 0);
-	return row;
-} */
-//------------------------------
-//endfunc PrintRow
-//--------------------------------------------------------------
-//Function to show a screen with debugging info
-//------------------------------
-/*void ShowDebugInfo(void)
-{	char uLE_rel_path[MAX_PATH], uLE_gen_path[MAX_PATH], TextRow[256];
-	int	i, event, post_event=0;
-
-	i = uLE_related(uLE_rel_path, "uLE:/LAUNCHELF.CNF");
-	genFixPath("uLE:/LAUNCHELF.CNF", uLE_gen_path);
-
-	event = 1;   //event = initial entry
-	//----- Start of event loop -----
-	while(1) {
-		//Pad response section
-		waitAnyPadReady();
-		if(readpad() && new_pad){
-			event |= 2;
-			if (setting->GUI_skin[0]) {
-				GUI_active = 1;
-				loadSkin(BACKGROUND_PIC, 0, 0);
-			}
-			break;
-		}
-
-		//Display section
-		if(event||post_event) { //NB: We need to update two frame buffers per event
-			clrScr(setting->color[0]);
-			PrintRow(0,"Debug Info Screen:");
-			sprintf(TextRow, "argc == %d", boot_argc);
-			PrintRow(1,TextRow);
-			for(i=0; (i<boot_argc)&&(i<8); i++){
-				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
-				PrintRow(-1, TextRow);
-			}
-			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
-			PrintRow(-1, TextRow);
-			sprintf(TextRow, "LaunchElfDir == \"%s\"", LaunchElfDir);
-			PrintRow(-1, TextRow);
-		}//ends if(event||post_event)
-		drawScr();
-		post_event = event;
-		event = 0;
-	} //ends while
-	//----- End of event loop -----
-}*/
-//------------------------------
-//endfunc ShowDebugInfo
-//--------------------------------------------------------------
-//Function to check for presence of key modules
-//------------------------------
 void CheckModules(void)
 {
 	smod_mod_info_t mod_t;
@@ -241,335 +181,7 @@ void CheckModules(void)
 	old_ps2netfs = (have_ps2netfs= smod_get_mod_by_name(IOPMOD_NAME_PS2NETFS, &mod_t));
 */
 }
-//------------------------------
-//endfunc CheckModules
-//--------------------------------------------------------------
-// Parse network configuration from IPCONFIG.DAT
-// Now completely rewritten to fix some problems
-//------------------------------
-/*static void getIpConfig(void)
-{
-	int fd;
-	int i;
-	int len;
-	char c;
-	char buf[IPCONF_MAX_LEN];
 
-	fd = fioOpen("mc0:/SYS-CONF/IPCONFIG.DAT", O_RDONLY);
-	if (fd >= 0) 
-	{	bzero(buf, IPCONF_MAX_LEN);
-		len = fioRead(fd, buf, IPCONF_MAX_LEN - 1); //Save a byte for termination
-		fioClose(fd);
-	}
-
-	if	((fd > 0) && (len > 0))
-	{	buf[len] = '\0'; //Ensure string termination, regardless of file content
-		for	(i=0; ((c = buf[i]) != '\0'); i++) //Clear out spaces and any CR/LF
-			if	((c == ' ') || (c == '\r') || (c == '\n'))
-				buf[i] = '\0';
-		strncpy(ip, buf, 15);
-		i = strlen(ip)+1;
-		strncpy(netmask, buf+i, 15);
-		i += strlen(netmask)+1;
-		strncpy(gw, buf+i, 15);
-	}
-
-	bzero(if_conf, IPCONF_MAX_LEN);
-	strncpy(if_conf, ip, 15);
-	i = strlen(ip) + 1;
-	strncpy(if_conf+i, netmask, 15);
-	i += strlen(netmask) + 1;
-	strncpy(if_conf+i, gw, 15);
-	i += strlen(gw) + 1;
-	if_conf_len = i;
-	sprintf(netConfig, "%s:  %-15s %-15s %-15s", LNG(Net_Config), ip, netmask, gw);
-
-}*/
-//------------------------------
-//endfunc getIpConfig
-//--------------------------------------------------------------
-/*void setLaunchKeys(void)
-{
-	if(!setting->LK_Flag[12])
-		strcpy(setting->LK_Path[12], setting->Misc_Configure);
-	if((maxCNF>1) && !setting->LK_Flag[13])
-		strcpy(setting->LK_Path[13], setting->Misc_Load_CNFprev);
-	if((maxCNF>1) && !setting->LK_Flag[14])
-		strcpy(setting->LK_Path[14], setting->Misc_Load_CNFnext);
-}*/
-//------------------------------
-//endfunc setLaunchKeys()
-//--------------------------------------------------------------
-/*int drawMainScreen(void)
-{
-	int nElfs=0;
-	int i;
-	int x, y;
-	u64 color;
-	char c[MAX_PATH+8], f[MAX_PATH];
-	char *p;
-
-	setLaunchKeys();
-
-	clrScr(setting->color[0]);
-
-	x = Menu_start_x;
-	y = Menu_start_y;
-	c[0] = 0;
-	if(init_delay)    sprintf(c, "%s: %d", LNG(Init_Delay), init_delay/SCANRATE);
-	else if(setting->LK_Path[0][0]){
-		if(!user_acted) sprintf(c, "%s: %d", LNG(TIMEOUT), timeout/SCANRATE);
-		else            sprintf(c, "%s: %s", LNG(TIMEOUT), LNG(Halted));
-	}
-	if(c[0]){
-		printXY(c, x, y, setting->color[3], TRUE, 0);
-		y += FONT_HEIGHT*2;
-	}
-	for(i=0; i<15; i++){
-		if(setting->LK_Path[i][0]){
-			switch(i){
-			case 0:
-				strcpy(c,"Default: ");
-				break;
-			case 1:
-				strcpy(c,"     ÿ0: ");
-				break;
-			case 2:
-				strcpy(c,"     ÿ1: ");
-				break;
-			case 3:
-				strcpy(c,"     ÿ2: ");
-				break;
-			case 4:
-				strcpy(c,"     ÿ3: ");
-				break;
-			case 5:
-				strcpy(c,"     L1: ");
-				break;
-			case 6:
-				strcpy(c,"     R1: ");
-				break;
-			case 7:
-				strcpy(c,"     L2: ");
-				break;
-			case 8:
-				strcpy(c,"     R2: ");
-				break;
-			case 9:
-				strcpy(c,"     L3: ");
-				break;
-			case 10:
-				strcpy(c,"     R3: ");
-				break;
-			case 11:
-				strcpy(c,"  START: ");
-				break;
-			case 12:
-				strcpy(c," SELECT: ");
-				break;
-			case 13:
-				sprintf(c,"%s: ", LNG(LEFT));
-				break;
-			case 14:
-				sprintf(c,"%s: ", LNG(RIGHT));
-				break;
-			}
-			if(setting->Show_Titles) //Show Launch Titles ?
-				strcpy(f, setting->LK_Title[i]);
-			else
-				f[0] = '\0';
-			if(!f[0]) {  //No title present, or allowed ?
-				if(setting->Hide_Paths) {  //Hide full path ?
-					if((p=strrchr(setting->LK_Path[i], '/'))) // found delimiter ?
-						strcpy(f, p+1);
-					else // No delimiter !
-						strcpy(f, setting->LK_Path[i]);
-					if((p=strrchr(f, '.')))
-						*p = 0;
-				} else {                  //Show full path !
-					strcpy(f, setting->LK_Path[i]);
-				}
-			} //ends clause for No title
-			if(nElfs++==selected && mode==DPAD)
-				color = setting->color[2];
-			else
-				color = setting->color[3];
-			int len = (strlen(LNG(LEFT))+2>strlen(LNG(RIGHT))+2)?
-				strlen(LNG(LEFT))+2:strlen(LNG(RIGHT))+2;
-			if(i==13){ // LEFT
-				if(strlen(LNG(RIGHT))+2>strlen(LNG(LEFT))+2)
-					printXY(c, x+(strlen(LNG(RIGHT))+2>9?
-						((strlen(LNG(RIGHT))+2)-(strlen(LNG(LEFT))+2))*FONT_WIDTH:
-						(9-(strlen(LNG(LEFT))+2))*FONT_WIDTH), y, color, TRUE, 0);
-				else
-					printXY(c, x+(strlen(LNG(LEFT))+2>9?
-						0:(9-(strlen(LNG(LEFT))+2))*FONT_WIDTH), y, color, TRUE, 0);
-			}else if (i==14){ // RIGHT
-				if(strlen(LNG(LEFT))+2>strlen(LNG(RIGHT))+2)
-					printXY(c, x+(strlen(LNG(LEFT))+2>9?
-						((strlen(LNG(LEFT))+2)-(strlen(LNG(RIGHT))+2))*FONT_WIDTH:
-						(9-(strlen(LNG(RIGHT))+2))*FONT_WIDTH), y, color, TRUE, 0);
-				else
-					printXY(c, x+(strlen(LNG(RIGHT))+2>9?
-						0:(9-(strlen(LNG(RIGHT))+2))*FONT_WIDTH), y, color, TRUE, 0);
-			}else
-				printXY(c, x+(len>9? (len-9)*FONT_WIDTH:0), y, color, TRUE, 0);
-			printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH), y, color, TRUE, 0);
-			y += FONT_HEIGHT;
-		} //ends clause for defined LK_Path[i]
-	} //ends for
-
-	if(mode==BUTTON)	sprintf(c, "%s!", LNG(PUSH_ANY_BUTTON_or_DPAD));
-	else{
-		if(swapKeys) 
-			sprintf(c, "ÿ1:%s ÿ0:%s", LNG(OK), LNG(Cancel));
-		else
-			sprintf(c, "ÿ0:%s ÿ1:%s", LNG(OK), LNG(Cancel));
-	}
-	
-	setScrTmp(mainMsg, c);
-	
-	return nElfs;
-}*/
-//------------------------------
-//endfunc drawMainScreen
-//--------------------------------------------------------------
-/*int drawMainScreen2pal(void)
-{
-	int nElfs=0;
-	int i;
-	int x, y;
-	u64 color;
-	char c[MAX_PATH+8], f[MAX_PATH];
-	char *p;
-
-	setLaunchKeys();
-
-	clrScr(setting->color[0]);
-
-	x = Menu_start_x;
-	y = Menu_start_y;
-
-	if(init_delay)    sprintf(c, "%s:       %d", LNG(Delay), init_delay/SCANRATE);
-	else if(setting->LK_Path[0][0]){
-		if(!user_acted) sprintf(c, "%s:     %d", LNG(TIMEOUT), timeout/SCANRATE);
-		else            sprintf(c, "%s:    %s", LNG(TIMEOUT), LNG(Halt));
-	}
-
-		printXY(c, x+448, y+FONT_HEIGHT+6, setting->color[3], TRUE, 0);
-		y += FONT_HEIGHT+5;
-
-	for(i=0; i<15; i++){
-			if(setting->Show_Titles) //Show Launch Titles ?
-				strcpy(f, setting->LK_Title[i]);
-			else
-				f[0] = '\0';
-			if(!f[0]) {  //No title present, or allowed ?
-				if(setting->Hide_Paths) {  //Hide full path ?
-					if((p=strrchr(setting->LK_Path[i], '/'))) // found delimiter ?
-						strcpy(f, p+1);
-					else // No delimiter !
-						strcpy(f, setting->LK_Path[i]);
-					if((p=strrchr(f, '.')))
-						*p = 0;
-				} else {                  //Show full path !
-					strcpy(f, setting->LK_Path[i]);
-				}
-			} //ends clause for No title
-			if(setting->LK_Path[i][0] && nElfs++==selected && mode==DPAD)
-				color = setting->color[2];
-			else
-				color = setting->color[3];
-			int len = (strlen(LNG(LEFT))+2>strlen(LNG(RIGHT))+2)?
-				strlen(LNG(LEFT))+2:strlen(LNG(RIGHT))+2;
-			if (i==0){
-				printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+20, y, color, TRUE, 0);
-				y += FONT_HEIGHT*2+5;
-			} else if (i==12) printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+370, y-FONT_HEIGHT*2-60, color, TRUE, 0);
-			  else if (i==13) printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+370, y-60, color, TRUE, 0);
-			  else if (i==14)printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+370, y-60+FONT_HEIGHT*2, color, TRUE, 0);
-			  else {
-				printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+10, y, color, TRUE, 0);
-				y += FONT_HEIGHT*2;
-			} 
-	} //ends for
-
-	c[0] = '\0';           //dummy tooltip string (Tooltip unused for GUI menu)
-	setScrTmp(mainMsg, c);
-	
-	return nElfs;
-}*/
-//------------------------------
-//endfunc drawMainScreen2pal
-//--------------------------------------------------------------
-/*int drawMainScreen2ntsc(void)
-{
-	int nElfs=0;
-	int i;
-	int x, y;
-	u64 color;
-	char c[MAX_PATH+8], f[MAX_PATH];
-	char *p;
-
-	setLaunchKeys();
-
-	clrScr(setting->color[0]);
-
-	x = Menu_start_x;
-	y = Menu_start_y;
-
-	if(init_delay)    sprintf(c, "%s:       %d", LNG(Delay), init_delay/SCANRATE);
-	else if(setting->LK_Path[0][0]){
-		if(!user_acted) sprintf(c, "%s:     %d", LNG(TIMEOUT), timeout/SCANRATE);
-		else            sprintf(c, "%s:    %s", LNG(TIMEOUT), LNG(Halt));
-	}
-
-		printXY(c, x+448, y+FONT_HEIGHT-5, setting->color[3], TRUE, 0);
-		y += FONT_HEIGHT-3;
-
-	for(i=0; i<15; i++){
-			if(setting->Show_Titles) //Show Launch Titles ?
-				strcpy(f, setting->LK_Title[i]);
-			else
-				f[0] = '\0';
-			if(!f[0]) {  //No title present, or allowed ?
-				if(setting->Hide_Paths) {  //Hide full path ?
-					if((p=strrchr(setting->LK_Path[i], '/'))) // found delimiter ?
-						strcpy(f, p+1);
-					else // No delimiter !
-						strcpy(f, setting->LK_Path[i]);
-					if((p=strrchr(f, '.')))
-						*p = 0;
-				} else {                  //Show full path !
-					strcpy(f, setting->LK_Path[i]);
-				}
-			} //ends clause for No title
-			if(setting->LK_Path[i][0] && nElfs++==selected && mode==DPAD)
-				color = setting->color[2];
-			else
-				color = setting->color[3];
-			int len = (strlen(LNG(LEFT))+2>strlen(LNG(RIGHT))+2)?
-				strlen(LNG(LEFT))+2:strlen(LNG(RIGHT))+2;
-			if (i==0){
-				printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+20, y-1, color, TRUE, 0);
-				y += FONT_HEIGHT*2-1;
-			} else if (i==12) printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+360, y-FONT_HEIGHT*2-48, color, TRUE, 0);
-			  else if (i==13) printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+360, y-52, color, TRUE, 0);
-			  else if (i==14)printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+360, y-54+FONT_HEIGHT*2, color, TRUE, 0);
-			  else {
-				printXY(f, x+(len>9? len*FONT_WIDTH:9*FONT_WIDTH)+10, y, color, TRUE, 0);
-				y += FONT_HEIGHT*2-4;
-			} 
-	} //ends for
-
-	c[0] = '\0';           //dummy tooltip string (Tooltip unused for GUI menu)
-	setScrTmp(mainMsg, c);
-	
-	return nElfs;
-}*/
-//------------------------------
-//endfunc drawMainScreen2ntsc
-//--------------------------------------------------------------
 void delay(int count)
 {
 	int i;
@@ -610,115 +222,46 @@ void	load_iomanx(void)
 //--------------------------------------------------------------
 void	load_filexio(void)
 {
-	int ret;
+	int dummy;
+	if	(have_filexio) return;
+#ifdef EXTERNAL_FILEXIO
+	char filePath[MAX_PATH];
+	void *fileBase;
+	int fileSize, i;
+	FILE *File;
 
-	if	(!have_filexio)
-	{	SifExecModuleBuffer(&filexio_irx, size_filexio_irx, 0, NULL, &ret);
+	fileBase = NULL;
+	fileSize = 0;
+		strcpy(filePath, "mc0:/BOOT/FILEXIO.IRX");
+		
+		if (!exists(filePath))
+			filePath[2] ^= 1;
+		
+		if (!exists(filePath))
+			return;
+		
+		File = fopen(filePath, "r");
+		if (File != NULL) {
+			fseek(File, 0, SEEK_END);
+			fileSize = ftell(File);
+			fseek(File, 0, SEEK_SET);
+			if (fileSize) {
+				if ((fileBase = malloc(fileSize)) > 0) {
+					fread(fileBase, 1, fileSize, File);
+				} else
+					fileSize = 0;
+			}
+			fclose(File);
+		} else {return;}
+		
+		SifExecModuleBuffer(fileBase, fileSize, 0, NULL, &dummy);
+		free(fileBase);
+#else
+	SifExecModuleBuffer(&filexio_irx, size_filexio_irx, 0, NULL, &dummy);
+#endif
 		have_filexio = 1;
-	}
 }
-//------------------------------
-//endfunc load_filexio
-//--------------------------------------------------------------
-/*void	load_ps2dev9(void)
-{
-	int ret;
 
-	load_iomanx();
-	if	(!have_ps2dev9)
-	{	SifExecModuleBuffer(&ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &ret);
-		have_ps2dev9 = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2dev9
-//--------------------------------------------------------------
-/*void	load_ps2ip(void)
-{
-	int ret;
-
-	load_ps2dev9();
-	if	(!have_ps2ip){
-		SifExecModuleBuffer(&smsutils_irx, size_smsutils_irx, 0, NULL, &ret);
-		SifExecModuleBuffer(&ps2ip_irx, size_ps2ip_irx, 0, NULL, &ret);
-		have_ps2ip = 1;
-	}
-	if	(!have_ps2smap){
-		SifExecModuleBuffer(&ps2smap_irx, size_ps2smap_irx,
-		                    if_conf_len, &if_conf[0], &ret);
-		have_ps2smap = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2ip
-//--------------------------------------------------------------
-/*void	load_ps2atad(void)
-{
-	int ret;
-	static char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
-	static char pfsarg[] = "-m" "\0" "4" "\0" "-o" "\0" "10" "\0" "-n" "\0" "40";
-
-	load_ps2dev9();
-	if	(!have_ps2atad)
-	{	SifExecModuleBuffer(&ps2atad_irx, size_ps2atad_irx, 0, NULL, &ret);
-		have_ps2atad = 1;
-	}
-	if	(!have_ps2hdd)
-	{	SifExecModuleBuffer(&ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &ret);
-		have_ps2hdd = 1;
-	}
-	if	(!have_ps2fs)
-	{	SifExecModuleBuffer(&ps2fs_irx, size_ps2fs_irx, sizeof(pfsarg), pfsarg, &ret);
-		have_ps2fs = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2atad
-//--------------------------------------------------------------
-/*void	load_ps2host(void)
-{
-	int ret;
-
-	load_ps2ip();
-	if	(!have_ps2host)
-	{	SifExecModuleBuffer(&ps2host_irx, size_ps2host_irx, 0, NULL, &ret);
-		have_ps2host = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2host
-//--------------------------------------------------------------
-/*void	load_ps2ftpd(void)
-{
-	int 	ret;
-	int		arglen;
-	char* arg_p;
-
-	arg_p = "-anonymous";
-	arglen = strlen(arg_p);
-
-	load_ps2ip();
-	if	(!have_ps2ftpd)
-	{	SifExecModuleBuffer(&ps2ftpd_irx, size_ps2ftpd_irx, arglen, arg_p, &ret);
-		have_ps2ftpd = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2ftpd
-//--------------------------------------------------------------
-/*void	load_ps2netfs(void)
-{
-	int ret;
-
-	load_ps2ip();
-	if	(!have_ps2netfs)
-	{	SifExecModuleBuffer(&ps2netfs_irx, size_ps2netfs_irx, 0, NULL, &ret);
-		have_ps2netfs = 1;
-	}
-}*/
-//------------------------------
-//endfunc load_ps2netfs
-//--------------------------------------------------------------
 void loadBasicModules(void)
 {
 	if (!have_sio2man) {
@@ -741,153 +284,7 @@ void loadBasicModules(void)
 //------------------------------
 //endfunc loadBasicModules
 //--------------------------------------------------------------
-/*void loadCdModules(void)
-{
-	int ret;
-	
-	if	(!have_cdvd) {
-		SifExecModuleBuffer(&cdvd_irx, size_cdvd_irx, 0, NULL, &ret);
-		cdInit(CDVD_INIT_INIT);
-		CDVD_Init();
-		have_cdvd = 1;
-	}
-}*/
-//------------------------------
-//endfunc loadCdModules
-//--------------------------------------------------------------
-// loadExternalFile below will use the given path, and read the
-// indicated file into a buffer it allocates for that purpose.
-// The buffer address and size are returned via pointer variables,
-// and the size is also returned as function value. Both those
-// instances of size will be forced to Zero if any error occurs,
-// and in such cases the buffer pointer returned will be NULL.
-// NB: Release of the allocated memory block, if/when it is not
-// needed anymore, is entirely the responsibility of the caller,
-// though, of course, none is allocated if the file is not found.
-//--------------------------------------------------------------
-/*int	loadExternalFile(char *argPath, void **fileBaseP, int *fileSizeP)
-{ //The first three variables are local variants similar to the arguments
-	char filePath[MAX_PATH];
-	void *fileBase;
-	int fileSize;
-	FILE*	File;
 
-	fileBase = NULL;
-	fileSize = 0;
-
-	if(!strncmp(argPath, "mass:/", 6)){
-		//Loading some module from USB mass:
-		//NB: This won't be for USB drivers, due to protection elsewhere
-		loadUsbModules();
-		strcpy(filePath, "mass:");
-		strcat(filePath, argPath+6);
-	}else if(!strncmp(argPath, "hdd0:/", 6)){
-		//Loading some module from HDD
-		char party[MAX_PATH];
-		char *p;
-
-		loadHddModules();
-		sprintf(party, "hdd0:%s", argPath+6);
-		p = strchr(party, '/');
-		sprintf(filePath, "pfs0:%s", p);
-		*p = 0;
-		fileXioMount("pfs0:", party, FIO_MT_RDONLY);
-	}else if(!strncmp(argPath, "cdfs", 4)){
-		loadCdModules();
-		strcpy(filePath, argPath);
-		CDVD_FlushCache();
-		CDVD_DiskReady(0);
-	}else{
-		strcpy(filePath, argPath);
-	}
-	//Here 'filePath' is a valid path for fio or fileXio operations
-	//Which means we can now use generic file I/O
-	File = fopen( filePath, "r" );
- 	if( File != NULL ) {
-		fseek(File, 0, SEEK_END);
-		fileSize = ftell(File);
-		fseek(File, 0, SEEK_SET);
-		if(fileSize) {
-			if((fileBase = malloc(fileSize)) > 0 ) {
-				fread(fileBase, 1, fileSize, File );
-			} else
-				fileSize =0;
-		}
-		fclose(File);
-	}
-	*fileBaseP = fileBase;
-	*fileSizeP = fileSize;
-	return fileSize;
-}*/
-//------------------------------
-//endfunc loadExternalFile
-//--------------------------------------------------------------
-// loadExternalModule below will use the given path and attempt
-// to load the indicated file into a temporary buffer, and from
-// that buffer send it on to the IOP as a driver module, after
-// which the temporary buffer will be freed. If the file is not
-// found, or some error occurs in its reading or buffer allocation
-// then the default internal module specified by the 2nd and 3rd
-// arguments will be used, except if the base is NULL or the size
-// is zero, in which case a value of 0 is returned. A value of
-// 0 is also returned if loading of default module fails. But
-// normally the value returned will be the size of the module.
-//--------------------------------------------------------------
-/*int loadExternalModule(char *modPath, void *defBase, int defSize)
-{
-	void *extBase;
-	int extSize;
-	int external;       //Flags loading of external file into buffer
-	int ext_OK, def_OK; //Flags success for external and default module
-	int	dummy;
-
-	ext_OK = (def_OK = 0);
-	if( (!(external = loadExternalFile(modPath, &extBase, &extSize)))
-		||((ext_OK = SifExecModuleBuffer(extBase, extSize, 0, NULL, &dummy)) < 0) ) {
-		if(defBase && defSize) {
-			def_OK = SifExecModuleBuffer(defBase, defSize, 0, NULL, &dummy);
-		}
-	}
-	if(external) free(extBase);
-	if(ext_OK) return extSize;
-	if(def_OK) return defSize;
-	return 0;
-}*/
-//------------------------------
-//endfunc loadExternalModule
-//--------------------------------------------------------------
-//void loadUsbDModule(void)
-//{
-//	int dummy;
-/*	if( (!have_usbd)
-		&&(loadExternalModule(setting->usbd_file, &usbd_irx, size_usbd_irx))
-	)*/
-//	SifExecModuleBuffer(&usbd_irx, size_usbd_irx, 0, NULL, &dummy);
-//	have_usbd = 1;
-//}
-//------------------------------
-//endfunc loadUsbDModule
-//--------------------------------------------------------------
-/*void loadUsbModules(void)
-{
-	//int ret;
-	int dummy;
-
-	loadUsbDModule();
-	if (have_usbd && !have_usb_mass){
-		SifExecModuleBuffer(&usb_mass_irx, size_usb_mass_irx, 0, NULL, &dummy);
-		delay(3);
-		have_usb_mass = 1;
-	}
-
-	/*if(	have_usbd
-	&&	!have_usb_mass
-	&&	loadExternalModule(setting->usbmass_file, &usb_mass_irx, size_usb_mass_irx)){
-		delay(3);
-		//ret = usb_mass_bindRpc(); //dlanor: disused in switching to usbhdfsd
-		have_usb_mass = 1;
-	}*/
-//}
 int loadUsbModules(void)
 {  //function used for loading usb modules from fmcb default install path
 	char filePath[MAX_PATH];

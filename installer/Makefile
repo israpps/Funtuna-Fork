@@ -14,7 +14,6 @@ ifeq ($(BOOT_FUNTUNA_ON_SUCCESS),1)
 	EE_CFLAGS += -DBOOT_FUNTUNA_ON_SUCCESS -DELF_LAUNCHER
 endif
 
-
 all:
 	@echo Building FunTuna Fork Installer
 	$(MAKE) $(EE_BIN_PACKED)
@@ -85,7 +84,6 @@ opl_cfg1.s:
 opl_dualshock.s:
 	@bin2s INSTALLER_CONTENTS/OPL/conf_game.cfg opl_dualshock.s opl_dualshock
 # /OPL
-
 
 # OPENTUNA
 
