@@ -2635,18 +2635,30 @@ void Config_fmcb_OSDSYS_item(int item)
 				if (s == 1) {
 					if (!strcmp(fmcb->OSD_E1_Path[item], "OSDSYS"))
 						sprintf(fmcb->OSD_E1_Path[item], "FASTBOOT");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "FASTBOOT"))
+						sprintf(fmcb->OSD_E1_Path[item], "OSDMENU");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "OSDMENU"))
+						sprintf(fmcb->OSD_E1_Path[item], "POWEROFF");
 					else
 						sprintf(fmcb->OSD_E1_Path[item], "OSDSYS");
 				} else if (s == 2) {
-					if (!strcmp(fmcb->OSD_E2_Path[item], "OSDSYS"))
-						sprintf(fmcb->OSD_E2_Path[item], "FASTBOOT");
+					if (!strcmp(fmcb->OSD_E1_Path[item], "OSDSYS"))
+						sprintf(fmcb->OSD_E1_Path[item], "FASTBOOT");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "FASTBOOT"))
+						sprintf(fmcb->OSD_E1_Path[item], "OSDMENU");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "OSDMENU"))
+						sprintf(fmcb->OSD_E1_Path[item], "POWEROFF");
 					else
-						sprintf(fmcb->OSD_E2_Path[item], "OSDSYS");
+						sprintf(fmcb->OSD_E1_Path[item], "OSDSYS");
 				} else if (s == 3) {
-					if (!strcmp(fmcb->OSD_E3_Path[item], "OSDSYS"))
-						sprintf(fmcb->OSD_E3_Path[item], "FASTBOOT");
+					if (!strcmp(fmcb->OSD_E1_Path[item], "OSDSYS"))
+						sprintf(fmcb->OSD_E1_Path[item], "FASTBOOT");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "FASTBOOT"))
+						sprintf(fmcb->OSD_E1_Path[item], "OSDMENU");
+					else if (!strcmp(fmcb->OSD_E1_Path[item], "OSDMENU"))
+						sprintf(fmcb->OSD_E1_Path[item], "POWEROFF");
 					else
-						sprintf(fmcb->OSD_E3_Path[item], "OSDSYS");
+						sprintf(fmcb->OSD_E1_Path[item], "OSDSYS");
 				}
 			} else if (new_pad & PAD_TRIANGLE) {
 			return_fmcb:

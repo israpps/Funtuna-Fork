@@ -40,7 +40,7 @@
 #define FUNTUNA_FORK_VERSION "2.0.0"
 
 
-
+#include <usbhdfsd-common.h>
 #include <tamtypes.h>
 #include <kernel.h>
 #include <sifrpc.h>
@@ -53,12 +53,17 @@
 #include <string.h>
 #include <stdio.h>
 #include <osd_config.h>
+#include <libpwroff.h>
 #include <libcdvdmod.h>
 #include <malloc.h>
 #include <debug.h>
 #include "splash.h"
 //#include "loading.h"
-
+#ifndef NEWLIB_PORT_AWARE
+#define NEWLIB_PORT_AWARE
+#endif
+#include <fileXio_rpc.h>
+#include <io_common.h>
 
 void _ps2sdk_libc_init() {}
 void _ps2sdk_libc_deinit() {}
@@ -70,8 +75,12 @@ extern int size_iomanx_irx;
 
 extern void init_irx;
 extern int size_init_irx;
+
 extern void chkesr_irx;
 extern int size_chkesr_irx;
+
+extern void poweroff_irx;
+extern int size_poweroff_irx;
 
 extern void elf_loader;
 extern int size_elf_loader;
@@ -207,7 +216,12 @@ char usbd_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBD.IRX";
 /**********************USBHDFSD.IRX************************/
 char usb_mass_irx_path[30] = "mc0:/BOOT/USBHDFSD.IRX";
 char usb_mass_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBHDFSD.IRX";
-
+/**********************FILEXIO.IRX************************/
+char filexio_irx_path[30] = "mc0:/BOOT/FILEXIO.IRX";
+char filexio_irx_path_sysconf[30] = "mc0:/SYS-CONF/FILEXIO.IRX";
+/**********************POWEROFF.IRX************************
+char poweroff_irx_path[30] = "mc0:/BOOT/POWEROFF.IRX";
+char poweroff_irx_path_sysconf[30] = "mc0:/SYS-CONF/POWEROFF.IRX";*/
 // DVD-Player Update path
 char dvdpl_path[] = "mc0:/BREXEC-DVDPLAYER/dvdplayer.elf";
 
@@ -330,7 +344,35 @@ int file_exists(char *filepath)
 
 	return 1;
 }
+static void closeAllAndPoweroff(void)
+{
+	// As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
+	fileXioDevctl("mass:", USBMASS_DEVCTL_STOP_ALL, NULL, 0, NULL, 0);
 
+	/* Power-off the PlayStation 2 console. */
+	poweroffShutdown();
+}
+//------------------------------
+//endfunc closeAllAndPoweroff
+//---------------------------------------------------------------------------
+static void poweroffHandler(int i)
+{
+	closeAllAndPoweroff();
+}
+//------------------------------
+//endfunc poweroffHandler
+//---------------------------------------------------------------------------
+static void setupPowerOff(void)
+{
+	int ret;
+
+	SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &ret);
+	poweroffInit();
+	poweroffSetCallback((void *)poweroffHandler, NULL);
+}
+//------------------------------
+//endfunc setupPowerOff
+//---------------------------------------------------------------------------
 //________________ From uLaunchELF ______________________
 
 //---------------------------------------------------------------------------
@@ -1909,6 +1951,18 @@ void load_modules(void)
 			}
 		}
 	}
+	if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) /**mc0:/BOOT/USBHDFSD.IRX*/
+	{
+		filexio_irx_path[2]++;
+		if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) /**mc1:/BOOT/USBHDFSD.IRX*/
+		{
+			if (SifLoadModule(filexio_irx_path_sysconf, 0, NULL) < 0) /**mc0:/SYS-CONF/USBHDFSD.IRX*/
+			{
+				filexio_irx_path_sysconf[2]++;
+				SifLoadModule(filexio_irx_path_sysconf, 0, NULL); /**mc1:/SYS-CONF/USBHDFSD.IRX*/
+			}
+		}
+	}
 }
 //--------------------------------------------------------------
 void load_chkesr_module(void)
@@ -2030,7 +2084,7 @@ void launch_osdsys(void)  // Run OSDSYS
 								memset(p_ExecPath + 2, 0x31, 1);  // mc0: -> mc1:
 						}
 
-						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT"))) {
+						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT")) || (!strcmp(p_ExecPath, "POWEROFF"))) {
 							// if path is set to OSDSYS or FASTBOOT,
 							menuitems[r] = OSDSYS.item_name[i];         // copy name to osdsys item name
 							menuitem_path[r] = OSDSYS.item_path[i][j];  // Copy index to an array
@@ -2100,6 +2154,11 @@ void check_path(void)  // check if a path contains FASTBOOT, OSDSYS, B?DATA, or 
 	if (!strcmp(p_ExecPath, "OSDMENU")) {  // if path is set to OSDMENU then skip disc boot
 		OSDSYS.skip_disc = 1;
 		launch_osdsys();
+	}
+	if (!strcmp(p_ExecPath, "POWEROFF"))
+	{
+		setupPowerOff();
+		closeAllAndPoweroff();
 	}
 	if (!strncmp(p_ExecPath + 5, "B?DATA-SYSTEM", 13))
 		memset(p_ExecPath + 6, romver_region_char[0], 1);  // Check path start with mc?:/B?DATA-SYSTEM
