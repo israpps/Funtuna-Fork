@@ -61,6 +61,9 @@ extern int size_FUNTUNA_USBD;
 extern u8 FUNTUNA_USBHDFSD[];
 extern int size_FUNTUNA_USBHDFSD;
 //----------------------------------------//
+extern u8 FILEXIO_IRX[];
+extern int size_FILEXIO_IRX;
+//----------------------------------------//
 extern u8 poweroff_elf[];
 extern int size_poweroff_elf;
 //----------------------------------------//
@@ -448,42 +451,46 @@ static int install(int mcport, int icon_variant)
 
 	//FUNTUNA&APPS
 	scr_printf("\t\t\tuLaunchELF\n");
-		retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
+			retorno = write_embed(&ule_elf, size_ule_elf, "BOOT", "ULE.ELF",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&ule_cnf, size_ule_cnf, "BOOT", "LAUNCHELF.CNF",mcport);
+			retorno = write_embed(&ule_cnf, size_ule_cnf, "BOOT", "LAUNCHELF.CNF",mcport);
 		if (retorno < 0) {return 6;}
 
 	scr_printf("\t\t\tFreeMcBoot\n");
-		retorno = write_embed(&FMCB_ELF, size_FMCB_ELF, "BOOT", "BOOT.ELF",mcport);
+			retorno = write_embed(&FMCB_ELF, size_FMCB_ELF, "BOOT", "BOOT.ELF",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&FMCB_CNF, size_FMCB_CNF, "BOOT", "FUNTUNA.CNF",mcport);
+			retorno = write_embed(&FMCB_CNF, size_FMCB_CNF, "BOOT", "FUNTUNA.CNF",mcport);
 		if (retorno < 0) {return 6;}
 	scr_printf("\t\t\tFreeMcBoot Configurator\n");
-		retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
+			retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
 
     scr_printf("\t\t\tFreeMcBoot USB drivers\n");
-		retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
+			retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
-                retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
+            retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
+		if (retorno < 0) {return 6;}
+		
+    scr_printf("\t\t\tFileXio IRX Driver\n");
+			retorno = write_embed(&FILEXIO_IRX, size_FILEXIO_IRX, "BOOT", "FILEXIO.IRX",mcport);
 		if (retorno < 0) {return 6;}
 
 	scr_printf("\t\t\tBOOT icons\n");
-		retorno = write_embed(&boot_icn, size_boot_icn, "BOOT", "SYSTEM.icn",mcport);
+			retorno = write_embed(&boot_icn, size_boot_icn, "BOOT", "SYSTEM.icn",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&boot_sys, size_boot_sys, "BOOT", "icon.sys",mcport);
+			retorno = write_embed(&boot_sys, size_boot_sys, "BOOT", "icon.sys",mcport);
 		if (retorno < 0) {return 6;}
 	scr_printf("\t\t\tPoweroff utility\n");
-		retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
+			retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
 		if (retorno < 0) {return 6;}
 	///FUNTUNA&APPS
 	scr_printf("\t\t\tAPPS folder icons\n");
-		retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
+			retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&apps_icn, size_apps_icn, "APPS","funtuna_apps.icn",mcport);
+			retorno = write_embed(&apps_icn, size_apps_icn, "APPS","funtuna_apps.icn",mcport);
 		if (retorno < 0) {return 6;}
 	scr_printf("\t\t\tOPL\n");
-		retorno = write_embed(&opl_elf, size_opl_elf, "APPS","OPNPS2LD.ELF",mcport);
+			retorno = write_embed(&opl_elf, size_opl_elf, "APPS","OPNPS2LD.ELF",mcport);
 		if (retorno < 0) {return 6;}
 	if (!file_exists(opl_settings_location))//If no OPL config file...
 	{
