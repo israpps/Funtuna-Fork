@@ -108,7 +108,7 @@ jobs:
         echo "#Compiled on GitHub Actions by runner: $REPO"
         cat FUNTUNA.TMP >> FUNTUNA.CNF
         rm FUNTUNA.TMP
-        
+
     - name: build installer
       run: |
         cd installer

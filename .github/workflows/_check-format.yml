@@ -1,6 +1,6 @@
 name: clang-format Check
 
-on: 
+on:
     workflow_dispatch:
     push:
         branches:
@@ -21,7 +21,7 @@ jobs:
       with:
         clang-format-version: '11'
         check-path: 'FreeMcBoot'
-    
+
     - name: Check FreeMcBoot-Configurator
       uses: jidicula/clang-format-action@v3.1.0
       with:
