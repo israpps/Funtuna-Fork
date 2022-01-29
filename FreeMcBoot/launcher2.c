@@ -2089,7 +2089,7 @@ void launch_osdsys(void)  // Run OSDSYS
 							if (!file_exists(p_ExecPath))
 								memset(p_ExecPath + 2, 0x31, 1);  // mc0: -> mc1:
 						}
-#ifndef NO_POWEROFF
+#ifdef NO_POWEROFF
 						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT"))) {
 #else
 						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT")) || (!strcmp(p_ExecPath, "POWEROFF"))) {

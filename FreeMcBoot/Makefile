@@ -41,11 +41,13 @@ EE_LDFLAGS = -Wl,-Ttext -Wl,$(LOADADDR)   -L$(PS2SDK)/sbv/lib -L.
 EE_LIBS = -lcdvd -lpad -lpatches -lc -lkernel -ldebug 
 EE_CFLAGS +=  -DNEWLIB_PORT_AWARE
 
-EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o poweroff_irx.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
+EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
 
 ifdef NO_POWEROFF
 EE_CFLAGS += -DNO_POWEROFF
+else
 EE_LIBS += -lfileXio -lpoweroff 
+EE_OBJS += poweroff_irx.o 
 endif
 
 all:
