@@ -369,7 +369,18 @@ static void poweroffHandler(int i)
 static void setupPowerOff(void)
 {
 	int ret;
-
+	if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc0:/BOOT/FILEXIO.IRX
+	{
+		filexio_irx_path[2]++;
+		if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc1:/BOOT/FILEXIO.IRX
+		{
+			if (SifLoadModule(filexio_irx_path_sysconf, 0, NULL) < 0) //mc0:/SYS-CONF/FILEXIO.IRX
+			{
+				filexio_irx_path_sysconf[2]++;
+				SifLoadModule(filexio_irx_path_sysconf, 0, NULL); //mc1:/SYS-CONF/FILEXIO.IRX
+			}
+		}
+	}
 	SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &ret);
 	poweroffInit();
 	poweroffSetCallback((void *)poweroffHandler, NULL);
@@ -1955,20 +1966,6 @@ void load_modules(void)
 		}
 	}
 	/* **************************FILEXIO.IRX************************************** */
-#ifndef NO_POWEROFF
-	if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc0:/BOOT/FILEXIO.IRX
-	{
-		filexio_irx_path[2]++;
-		if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc1:/BOOT/FILEXIO.IRX
-		{
-			if (SifLoadModule(filexio_irx_path_sysconf, 0, NULL) < 0) //mc0:/SYS-CONF/FILEXIO.IRX
-			{
-				filexio_irx_path_sysconf[2]++;
-				SifLoadModule(filexio_irx_path_sysconf, 0, NULL); //mc1:/SYS-CONF/FILEXIO.IRX
-			}
-		}
-	}
-#endif
 }
 //--------------------------------------------------------------
 void load_chkesr_module(void)
