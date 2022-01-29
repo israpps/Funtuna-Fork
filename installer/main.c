@@ -367,7 +367,7 @@ static int install(int mcport, int icon_variant)
 #ifndef REQUIRED_SPACE
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
 #else
-	if (mc_Free < (REQUIRED_SPACE + 128)){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
+	if (mc_Free < (REQUIRED_SPACE + 128)){return NOT_ENOUGH_SPACE;}
 #endif
 	//If the files exists, we have an error:
 	if (mcport == 0) {

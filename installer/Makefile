@@ -125,7 +125,7 @@ $(EE_BIN_STRIPPED): $(EE_BIN)
 	$(EE_STRIP) -o $@ $<
 
 $(EE_BIN_PACKED): $(EE_BIN_STRIPPED)
-	ps2-packer $< $@ > /dev/null
+	ps2-packer -v $< $@ 
 
 package-size:
 	@echo package size is \[$(PACKAGE_SIZE)\]
