@@ -364,8 +364,11 @@ static int install(int mcport, int icon_variant)
 	}
 	// /CLEANUP
 	//If there's no free space, we have an error:
+#ifndef REQUIRED_SPACE
 	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
-
+#else
+	if (mc_Free < (REQUIRED_SPACE + 128)){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
+#endif
 	//If the files exists, we have an error:
 	if (mcport == 0) {
 	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.icn")) {return FUNTUNA_FORK_FOUND;}

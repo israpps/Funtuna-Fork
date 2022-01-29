@@ -43,13 +43,14 @@ EE_CFLAGS +=  -DNEWLIB_PORT_AWARE
 
 EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o poweroff_irx.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
 
+ifdef NO_POWEROFF
+EE_CFLAGS += -DNO_POWEROFF
+endif
 
 all:
 	@echo "="
 	@echo "========================= Compiling FreeMcBoot ========================="
 	$(MAKE) $(EE_BIN_PACKED)
-	
-	
 
 $(EE_BIN_STRIPPED): $(EE_BIN)
 	@echo "--------------- EE_STRIP ---------------"
@@ -124,9 +125,6 @@ elf_loader.s:
 	@$(MAKE) -C elf_loader 
 	@echo "converting with bin2s"
 	@bin2s elf_loader/elf_loader.elf elf_loader.s elf_loader
-
-
-
 
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal
