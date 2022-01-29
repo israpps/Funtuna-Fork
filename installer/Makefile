@@ -10,12 +10,15 @@ EE_OBJS += $(EMBEDDED_FILES_OBJ)
 EE_SRC = $(EMBEDDED_FILES_SRC)
 EE_LIBS = -ldebug -lcdvd -lpatches -lpad -lmc
 
+PACKAGE_SIZE := $(shell du -s  --exclude=*.bak INSTALLER_CONTENTS/ | cut -f1)
+
 ifeq ($(BOOT_FUNTUNA_ON_SUCCESS),1)
 	EE_CFLAGS += -DBOOT_FUNTUNA_ON_SUCCESS -DELF_LAUNCHER
 endif
 
 all:
 	@echo Building FunTuna Fork Installer
+	@echo package size is \[$(PACKAGE_SIZE)\]
 	$(MAKE) $(EE_BIN_PACKED)
 #FREEMCBOOT:
 #	test -f ../FreeMcBoot/BOOT.ELF || make -C ../FreeMcBoot clean all
@@ -124,5 +127,8 @@ $(EE_BIN_STRIPPED): $(EE_BIN)
 $(EE_BIN_PACKED): $(EE_BIN_STRIPPED)
 	ps2-packer $< $@ > /dev/null
 
+package-size:
+	@echo package size is \[$(PACKAGE_SIZE)\]
+	
 include $(PS2SDK)/samples/Makefile.pref
 include $(PS2SDK)/samples/Makefile.eeglobal
