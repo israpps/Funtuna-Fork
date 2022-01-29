@@ -38,13 +38,14 @@ EE_BIN_STRIPPED = BOOT-STRIPPED.ELF
 
 EE_INCS = -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include -I$(PS2SDK)/sbv/include
 EE_LDFLAGS = -Wl,-Ttext -Wl,$(LOADADDR)   -L$(PS2SDK)/sbv/lib -L. 
-EE_LIBS = -lcdvd -lpad -lpatches -lc -lkernel -ldebug -lfileXio -lpoweroff 
+EE_LIBS = -lcdvd -lpad -lpatches -lc -lkernel -ldebug 
 EE_CFLAGS +=  -DNEWLIB_PORT_AWARE
 
 EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o poweroff_irx.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
 
 ifdef NO_POWEROFF
 EE_CFLAGS += -DNO_POWEROFF
+EE_LIBS += -lfileXio -lpoweroff 
 endif
 
 all:
