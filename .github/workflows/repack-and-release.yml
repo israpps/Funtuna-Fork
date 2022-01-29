@@ -53,8 +53,8 @@ jobs:
             CFG.ELF
             BOOT.ELF
             FILEXIO.IRX
-            BOOT-UNC.ELF
-            BOOT-STRIPPED.ELF
+            FreeMcBoot/BOOT-UNC.ELF
+            FreeMcBoot/BOOT-STRIPPED.ELF
 #            USBD.IRX
 #            USBHDFSD.IRX
 
