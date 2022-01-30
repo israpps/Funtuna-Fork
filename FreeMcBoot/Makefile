@@ -31,7 +31,7 @@
 #
 # ------------------------------------------------------------------------
 
-LOADADDR=0x00084000
+LOADADDR=0x00090000
 EE_BIN = BOOT-UNC.ELF
 EE_BIN_PACKED = BOOT.ELF
 EE_BIN_STRIPPED = BOOT-STRIPPED.ELF
