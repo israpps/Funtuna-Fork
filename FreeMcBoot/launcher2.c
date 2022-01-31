@@ -59,13 +59,6 @@
 #include <debug.h>
 #include "splash.h"
 //#include "loading.h"
-#ifndef NEWLIB_PORT_AWARE
-#define NEWLIB_PORT_AWARE
-#endif
-#ifndef NO_POWEROFF
-#include <fileXio_rpc.h>
-#include <io_common.h>
-#endif
 void _ps2sdk_libc_init() {}
 void _ps2sdk_libc_deinit() {}
 
@@ -79,10 +72,7 @@ extern int size_init_irx;
 
 extern void chkesr_irx;
 extern int size_chkesr_irx;
-#ifndef NO_POWEROFF
-extern void poweroff_irx;
-extern int size_poweroff_irx;
-#endif
+
 extern void elf_loader;
 extern int size_elf_loader;
 
@@ -217,15 +207,7 @@ char usbd_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBD.IRX";
 /**********************USBHDFSD.IRX************************/
 char usb_mass_irx_path[30] = "mc0:/BOOT/USBHDFSD.IRX";
 char usb_mass_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBHDFSD.IRX";
-/**********************FILEXIO.IRX************************/
-#ifndef NO_POWEROFF
-char filexio_irx_path[30] = "mc0:/BOOT/FILEXIO.IRX";
-char filexio_irx_path_sysconf[30] = "mc0:/SYS-CONF/FILEXIO.IRX";
-#endif
-/**********************POWEROFF.IRX************************
-char poweroff_irx_path[30] = "mc0:/BOOT/POWEROFF.IRX";
-char poweroff_irx_path_sysconf[30] = "mc0:/SYS-CONF/POWEROFF.IRX";*/
-// DVD-Player Update path
+
 char dvdpl_path[] = "mc0:/BREXEC-DVDPLAYER/dvdplayer.elf";
 
 // Buttons ID must be kept in this order !
@@ -347,48 +329,6 @@ int file_exists(char *filepath)
 
 	return 1;
 }
-#ifndef NO_POWEROFF
-static void closeAllAndPoweroff(void)
-{
-	// As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
-	fileXioDevctl("mass:", USBMASS_DEVCTL_STOP_ALL, NULL, 0, NULL, 0);
-
-	/* Power-off the PlayStation 2 console. */
-	poweroffShutdown();
-}
-//------------------------------
-//endfunc closeAllAndPoweroff
-//---------------------------------------------------------------------------
-static void poweroffHandler(int i)
-{
-	closeAllAndPoweroff();
-}
-//------------------------------
-//endfunc poweroffHandler
-//---------------------------------------------------------------------------
-static void setupPowerOff(void)
-{
-	int ret;
-	if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc0:/BOOT/FILEXIO.IRX
-	{
-		filexio_irx_path[2]++;
-		if (SifLoadModule(filexio_irx_path, 0, NULL) < 0) //mc1:/BOOT/FILEXIO.IRX
-		{
-			if (SifLoadModule(filexio_irx_path_sysconf, 0, NULL) < 0) //mc0:/SYS-CONF/FILEXIO.IRX
-			{
-				filexio_irx_path_sysconf[2]++;
-				SifLoadModule(filexio_irx_path_sysconf, 0, NULL); //mc1:/SYS-CONF/FILEXIO.IRX
-			}
-		}
-	}
-	SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &ret);
-	poweroffInit();
-	poweroffSetCallback((void *)poweroffHandler, NULL);
-}
-#endif
-//------------------------------
-//endfunc setupPowerOff
-//---------------------------------------------------------------------------
 //________________ From uLaunchELF ______________________
 
 //---------------------------------------------------------------------------
@@ -2086,12 +2026,7 @@ void launch_osdsys(void)  // Run OSDSYS
 							if (!file_exists(p_ExecPath))
 								memset(p_ExecPath + 2, 0x31, 1);  // mc0: -> mc1:
 						}
-#ifdef NO_POWEROFF
 						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT"))) {
-#else
-						if ((!strcmp(p_ExecPath, "OSDSYS")) || (!strcmp(p_ExecPath, "FASTBOOT")) || (!strcmp(p_ExecPath, "POWEROFF"))) {
-#endif
-							// if path is set to OSDSYS or FASTBOOT,
 							menuitems[r] = OSDSYS.item_name[i];         // copy name to osdsys item name
 							menuitem_path[r] = OSDSYS.item_path[i][j];  // Copy index to an array
 							r++;
@@ -2161,13 +2096,7 @@ void check_path(void)  // check if a path contains FASTBOOT, OSDSYS, B?DATA, or 
 		OSDSYS.skip_disc = 1;
 		launch_osdsys();
 	}
-#ifndef NO_POWEROFF
-	if (!strcmp(p_ExecPath, "POWEROFF"))
-	{
-		setupPowerOff();
-		closeAllAndPoweroff();
-	}
-#endif
+	
 	if (!strncmp(p_ExecPath + 5, "B?DATA-SYSTEM", 13))
 		memset(p_ExecPath + 6, romver_region_char[0], 1);  // Check path start with mc?:/B?DATA-SYSTEM
 	if (!strncmp(p_ExecPath, "mc?:", 4))                   // Check if path start with mc?: in this case search for the file in 2 slots.

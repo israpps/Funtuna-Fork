@@ -64,8 +64,8 @@ extern int size_FUNTUNA_USBHDFSD;
 extern u8 FILEXIO_IRX[];
 extern int size_FILEXIO_IRX;
 //----------------------------------------//
-//extern u8 poweroff_elf[];
-//extern int size_poweroff_elf;
+extern u8 poweroff_elf[];
+extern int size_poweroff_elf;
 //----------------------------------------//
 extern u8 opl_elf[];
 extern int size_opl_elf;
@@ -483,9 +483,9 @@ static int install(int mcport, int icon_variant)
 		if (retorno < 0) {return 6;}
 			retorno = write_embed(&boot_sys, size_boot_sys, "BOOT", "icon.sys",mcport);
 		if (retorno < 0) {return 6;}
-//	scr_printf("\t\t\tPoweroff utility\n");
-//			retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
-//		if (retorno < 0) {return 6;}
+	scr_printf("\t\t\tPoweroff utility\n");
+			retorno = write_embed(&poweroff_elf, size_poweroff_elf, "BOOT", "POWEROFF.ELF",mcport);
+		if (retorno < 0) {return 6;}
 	///FUNTUNA&APPS
 	scr_printf("\t\t\tAPPS folder icons\n");
 			retorno = write_embed(&apps_sys, size_apps_sys, "APPS","icon.sys",mcport);

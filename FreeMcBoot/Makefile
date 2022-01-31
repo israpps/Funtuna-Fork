@@ -43,12 +43,6 @@ EE_CFLAGS +=  -DNEWLIB_PORT_AWARE
 
 EE_OBJS = launcher2.o gs.o chkesr_rpc.o chkesr.o pad.o timer.o iomanx.o init.o dma_asm.o gs_asm.o ps2_asm.o elf_loader.o #usbhdfsd.o usbd.o 
 
-ifdef NO_POWEROFF
-EE_CFLAGS += -DNO_POWEROFF
-else
-EE_LIBS += -lfileXio -lpoweroff 
-EE_OBJS += poweroff_irx.o 
-endif
 
 all:
 	@echo "="
@@ -96,8 +90,6 @@ clean:
 	@echo "--elf_loader.s"
 	@rm -f elf_loader.s
 
-	@echo "--poweroff_irx.s"
-	@rm -f poweroff_irx.s
 
 format-check:
 	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
@@ -105,8 +97,6 @@ format-check:
 	
 iomanx.s:
 	iomanx.s iomanx_irx
-poweroff_irx.s: $(PS2SDK)/iop/irx/poweroff.irx
-	bin2s $< $@ poweroff_irx
 #filexio.s:
 #	filexio.s filexio_irx
 #usbd.s:
