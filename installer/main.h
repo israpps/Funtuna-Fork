@@ -17,7 +17,6 @@
 //#include <osd_config.h>
 //#include <libcdvd.h>
 #include <debug.h>
-#include "enums.h"
 
 #define NEWLIB_PORT_AWARE
 #include <fileio.h>
