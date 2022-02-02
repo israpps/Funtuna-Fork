@@ -61,8 +61,8 @@ extern int size_FUNTUNA_USBD;
 extern u8 FUNTUNA_USBHDFSD[];
 extern int size_FUNTUNA_USBHDFSD;
 //----------------------------------------//
-extern u8 FILEXIO_IRX[];
-extern int size_FILEXIO_IRX;
+//extern u8 FILEXIO_IRX[];
+//extern int size_FILEXIO_IRX;
 //----------------------------------------//
 extern u8 poweroff_elf[];
 extern int size_poweroff_elf;
@@ -175,7 +175,7 @@ static void ResetIOP(void)
 		if (exec.epc > 0)
 		{
 			ResetIOP();
-			
+
 			if (party != 0)
 			{
 				args[0] = party;
@@ -473,10 +473,10 @@ static int install(int mcport, int icon_variant)
 		if (retorno < 0) {return 6;}
             retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
 		if (retorno < 0) {return 6;}
-		
+/*
     scr_printf("\t\t\tFileXio IRX Driver\n");
 			retorno = write_embed(&FILEXIO_IRX, size_FILEXIO_IRX, "BOOT", "FILEXIO.IRX",mcport);
-		if (retorno < 0) {return 6;}
+		if (retorno < 0) {return 6;}*/
 
 	scr_printf("\t\t\tBOOT icons\n");
 			retorno = write_embed(&boot_icn, size_boot_icn, "BOOT", "SYSTEM.icn",mcport);

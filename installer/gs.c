@@ -1,15 +1,15 @@
-/*      
-  _____     ___ ____ 
+/*
+  _____     ___ ____
    ____|   |    ____|      PS2 Open Source Project
-  |     ___|   |____       
-  
+  |     ___|   |____
+
 ---------------------------------------------------------------------------
 
-    Copyright (C) 2008 - Neme & jimmikaelkael (www.psx-scene.com) 
+    Copyright (C) 2008 - Neme & jimmikaelkael (www.psx-scene.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the Free McBoot License.
-    
+
 	This program and any related documentation is provided "as is"
 	WITHOUT ANY WARRANTIES, either express or implied, including, but not
  	limited to, implied warranties of fitness for a particular purpose. The
@@ -21,7 +21,7 @@
  	arising out of the use of or inability to use this software or
  	documentation, even if the author has been advised of the possibility of
  	such damages.
- 	
+
     You should have received a copy of the Free McBoot License along with
     this program; if not, please report at psx-scene :
     http://psx-scene.com/forums/freevast/
@@ -214,7 +214,7 @@ int VMode;
 	((u64)(G)	<< 8)		| \
 	((u64)(B)	<< 16)
 
-	
+
 //===========================================================================
 // General Purpose Register Macros
 //===========================================================================
@@ -238,7 +238,7 @@ int VMode;
 	 ((u64)(DBP)	<< 32)		| \
 	 ((u64)(DBW)	<< 48)		| \
 	 ((u64)(DPSM)	<< 56))
-	
+
 //---------------------------------------------------------------------------
 // FRAME_x Register
 //---------------------------------------------------------------------------
@@ -269,7 +269,7 @@ int VMode;
 	 ((u64)(FST)	<< 8)		| \
 	 ((u64)(CTXT)	<< 9)		| \
 	 ((u64)(FIX)	<< 10))
-	 
+
 //---------------------------------------------------------------------------
 // RGBAQ Register
 //---------------------------------------------------------------------------
@@ -279,14 +279,14 @@ int VMode;
 	 ((u64)(B)		<< 16)		| \
 	 ((u64)(A)		<< 24)		| \
 	 ((u64)(Q)		<< 32))
-	 
+
 //---------------------------------------------------------------------------
 // XYOFFSET_x Register
 //---------------------------------------------------------------------------
 #define GS_XYOFFSET(OFX,OFY)	\
 	(((u64)(OFX)		<< 0)		| \
 	 ((u64)(OFY)		<< 32))
-	
+
 //---------------------------------------------------------------------------
 // SCISSOR_x Register
 //---------------------------------------------------------------------------
@@ -334,7 +334,7 @@ int VMode;
 #define GS_TRXREG(RRW,RRH)	\
 	(((u64)(RRW)	<< 0)		| \
 	 ((u64)(RRH)	<< 32))
-	 
+
 //---------------------------------------------------------------------------
 // XYZ2 Register
 //---------------------------------------------------------------------------
@@ -342,7 +342,7 @@ int VMode;
 	(((u64)(X)		<< 0)		| \
 	 ((u64)(Y)		<< 16)		| \
 	 ((u64)(Z)		<< 32))
-	
+
 
 //---------------------------------------------------------------------------
 #define GIF_AD		0x0e
@@ -390,7 +390,7 @@ int VMode;
 	DMA_WAIT(GIF_CHCR)
 
 
-	
+
 //---------------------------------------------------------------------------
 // CHCR Register - Channel Control Register
 //---------------------------------------------------------------------------
@@ -437,7 +437,7 @@ int VMode;
 #define SET_QWC(WHICH,SIZE) \
 	*WHICH = (u32)(SIZE)
 
-	
+
 //---------------------------------------------------------------------------
 DECLARE_GS_PACKET(gs_dma_buf,50);
 
@@ -465,7 +465,7 @@ vmode_t *v;
 	GS_RESET();
 
 	__asm__("sync.p; nop;");
-		
+
 	// - Sets up the GS IMR register.
 	// - The IMR register is used to mask and unmask certain interrupts.
 	gs_set_imr();
@@ -481,7 +481,7 @@ vmode_t *v;
 		0,		// Blend Alpha with the output of ReadCircuit2
 		0xFF	// Alpha Value = 1.0
 	);
-	
+
 	GS_SET_DISPFB2(
 		0,				// Frame Buffer base pointer = 0 (Address/2048)
 		v->width/64,	// Buffer Width (Address/64)
@@ -596,7 +596,7 @@ void gs_set_fill_color(u8 r, u8 g, u8 b)
 void gs_fill_rect(u16 x0, u16 y0, u16 x1, u16 y1)
 {
 	BEGIN_GS_PACKET(gs_dma_buf);
-	
+
 	GIF_TAG_AD(gs_dma_buf, 4, 1, 0, 0, 0);
 	GIF_DATA_AD(gs_dma_buf, prim, GS_PRIM(PRIM_SPRITE, 0, 0, 0, 0, 0, 0, 0, 0));
 	GIF_DATA_AD(gs_dma_buf, rgbaq, GS_RGBAQ(gs_fill_r, gs_fill_g, gs_fill_b, 0, 0));
@@ -609,7 +609,7 @@ void gs_fill_rect(u16 x0, u16 y0, u16 x1, u16 y1)
 	// not draw the right and bottom 'lines' of the rectangle refined by
 	// the parameters. Add +1 to change this.
 	GIF_DATA_AD(gs_dma_buf, xyz2, GS_XYZ2((x1+1)<<4, (y1+1)<<4, 0));
-	
+
 	SEND_GS_PACKET(gs_dma_buf);
 }
 

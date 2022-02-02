@@ -34,7 +34,7 @@
 extern int VMode;
 
 typedef enum {
-	PAL_640_512_32,	
+	PAL_640_512_32,
 	NTSC_640_448_32
 } gs_video_mode;
 
