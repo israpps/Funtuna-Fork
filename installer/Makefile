@@ -10,7 +10,7 @@ EE_OBJS += $(EMBEDDED_FILES_OBJ)
 EE_SRC = $(EMBEDDED_FILES_SRC)
 EE_LIBS = -ldebug -lcdvd -lpatches -lpad -lmc
 
-PACKAGE_SIZE := $(shell du -s  --exclude=*.bak INSTALLER_CONTENTS/ | cut -f1)
+PACKAGE_SIZE := $(shell du -s INSTALLER_CONTENTS/ | cut -f1)
 
 ifeq ($(BOOT_FUNTUNA_ON_SUCCESS),1)
 	EE_CFLAGS += -DBOOT_FUNTUNA_ON_SUCCESS -DELF_LAUNCHER
