@@ -25,6 +25,9 @@ you can find the instructions to install at the [__WIKI__](https://github.com/is
 
  + [PSX-Place](https://www.psx-place.com/members/el_isra.59064/)
 
+## known issues:
+
+- Opentuna will have issues if the memory card contains icons with japanese text
 
 ## Differences compared to original FunTuna:
 
