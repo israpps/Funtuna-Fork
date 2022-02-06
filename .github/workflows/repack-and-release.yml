@@ -52,11 +52,8 @@ jobs:
         path: |
             CFG.ELF
             BOOT.ELF
-#            FILEXIO.IRX
             FreeMcBoot/BOOT-UNC.ELF
             FreeMcBoot/BOOT-STRIPPED.ELF
-#            USBD.IRX
-#            USBHDFSD.IRX
 
   Repack_and_Release:
     runs-on: ubuntu-latest
