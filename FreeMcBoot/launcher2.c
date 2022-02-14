@@ -53,7 +53,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <osd_config.h>
-#include <libpwroff.h>
 #include <libcdvdmod.h>
 #include <malloc.h>
 #include <debug.h>
@@ -1567,9 +1566,11 @@ int deviated_exec_ps2dvd(void)
 		OSDSYS_CleanUp();  // CleanUp needed before launching game
 		if (CNF_RAM_p != NULL)
 			free(CNF_RAM_p);
-		args[0] = cdboot_path;
-		LoadExecPS2("rom0:PS2LOGO", 1, args);  // Launch PS2 Game with rom0:PS2LOGO
-	}
+ 		//args[0] = cdboot_path;
+		//Replace call to PS2LOGO, idea by jabu
+                //LoadExecPS2("rom0:PS2LOGO", 1, args);  // Launch PS2 Game with rom0:PS2LOGO
+	        LoadExecPS2(cdboot_path, 0, NULL); 
+        }
 
 	// second try, for failing case when PS2DVD was inserted before ps2 startup on v9, v10
 	call_from_osdsys = 1;
@@ -2261,7 +2262,8 @@ void load_elf(char *elf_path)
 		args[0] = cdboot_path;
 		sceCdInit(CDVD_INIT_EXIT);
 		SifExitRpc();                          //some programs need it to be here
-		LoadExecPS2("rom0:PS2LOGO", 1, args);  // Launch PS2 Game with rom0:PS2LOGO
+		//LoadExecPS2("rom0:PS2LOGO", 1, args);  // Launch PS2 Game with rom0:PS2LOGO
+                LoadExecPS2(cdboot_path, 0, NULL); //idea by jabu
 	}
 
 	// DVDV launch handling
