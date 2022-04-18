@@ -17,15 +17,14 @@
 //#include <osd_config.h>
 //#include <libcdvd.h>
 #include <debug.h>
-
 #define NEWLIB_PORT_AWARE
 #include <fileio.h>
 
+#include "pad.h"
 
 #define MAX_PATH 260
 
 /*     gs.c     */
-
 // ntsc_pal
 #define NTSC			2
 #define PAL				3
@@ -45,15 +44,4 @@ void gs_fill_rect(u16 x0, u16 y0, u16 x1, u16 y1);
 u16 gs_get_max_x(void);
 u16 gs_get_max_y(void);
 void gs_print_bitmap(u16 x, u16 y, u16 w, u16 h, u32 *data);
-
-/* pad.c */
-
-extern u32 new_pad;
-
-int readPad(void);
-void waitAnyPadReady(void);
-int setupPad(void);
-
-
-
 #endif
