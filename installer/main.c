@@ -287,6 +287,8 @@ static void InitPS2(void)
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
+	
+	sbv_patch_enable_lmb();
 	sbv_patch_disable_prefix_check();
 	DEBUG_PRINTF("[PS2-INIT]: Loading IRX drivers...\n");
 	SifExecModuleBuffer(SIO2MAN_irx, size_SIO2MAN_irx, 0, NULL, NULL);
