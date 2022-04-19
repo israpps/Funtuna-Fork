@@ -60,7 +60,7 @@ body:
         - "for Slims and SCPH-5XXXX with 1.90 ROM"
         - "for SCPH-5XXXX with 1.70 ROM"
         - "For FAT units, from SCPH-18000 up to SCPH-39XXX"
-        - NONE
+        - "No opentuna"
 
 
   - type: dropdown
