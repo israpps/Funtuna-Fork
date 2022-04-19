@@ -35,7 +35,7 @@ body:
     id: version
     attributes:
       label: Program version
-      description: Provide the version number (Press F1 to see it!)
+      description: Provide the version number (Should appear on menu)
       placeholder: "1.0.10 ; commit code (found inside commit.txt in package)"
     validations:
       required: false
