@@ -1,0 +1,75 @@
+name: Issue report
+description: Report a bug/unexpected behaviour
+title: "[bug]: "
+labels: [bug]
+assignees:
+  - israpps
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Something isn't working as expected? Please provide the following data:
+        
+      
+  - type: textarea
+    id: explanation
+    attributes:
+      label: Issue
+      description: explain to us what happened!
+      placeholder: the problem was...
+      value: "the problem was"
+    validations:
+      required: true
+
+  - type: textarea
+    id: explanation_expected
+    attributes:
+      label: expected behaviour
+      description: explain to us what you expected to happen!
+      placeholder: I expected...
+      value: "I expected..."
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: Program version
+      description: Provide the version number (Press F1 to see it!)
+      placeholder: "1.0.10 ; commit code (found inside commit.txt in package)"
+    validations:
+      required: false
+
+      
+  - type: input
+    id: console
+    attributes:
+      label: Console model
+      description: you can see it on the console sticker or inside OSDSYS (press triangle on main menú)
+      placeholder: SCPH-?????
+    validations:
+      required: true
+
+  - type: dropdown
+    id: OpenTuna-variant
+    attributes:
+      label: "the OpenTuna variant used during install"
+      multiple: true
+      required: true
+      options:
+        - "for Slims and SCPH-5XXXX with 1.90 ROM"
+        - "for SCPH-5XXXX with 1.70 ROM"
+        - "For FAT units, from SCPH-18000 up to SCPH-39XXX"
+        - NONE
+
+
+  - type: dropdown
+    id: inst-mode
+    attributes:
+      label: "the Installation mode chosen"
+      multiple: true
+      required: true
+      options:
+        - "Manual Install"
+        - "Installer (auto Install)"
+        - "Installer (user-chosen Icon)"
