@@ -55,12 +55,13 @@ body:
     attributes:
       label: "the OpenTuna variant used during install"
       multiple: true
-      required: true
       options:
         - "for Slims and SCPH-5XXXX with 1.90 ROM"
         - "for SCPH-5XXXX with 1.70 ROM"
         - "For FAT units, from SCPH-18000 up to SCPH-39XXX"
         - "No opentuna"
+    validations:
+      required: true
 
 
   - type: dropdown
@@ -68,8 +69,9 @@ body:
     attributes:
       label: "the Installation mode chosen"
       multiple: true
-      required: true
       options:
         - "Manual Install"
         - "Installer (auto Install)"
         - "Installer (user-chosen Icon)"
+    validations:
+      required: true
