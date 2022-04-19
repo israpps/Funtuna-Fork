@@ -3,6 +3,8 @@ __Experimental/**/desktop.ini
 __STABLE/**/desktop.ini
 **/desktop.ini
 
+**_irx.c
+
 FreeMcBoot/launcher2.elf.BAK
 **.lnk
 
