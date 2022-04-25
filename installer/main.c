@@ -4,10 +4,13 @@
 #include "main.h"
 //*/
 #ifdef GS_DEBUG_ISRA
-#define DEBUG_PRINTF(arg...) scr_printf(arg...);
+	#define DEBUG_PRINTF(arg...) scr_printf(arg);
+#elif defined(USE_PRINTF)
+	#define DEBUG_PRINTF(arg...) printf(arg);
 #else
-#define DEBUG_PRINTF(arg...)
+	#define DEBUG_PRINTF(arg...)
 #endif
+
 
 extern u8 opl_icn[];
 extern int size_opl_icn;
@@ -61,9 +64,6 @@ extern int size_FUNTUNA_USBD;
 extern u8 FUNTUNA_USBHDFSD[];
 extern int size_FUNTUNA_USBHDFSD;
 //----------------------------------------//
-//extern u8 FILEXIO_IRX[];
-//extern int size_FILEXIO_IRX;
-//----------------------------------------//
 extern u8 poweroff_elf[];
 extern int size_poweroff_elf;
 //----------------------------------------//
@@ -79,7 +79,22 @@ extern int size_apps_icn;
 extern u8 apps_sys[];
 extern int size_apps_sys;
 
+// Embedded IOP drivers
+extern unsigned char SIO2MAN_irx[];
+extern unsigned int size_SIO2MAN_irx;
+
+extern unsigned char PADMAN_irx[];
+extern unsigned int size_PADMAN_irx;
+
+extern unsigned char MCMAN_irx[];
+extern unsigned int size_MCMAN_irx;
+
+extern unsigned char MCSERV_irx[];
+extern unsigned int size_MCSERV_irx;
+
+
 static int pad_inited = 0;
+int key;
 #include "BMPS/FUNTUNA_FORK_INSTALLER_BG.h"
 #include "BMPS/FUNTUNA_FORK_INSTALLER_WELCOME.h"
 #include "BMPS/FUNTUNA_FORK_INSTALLER_SUCESS.h"
@@ -127,6 +142,7 @@ char* ICONTYPE_ALIAS[4] = {"190+","110+","170 ","100 "};
 
 int GetIconType(unsigned long int ROMVERSION)
 {
+	DEBUG_PRINTF("getting icon type...\n");
 	int icontype = UNSUPPORTED;
 
 	if (ROMVERSION >= 0x190)
@@ -158,11 +174,13 @@ static int file_exists(char *filepath)
 //--------------------------------------------------------------
 static void ResetIOP(void)
 {
+	DEBUG_PRINTF("[IOP-RESET]: START\n");
 	//parrado
 	SifInitRpc(0);
 	while (!SifIopReset("", 0)) {};
 	while (!SifIopSync()) {};
 	SifInitRpc(0);
+	DEBUG_PRINTF("[IOP-RESET]: END\n");
 }
 //=============================================================
 #ifdef ELF_LAUNCHER
@@ -199,7 +217,19 @@ static void display_bmp(u16 W, u16 H, u32 *data)
 	data                        //array
 	);
 }
-//=============================================================
+//--------------------------------------------------------------
+int wait_key(int key)
+{
+	DEBUG_PRINTF("waiting for key...\n");
+	int new_pad;
+	while (1)
+	{
+		new_pad = ReadCombinedPadStatus();
+		if (new_pad & key)
+			return new_pad;
+	}
+}
+//--------------------------------------------------------------
 /// DeleteFolder(); function was SP193's FreeMcBoot installer.
 //thanks to SP193 for all his work
 static int DeleteFolder(const char *folder)
@@ -249,22 +279,28 @@ static int DeleteFolder(const char *folder)
 
 	return r;
 }
-//=============================================================
+//--------------------------------------------------------------
 static void InitPS2(void)
 {
+	DEBUG_PRINTF("[PS2-INIT]: start\n");
 	ResetIOP();
 	SifInitIopHeap();
 	SifLoadFileInit();
 	fioInit();
+	
+	sbv_patch_enable_lmb();
 	sbv_patch_disable_prefix_check();
-	SifLoadModule("rom0:SIO2MAN", 0, NULL);
-	SifLoadModule("rom0:MCMAN", 0, NULL);
-	SifLoadModule("rom0:MCSERV", 0, NULL);
-	SifLoadModule("rom0:PADMAN", 0, NULL);
+	DEBUG_PRINTF("[PS2-INIT]: Loading IRX drivers...\n");
+	SifExecModuleBuffer(SIO2MAN_irx, size_SIO2MAN_irx, 0, NULL, NULL);
+	SifExecModuleBuffer(PADMAN_irx, size_PADMAN_irx, 0, NULL, NULL);
+	SifExecModuleBuffer(MCMAN_irx, size_MCMAN_irx, 0, NULL, NULL);
+	SifExecModuleBuffer(MCSERV_irx, size_MCSERV_irx, 0, NULL, NULL);
+	DEBUG_PRINTF("[PS2-INIT]: sbv_patch_fileio()\n");
 	sbv_patch_fileio();// THANKS fjtrujy
-	mcInit(MC_TYPE_MC); //Faltaba iniciar la MC (alexparrado)
-	setupPad();
-	waitAnyPadReady();
+	DEBUG_PRINTF("PadInit\n");
+	PadInitPads();
+	DEBUG_PRINTF("mcInit (XMC)\n");
+	mcInit(MC_TYPE_XMC);
 }
 
 //write &embed_file to path
@@ -287,9 +323,7 @@ static int write_embed(void *embed_file, const int embed_size, char* folder, cha
 		close(fd);
 	}
 
-#ifdef __DEBUG_PRINTF__
-	printf("embed file written: %s\n", target);
-#endif
+DEBUG_PRINTF("embed file written: %s\n", target);
 	return 0;
 }
 static int write_embed_replace(void *embed_file, const int embed_size, char* folder, char* filename, int mcport)
@@ -306,12 +340,10 @@ static int write_embed_replace(void *embed_file, const int embed_size, char* fol
 		}
 		close(fd);
 
-#ifdef __DEBUG_PRINTF__
-	printf("embed file written: %s\n", target);
-#endif
+DEBUG_PRINTF("embed file written: %s\n", target);
 	return 0;
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//--------------------------------------------------------------
 //return 0 = ok, return 1 = error
 static int install(int mcport, int icon_variant)
 {
@@ -546,7 +578,7 @@ static void CleanUp(void) //trimmed from FMCB 1.9??? installer
 	gs_set_fill_color(0, 0, 0);
 	gs_fill_rect(0, 0, gs_get_max_x(), gs_get_max_y());
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//--------------------------------------------------------------
 void tell_the_user_wtf_happened(int retval)
 {
 	scr_clear();
@@ -577,7 +609,7 @@ void tell_the_user_wtf_happened(int retval)
 	}
 	scr_printf("\n\n\n\nERROR CODE: [%d]",retval);
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//--------------------------------------------------------------
 int IconQuery(int default_icon_type)
 {
 	switch (default_icon_type)
@@ -597,10 +629,13 @@ int IconQuery(int default_icon_type)
 
 	while (1)
 	{
-		readPad();
-		if (new_pad & PAD_TRIANGLE)     return SLIMS;
-		if (new_pad & PAD_CROSS)  		return FATS;
-		if (new_pad & PAD_SQUARE) 		return FAT170;
+		key = wait_key(-1);
+		if (key & PAD_TRIANGLE)
+			return SLIMS;
+		if (key & PAD_CROSS)
+			return FATS;
+		if (key & PAD_SQUARE)
+			return FAT170;
 	}
 }
 int Choose_Install_Mode(int default_icon_type)
@@ -608,23 +643,33 @@ int Choose_Install_Mode(int default_icon_type)
 	display_bmp(640, 448, INSTALL_QUERY);
 	while (1)
 	{
-		readPad();
-		if (new_pad & PAD_R2) return default_icon_type;
+		key = wait_key(-1);
+		if (key & PAD_R2) 
+			return default_icon_type;
 
-		if (new_pad & PAD_L2) return IconQuery(default_icon_type);
+		if (key & PAD_L2) 
+			return IconQuery(default_icon_type);
 	}
 }
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//--------------------------------------------------------------
 //close program and go to browser
 static void PS2_browser(void)
 {
 	CleanUp();
 	LoadExecPS2("rom0:OSDSYS", 0, NULL);
 }
-
+enum STATE
+{
+	USERQUERY = 0,
+	INSTALLING,
+	INST_ERROR,
+	INST_SUCCESS,
+	
+	STATE_COUNT
+};
 int main (int argc, char *argv[])
 {
-
+DEBUG_PRINTF("-------------------------{FunTuna Fork Installer}-------------------------\nhello world\n");
 	int fdn, icontype;
 	unsigned long int ROM_VERSION;
 	char romver[5];
@@ -648,56 +693,49 @@ int main (int argc, char *argv[])
 	else
 		gs_init(NTSC_640_448_32);
 	icontype = GetIconType(ROM_VERSION);
-	waitAnyPadReady();
 	pad_inited = 1;
 
 	int iz = 1, mcport;
-	int menuactual = 101;//101: Initial Menu, 102: Installing (not needed), 103: Error, 104: Done
+	int state = USERQUERY;
 
 	display_bmp(640, 448, WELCOME);
 	while (1) {
-		readPad();
-
-		if ( (new_pad & PAD_L1) && (menuactual == 101) ) {
-			menuactual = 102;
-			mcport = 0;
-			//iz = install(mcport, icontype);
-			iz = install(mcport, Choose_Install_Mode(icontype));
-			if(iz == 0){
-				menuactual = 104;
-				display_bmp(640, 448, SUCESS);
-			} else {
-				menuactual = 103;//error
-				tell_the_user_wtf_happened(iz);
-			}
-		}
-		else if ( (new_pad & PAD_R1) && (menuactual == 101) ) {
-			menuactual = 102;
-			mcport = 1;
-			//iz = install(mcport, icontype);
-			iz = install(mcport, Choose_Install_Mode(icontype));
-			if(iz == 0){
-				menuactual = 104;
-				display_bmp(640, 448, SUCESS);
-			} else {
-				menuactual = 103;//error
-				tell_the_user_wtf_happened(iz);
-			}
-		}
-
-		else if ((new_pad & PAD_START) && (menuactual == 103)) {PS2_browser();}
-		else if ((new_pad & PAD_START) && (menuactual == 104))
+		key = wait_key(-1);
+		switch (state)
 		{
-#ifdef BOOT_FUNTUNA_ON_SUCCESS
-			if (mcport==0){
-				if (file_exists("mc0:/BOOT/BOOT.ELF"))
-					LoadElf("mc0:/BOOT/BOOT.ELF", "mc0:/BOOT/");
-			} else {
-				if (file_exists("mc1:/BOOT/BOOT.ELF"))
-					LoadElf("mc1:/BOOT/BOOT.ELF", "mc1:/BOOT/");
-			}
-#endif
-			PS2_browser();
+			case USERQUERY:
+				if (key & PAD_L1) 
+				{
+					mcport = 0;
+					iz = install(mcport, Choose_Install_Mode(icontype));
+					if(iz == 0)
+					{
+						state = INST_SUCCESS;
+						display_bmp(640, 448, SUCESS);
+					} else {
+						state = INST_ERROR;
+						tell_the_user_wtf_happened(iz);
+					}
+				}
+				else if (key & PAD_R1) 
+				{
+					mcport = 1;
+					iz = install(mcport, Choose_Install_Mode(icontype));
+					if(iz == 0)
+					{
+						state = INST_SUCCESS;
+						display_bmp(640, 448, SUCESS);
+					} else {
+						state = INST_ERROR;
+						tell_the_user_wtf_happened(iz);
+					}
+				}
+				continue;
+			case INST_SUCCESS:
+			case INST_ERROR:
+				if (key & PAD_START) 
+					PS2_browser();
+				continue;
 		}
 	}
 
