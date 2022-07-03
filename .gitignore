@@ -27,3 +27,4 @@ FreeMcBoot/elf_loader.s
 FreeMcBoot/chkesr/chkesr.irx
 FreeMcBoot/chkesr.s
 FreeMcBoot/chkesr.irx
+.vscode/*

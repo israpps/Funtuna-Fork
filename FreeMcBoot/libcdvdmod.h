@@ -158,13 +158,22 @@ typedef struct
 
 
 // Modes for cdInit()
+#ifndef CDVD_INIT_INIT
 #define CDVD_INIT_INIT 0x00     // init cd system and wait till commands can be issused
+#endif
+#ifndef CDVD_INIT_NOCHECK
 #define CDVD_INIT_NOCHECK 0x01  // init cd system
+#endif
+#ifndef CDVD_INIT_EXIT
 #define CDVD_INIT_EXIT 0x05     // de-init system
-
+#endif
 // cdDiskReady() return values
+#ifndef CDVD_READY_READY
 #define CDVD_READY_READY 0x02
+#endif
+#ifndef CDVD_READY_NOTREADY
 #define CDVD_READY_NOTREADY 0x06
+#endif
 
 
 // struct for ps2 clock values cdReadClock()/cdWriteClock()
