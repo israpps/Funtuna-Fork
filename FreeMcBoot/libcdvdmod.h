@@ -19,7 +19,7 @@
 #ifndef _LIBCDVD_H_
 #define _LIBCDVD_H_
 
-//#include <tamtypes.h>
+#include <libcdvd-common.h>
 
 
 // struct for chain reading
@@ -45,6 +45,7 @@ typedef struct
 #ifndef CDVD_FILE_MAXLEVELS
 #define CDVD_FILE_MAXLEVELS 8  // max levels of directories
 #endif
+/* THIS Is redefined on ps2sdk
 typedef struct
 {
 	u32 lsn;        // file location
@@ -52,7 +53,7 @@ typedef struct
 	char name[16];  // file name (body)
 	u8 date[8];     // date (1=secs, 2=mins, 3=hours, 4=day, 5=mon, 6,7=year,   0=iso file flags)
 } CdvdFileSpec_t;
-
+*/
 
 // Cdvd Read Mode struct
 typedef struct
