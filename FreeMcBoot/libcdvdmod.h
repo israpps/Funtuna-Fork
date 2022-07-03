@@ -56,6 +56,7 @@ typedef struct
 */
 
 // Cdvd Read Mode struct
+/* redefined on latest SDK
 typedef struct
 {
 	u8 retries;     // number of times to retry reads when an error occurs
@@ -63,6 +64,7 @@ typedef struct
 	u8 sectorType;  // sector size value CDVD_SECTOR_???
 	u8 pad;         // padding
 } CdvdReadMode_t;
+*/
 
 // sector type settings for CdReadMode structs
 typedef enum {
