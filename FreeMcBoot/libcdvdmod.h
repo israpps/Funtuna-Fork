@@ -36,10 +36,15 @@ typedef struct
 #define CDVD_STREAM 0x40000000
 
 // Low Level File System for CdSearchFile()
+#ifndef CDVD_FILE_MAXFILES
 #define CDVD_FILE_MAXFILES 64  // max number of files in a directory
+#endif
+#ifndef CDVD_FILE_MAXDIRS
 #define CDVD_FILE_MAXDIRS 128  // max number of directories
+#endif
+#ifndef CDVD_FILE_MAXLEVELS
 #define CDVD_FILE_MAXLEVELS 8  // max levels of directories
-
+#endif
 typedef struct
 {
 	u32 lsn;        // file location

@@ -53,7 +53,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <osd_config.h>
-//#include <libcdvdmod.h>
+#include <libcdvdmod.h>
 #include <malloc.h>
 #include <debug.h>
 #include "splash.h"
