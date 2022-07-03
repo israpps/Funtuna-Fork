@@ -67,17 +67,18 @@ typedef struct
 */
 
 // sector type settings for CdReadMode structs
+
+/* redefined on latest SDK
 typedef enum {
-	/* Game CD and DVD sector types.  */
 	CDVD_SECTOR_2048 = 0,
 	CDVD_SECTOR_2328,
 	CDVD_SECTOR_2340,
 
-	/* CDDA sector types.  */
 	CDVD_SECTOR_2352 = 0,
 	CDVD_SECTOR_2368,
 	CDVD_SECTOR_2448
 } CdvdSectorType_t;
+*/
 
 // cd rotation speeds for CdReadMode structs (affects read speed)
 #define CDVD_SPIN_MAX 0     // spin at max speed
