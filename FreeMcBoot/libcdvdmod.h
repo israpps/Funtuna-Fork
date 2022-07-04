@@ -143,7 +143,7 @@ typedef enum {
 #endif
 #ifndef CDVD_ERR_READCFR
 #define CDVD_ERR_READCFR 0xFE  // error setting command
-#ifndef
+#endif
 
 
 // cdGetDiskType() return values
