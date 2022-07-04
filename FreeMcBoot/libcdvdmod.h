@@ -81,11 +81,18 @@ typedef enum {
 */
 
 // cd rotation speeds for CdReadMode structs (affects read speed)
+#ifndef CDVD_SPIN_MAX
 #define CDVD_SPIN_MAX 0     // spin at max speed
+#endif
+#ifndef CDVD_SPIN_NORMAL
 #define CDVD_SPIN_NORMAL 1  // starts reading at max speed, slows down as read errors occur
+#endif
+#ifndef CDVD_SPIN_STREAM
 #define CDVD_SPIN_STREAM 0  // spins at the recommended speed for streaming data
+#endif
+#ifndef CDVD_SPIN_DVD0
 #define CDVD_SPIN_DVD0 0    // spins at the DVD layer 0 speed
-
+#endif
 
 // cdGetError() return values
 #define CDVD_ERR_FAIL -1       // error in cdGetError()
