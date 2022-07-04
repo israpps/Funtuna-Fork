@@ -31,7 +31,6 @@ int key;
 #include "BMPS/NO_MEMORY_CARD.h"
 #include "BMPS/NO_PS2_MC.h"
 
-extern uint32 BG[];
 enum OPENTUNA_VARIANTS
 {
 	SLIMS = 0,	  // fat 0x190 and every 0x2?? ROM
@@ -288,6 +287,13 @@ static int install(int mcport, int icon_variant)
 	mcSync(0, NULL, &ret);
 	if (ret != -1){return NO_MEMORY_CARD;}
 	if (mc_Type != 2){return NO_PS2_MEMORY_CARD;}
+
+	#ifndef REQUIRED_SPACE
+	if (mc_Free < 1950){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
+	#else
+	if (mc_Free < (REQUIRED_SPACE + 128)){return NOT_ENOUGH_SPACE;}
+	#endif
+
 	//  CLEANUP
 	sprintf(temp_path,"mc%u:BOOT", mcport);
 		DeleteFolder(temp_path);
@@ -317,11 +323,7 @@ static int install(int mcport, int icon_variant)
 	}
 	// /CLEANUP
 	//If there's no free space, we have an error:
-#ifndef REQUIRED_SPACE
-	if (mc_Free < 2000){return NOT_ENOUGH_SPACE;}//Installation actually requires less than this (something like 1.6MB), but i left a larger size for space check since OPL will create settings and icon files on first launch... (and users will innevitally load more files)
-#else
-	if (mc_Free < (REQUIRED_SPACE + 128)){return NOT_ENOUGH_SPACE;}
-#endif
+
 	//If the files exists, we have an error:
 	if (mcport == 0) {
 	if (file_exists("mc0:/BXEXEC-OPENTUNA/icon.icn")) {return FUNTUNA_FORK_FOUND;}
