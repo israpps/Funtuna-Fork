@@ -2392,7 +2392,7 @@ void check_ESR_paths(void)
 int FastBoot_Disc(void)
 {
 	// Boot an identified disc in the tray
-	CdvdDiscType_t cdmode;
+	enum CdvdDiscType_t cdmode;
 	char *args[3];
 	char ver[MAX_PATH];
 	int i;
