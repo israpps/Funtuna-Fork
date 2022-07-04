@@ -275,9 +275,9 @@ typedef enum {
 #ifndef CDVD_STREAM_NONBLOCK
 #define CDVD_STREAM_NONBLOCK 0
 #endif
-#ifndef CDVD_STREAM_BLOC
-#define CDVD_STREAM_BLOCK 1
-#endif
+// #ifndef CDVD_STREAM_BLOC
+// #define CDVD_STREAM_BLOCK 1
+// #endif
 // cdTrayReq() values
 #ifndef CDVD_TRAY_OPEN
 #define CDVD_TRAY_OPEN 0   // Tray Open
