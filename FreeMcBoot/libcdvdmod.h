@@ -219,14 +219,22 @@ typedef enum {
 } CdvdStCmd_t;
 
 // streaming modes for cdStRead()
+#ifndef CDVD_STREAM_NONBLOCK
 #define CDVD_STREAM_NONBLOCK 0
+#endif
+#ifndef CDVD_STREAM_BLOC
 #define CDVD_STREAM_BLOCK 1
-
+#endif
 // cdTrayReq() values
+#ifndef CDVD_TRAY_OPEN
 #define CDVD_TRAY_OPEN 0   // Tray Open
+#endif
+#ifndef CDVD_TRAY_CLOSE
 #define CDVD_TRAY_CLOSE 1  // Tray Close
+#endif
+#ifndef CDVD_TRAY_CHECK
 #define CDVD_TRAY_CHECK 2  // Tray Check
-
+#endif
 
 
 #ifdef __cplusplus
