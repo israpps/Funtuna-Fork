@@ -15,7 +15,7 @@
 
 static int pad_inited = 0;
 int key;
-//#include "BMPS/FUNTUNA_FORK_INSTALLER_BG.h"
+#include "BMPS/FUNTUNA_FORK_INSTALLER_BG.h"
 #include "BMPS/FUNTUNA_FORK_INSTALLER_WELCOME.h"
 #include "BMPS/FUNTUNA_FORK_INSTALLER_SUCESS.h"
 #include "BMPS/FUNTUNA_FORK_INSTALLER_FAIL.h"

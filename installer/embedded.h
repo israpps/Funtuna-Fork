@@ -1,5 +1,6 @@
 #ifndef EMBEDDED_INCLUDED
 #define EMBEDDED_INCLUDED
+
 extern u8 opl_icn[];
 extern int size_opl_icn;
 //----------------------------------------//
@@ -78,4 +79,5 @@ extern unsigned int size_MCMAN_irx;
 //----------------------------------------//
 extern unsigned char MCSERV_irx[];
 extern unsigned int size_MCSERV_irx;
+
 #endif //EMBEDDED_INCLUDED
