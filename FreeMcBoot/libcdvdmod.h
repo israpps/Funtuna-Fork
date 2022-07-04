@@ -147,6 +147,7 @@ typedef enum {
 
 
 // cdGetDiskType() return values
+/* REDEFINED ON PS2SDK
 typedef enum {
 	CDVD_TYPE_NODISK = 0x00,  // No Disc inserted
 	CDVD_TYPE_DETECT,         // Detecting disc type
@@ -165,7 +166,7 @@ typedef enum {
 	CDVD_TYPE_DVDVIDEO,     // DVD Video
 	CDVD_TYPE_ILLEGAL,      // Illegal disk type
 } CdvdDiscType_t;
-
+*/
 
 // cdStatus() return values
 #define CDVD_STAT_STOP 0x00   // disc has stopped spinning
