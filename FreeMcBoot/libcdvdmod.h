@@ -169,13 +169,27 @@ typedef enum {
 */
 
 // cdStatus() return values
+#ifndef CDVD_STAT_STOP
 #define CDVD_STAT_STOP 0x00   // disc has stopped spinning
+#endif
+#ifndef CDVD_STAT_OPEN
 #define CDVD_STAT_OPEN 0x01   // tray is open
+#endif
+#ifndef CDVD_STAT_SPIN
 #define CDVD_STAT_SPIN 0x02   // disc is spinning
+#endif
+#ifndef CDVD_STAT_READ
 #define CDVD_STAT_READ 0x06   // reading from disc
+#endif
+#ifndef CDVD_STAT_PAUSE
 #define CDVD_STAT_PAUSE 0x0A  // disc is paused
+#endif
+#ifndef CDVD_STAT_SEEK
 #define CDVD_STAT_SEEK 0x12   // disc is seeking
+#endif
+#ifndef CDVD_STAT_ERROR
 #define CDVD_STAT_ERROR 0x20  // error occurred
+#endif
 
 typedef enum {
 	CDVD_MEDIA_MODE_CD = 1,
