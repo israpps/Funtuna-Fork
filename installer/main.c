@@ -423,10 +423,17 @@ static int install(int mcport, int icon_variant)
 			retorno = write_embed(&CFG_ELF, size_CFG_ELF, "BOOT", "CFG.ELF",mcport);
 		if (retorno < 0) {return 6;}
 
-    scr_printf("\t\t\tFreeMcBoot USB drivers\n");
+    scr_printf("\t\t\tFreeMcBoot USB driver\n");
 			retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
-            retorno = write_embed(&FUNTUNA_USBHDFSD, size_FUNTUNA_USBHDFSD, "BOOT", "USBHDFSD.IRX",mcport);
+    scr_printf("\t\t\tBDM driver\n");
+			retorno = write_embed(&FUNTUNA_BDM, size_FUNTUNA_BDM, "BOOT", "BMD.IRX",mcport);
+		if (retorno < 0) {return 6;}
+    scr_printf("\t\t\tBDM Exfat driver\n");
+			retorno = write_embed(&FUNTUNA_BDMFS_FATFS, size_FUNTUNA_BDMFS_FATFS, "BOOT", "BDMFS_FATFS.IRX",mcport);
+		if (retorno < 0) {return 6;}
+    scr_printf("\t\t\tBDM USB driver\n");
+			retorno = write_embed(&FUNTUNA_USBMASS_BD, size_FUNTUNA_USBMASS_BD, "BOOT", "USBMASS_BD.IRX",mcport);
 		if (retorno < 0) {return 6;}
 /*
     scr_printf("\t\t\tFileXio IRX Driver\n");

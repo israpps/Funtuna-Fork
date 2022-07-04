@@ -204,8 +204,14 @@ char cnf_path[30] = "mc0:/BOOT/FUNTUNA.CNF";
 char usbd_irx_path[30] = "mc0:/BOOT/USBD.IRX";
 char usbd_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBD.IRX";
 /**********************USBHDFSD.IRX************************/
-char usb_mass_irx_path[30] = "mc0:/BOOT/USBHDFSD.IRX";
-char usb_mass_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBHDFSD.IRX";
+char usb_mass_irx_path[30] = "mc0:/BOOT/USBMASS_BD.IRX";
+char usb_mass_irx_path_sysconf[30] = "mc0:/SYS-CONF/USBMASS_BD.IRX";
+/**********************BDMFS_FATFS.IRX************************/
+char bdmfs_fatfs_irx_path[30] = "mc0:/BOOT/BDMFS_FATFS.IRX";
+char bdmfs_fatfs_irx_path_sysconf[30] = "mc0:/SYS-CONF/BDMFS_FATFS.IRX";
+/**********************BDM.IRX************************/
+char bdm_irx_path[30] = "mc0:/BOOT/BDM.IRX";
+char bdm_irx_path_sysconf[30] = "mc0:/SYS-CONF/BDM.IRX";
 
 char dvdpl_path[] = "mc0:/BREXEC-DVDPLAYER/dvdplayer.elf";
 
@@ -1894,6 +1900,32 @@ void load_modules(void)
 		}
 	}
 	/* **************************USBHDFSD.IRX************************************** */
+	if (SifLoadModule(bdm_irx_path, 0, NULL) < 0) /**mc0:/BOOT/USBHDFSD.IRX*/
+	{
+		bdm_irx_path[2]++;
+		if (SifLoadModule(bdm_irx_path, 0, NULL) < 0) /**mc1:/BOOT/USBHDFSD.IRX*/
+		{
+			if (SifLoadModule(bdm_irx_path_sysconf, 0, NULL) < 0) /**mc0:/SYS-CONF/USBHDFSD.IRX*/
+			{
+				bdm_irx_path_sysconf[2]++;
+				SifLoadModule(bdm_irx_path_sysconf, 0, NULL); /**mc1:/SYS-CONF/USBHDFSD.IRX*/
+			}
+		}
+	}
+	/* **************************USBHDFSD.IRX************************************** */
+	if (SifLoadModule(bdmfs_fatfs_irx_path, 0, NULL) < 0) /**mc0:/BOOT/USBHDFSD.IRX*/
+	{
+		bdmfs_fatfs_irx_path[2]++;
+		if (SifLoadModule(bdmfs_fatfs_irx_path, 0, NULL) < 0) /**mc1:/BOOT/USBHDFSD.IRX*/
+		{
+			if (SifLoadModule(bdmfs_fatfs_irx_path_sysconf, 0, NULL) < 0) /**mc0:/SYS-CONF/USBHDFSD.IRX*/
+			{
+				bdmfs_fatfs_irx_path_sysconf[2]++;
+				SifLoadModule(bdmfs_fatfs_irx_path_sysconf, 0, NULL); /**mc1:/SYS-CONF/USBHDFSD.IRX*/
+			}
+		}
+	}
+	/* **************************USBHDFSD.IRX************************************** */
 	if (SifLoadModule(usb_mass_irx_path, 0, NULL) < 0) /**mc0:/BOOT/USBHDFSD.IRX*/
 	{
 		usb_mass_irx_path[2]++;
@@ -1906,7 +1938,6 @@ void load_modules(void)
 			}
 		}
 	}
-	/* **************************FILEXIO.IRX************************************** */
 }
 //--------------------------------------------------------------
 void load_chkesr_module(void)

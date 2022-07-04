@@ -298,11 +298,15 @@ int loadUsbModules(void)
 	if (have_usbd && have_usb_mass)
 		return 3;
 
-	for (i = 1; i < 3; i++) {
+	for (i = 1; i < 5; i++) {
 		if (i == 1)
 			strcpy(filePath, "mc0:/BOOT/USBD.IRX");
 		else if (i == 2)
-			strcpy(filePath, "mc0:/BOOT/USBHDFSD.IRX");
+			strcpy(filePath, "mc0:/BOOT/BDM.IRX");
+		else if (i == 3)
+			strcpy(filePath, "mc0:/BOOT/BDMFS_FATFS.IRX");
+		else if (i == 4)
+			strcpy(filePath, "mc0:/BOOT/USBMASS_BD.IRX");
 
 		if (!exists(filePath))
 			filePath[2] ^= 1;
@@ -331,6 +335,7 @@ int loadUsbModules(void)
 		}
 		free(fileBase);
 	}
+	delay(3);
 	//free(fileBase);
 	if (!error) {
 		have_usbd = 1;

@@ -49,8 +49,14 @@ extern int size_ule_cnf;
 extern u8 FUNTUNA_USBD[];
 extern int size_FUNTUNA_USBD;
 //----------------------------------------//
-extern u8 FUNTUNA_USBHDFSD[];
-extern int size_FUNTUNA_USBHDFSD;
+extern u8 FUNTUNA_BDM[];
+extern int size_FUNTUNA_BDM;
+//----------------------------------------//
+extern u8 FUNTUNA_BDMFS_FATFS[];
+extern int size_FUNTUNA_BDMFS_FATFS;
+//----------------------------------------//
+extern u8 FUNTUNA_USBMASS_BD[];
+extern int size_FUNTUNA_USBMASS_BD;
 //----------------------------------------//
 extern u8 poweroff_elf[];
 extern int size_poweroff_elf;
