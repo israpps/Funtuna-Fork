@@ -95,22 +95,55 @@ typedef enum {
 #endif
 
 // cdGetError() return values
+
+#ifndef CDVD_ERR_FAIL
 #define CDVD_ERR_FAIL -1       // error in cdGetError()
+#endif
+#ifndef CDVD_ERR_NO
 #define CDVD_ERR_NO 0x00       // no error occurred
+#endif
+#ifndef CDVD_ERR_ABRT
 #define CDVD_ERR_ABRT 0x01     // command was aborted due to cdBreak() call
+#endif
+#ifndef CDVD_ERR_CMD
 #define CDVD_ERR_CMD 0x10      // unsupported command
+#endif
+#ifndef CDVD_ERR_OPENS
 #define CDVD_ERR_OPENS 0x11    // tray is open
+#endif
+#ifndef CDVD_ERR_NODISC
 #define CDVD_ERR_NODISC 0x12   // no disk inserted
+#endif
+#ifndef CDVD_ERR_NORDY
 #define CDVD_ERR_NORDY 0x13    // drive is busy processing another command
+#endif
+#ifndef CDVD_ERR_CUD
 #define CDVD_ERR_CUD 0x14      // command unsupported for disc currently in drive
+#endif
+#ifndef CDVD_ERR_IPI
 #define CDVD_ERR_IPI 0x20      // sector address error
+#endif
+#ifndef CDVD_ERR_ILI
 #define CDVD_ERR_ILI 0x21      // num sectors error
+#endif
+#ifndef CDVD_ERR_PRM
 #define CDVD_ERR_PRM 0x22      // command parameter error
+#endif
+#ifndef CDVD_ERR_READ
 #define CDVD_ERR_READ 0x30     // error while reading
+#endif
+#ifndef CDVD_ERR_TRMOPN
 #define CDVD_ERR_TRMOPN 0x31   // tray was opened
+#endif
+#ifndef CDVD_ERR_EOM
 #define CDVD_ERR_EOM 0x32      // outermost error
+#endif
+#ifndef CDVD_ERR_READCF
 #define CDVD_ERR_READCF 0xFD   // error setting command
+#endif
+#ifndef CDVD_ERR_READCFR
 #define CDVD_ERR_READCFR 0xFE  // error setting command
+#ifndef
 
 
 // cdGetDiskType() return values
