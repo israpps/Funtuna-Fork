@@ -191,19 +191,23 @@ typedef enum {
 #define CDVD_STAT_ERROR 0x20  // error occurred
 #endif
 
+/* REDEFINED ON SDK
 typedef enum {
 	CDVD_MEDIA_MODE_CD = 1,
 	CDVD_MEDIA_MODE_DVD
 } CdvdMediaMode_t;
-
+*/
 // max number of toc entries for cdGetToc()
+#ifndef CDVD_MAXTOC
 #define CDVD_MAXTOC 100
+#endif
 
 // cd callback func typedef for cdSetCallback()
 typedef void (*CdCBFunc)(s32);
 
 
 // cdvd location struct, used with cdIntToPos() and cdPosToInt()
+/* REDEFINED ON SDK
 typedef struct
 {
 	u8 minute;  // minute (BCD)
@@ -211,7 +215,7 @@ typedef struct
 	u8 sector;  // sector (BCD)
 	u8 track;   // track (void)
 } CdvdLocation_t;
-
+*/
 // macros for converting between an integer and a BCD number
 #ifndef btoi
 #define btoi(b) ((b) / 16 * 10 + (b) % 16)  // BCD to int
@@ -241,6 +245,7 @@ typedef struct
 
 
 // struct for ps2 clock values cdReadClock()/cdWriteClock()
+/* REDEFINED ON SDK
 typedef struct
 {
 	u8 status;  // status
@@ -252,7 +257,7 @@ typedef struct
 	u8 month;   // month
 	u8 year;    // year
 } CdvdClock_t;
-
+*/
 /* Stream commands. */
 typedef enum {
 	CDVD_ST_CMD_START = 1,
