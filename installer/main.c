@@ -427,7 +427,7 @@ static int install(int mcport, int icon_variant)
 			retorno = write_embed(&FUNTUNA_USBD, size_FUNTUNA_USBD, "BOOT", "USBD.IRX",mcport);
 		if (retorno < 0) {return 6;}
     scr_printf("\t\t\tBDM driver\n");
-			retorno = write_embed(&FUNTUNA_BDM, size_FUNTUNA_BDM, "BOOT", "BMD.IRX",mcport);
+			retorno = write_embed(&FUNTUNA_BDM, size_FUNTUNA_BDM, "BOOT", "BDM.IRX",mcport);
 		if (retorno < 0) {return 6;}
     scr_printf("\t\t\tBDM Exfat driver\n");
 			retorno = write_embed(&FUNTUNA_BDMFS_FATFS, size_FUNTUNA_BDMFS_FATFS, "BOOT", "BDMFS_FATFS.IRX",mcport);
