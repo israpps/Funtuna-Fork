@@ -27,8 +27,8 @@ jobs:
       
     - name: Update wLaunchELF_ISR
       run: |
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
-         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT.ELF -O __Release/ULE_psu.ELF
+         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-DS34.ELF -O installer/INSTALLER_CONTENTS/BOOT/ULE.ELF
+         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-DS34.ELF -O __Release/ULE_psu.ELF
     
     - name: build installer
       run: |
