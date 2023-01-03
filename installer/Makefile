@@ -1,5 +1,5 @@
 EE_BIN = Installer.elf
-EE_BIN_PACKED = FunTuna-Fork_Installer.ELF
+EE_BIN_PACKED = PS2BBL_OpenTuna_Installer.ELF
 EE_BIN_STRIPPED = stripped.elf
 EE_OBJS = main.o gs.o pad.o  gs_asm.o ps2_asm.o dma_asm.o
 EE_OBJS += PS2BBL_ELF.o opl_elf.o ule_elf.o apps_icn.o apps_sys.o boot_sys.o boot_icn.o exploit_sys.o exploit_bin.o OpenTuna_SLIMS.o OpenTuna_FAT-170.o OpenTuna_FAT-110-120-150-160.o opl_icn.o opl_sys.o opl_cfg.o opl_cfg1.o opl_dualshock.o PS2BBL_CFG.o PS2BBL_icn.o PS2BBL_sys.o
@@ -14,7 +14,8 @@ endif
 all:
 	@echo Building FunTuna Fork Installer
 	$(MAKE) $(EE_BIN_PACKED)
-
+	
+rebuild: clean all
 # BOOT
 PS2BBL_ELF.s:
 	@bin2s INSTALLER_CONTENTS/BOOT/BOOT.ELF PS2BBL_ELF.s PS2BBL_ELF
