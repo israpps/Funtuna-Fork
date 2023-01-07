@@ -16,3 +16,4 @@ installer/stripped.elf
 !**dma_asm.S
 !**gs_asm.S
 !**ps2_asm.S
+installer/bin/*.elf

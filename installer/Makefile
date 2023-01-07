@@ -1,6 +1,7 @@
-EE_BIN = Installer.elf
-EE_BIN_PACKED = PS2BBL_OpenTuna_Installer.ELF
-EE_BIN_STRIPPED = stripped.elf
+BINDIR = bin/
+EE_BIN = $(BINDIR)Installer.elf
+EE_BIN_PACKED = $(BINDIR)PS2BBL_OpenTuna_Installer.ELF
+EE_BIN_STRIPPED = $(BINDIR)stripped.elf
 EE_OBJS = main.o gs.o pad.o  gs_asm.o ps2_asm.o dma_asm.o
 EE_OBJS += PS2BBL_ELF.o opl_elf.o ule_elf.o apps_icn.o apps_sys.o boot_sys.o boot_icn.o exploit_sys.o exploit_bin.o OpenTuna_SLIMS.o OpenTuna_FAT-170.o OpenTuna_FAT-110-120-150-160.o opl_icn.o opl_sys.o opl_cfg.o opl_cfg1.o opl_dualshock.o PS2BBL_CFG.o PS2BBL_icn.o PS2BBL_sys.o
 EE_SRC =   PS2BBL_ELF.s opl_elf.s ule_elf.s apps_icn.s apps_sys.s boot_sys.s boot_icn.s exploit_sys.s exploit_bin.s OpenTuna_SLIMS.s OpenTuna_FAT-170.s OpenTuna_FAT-110-120-150-160.s opl_icn.s opl_sys.s opl_cfg.s opl_cfg1.s opl_dualshock.s PS2BBL_CFG.s PS2BBL_icn.s PS2BBL_sys.s
