@@ -82,7 +82,7 @@ OpenTuna_SLIMS.c:
 	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/slims.bin OpenTuna_SLIMS.c opentuna_slims
 	
 OpenTuna_FAT-110-120-150-160.c:
-	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/fats.bin OpenTuna_FAT-110-120-150-160.s opentuna_fats
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/fats.bin OpenTuna_FAT-110-120-150-160.c opentuna_fats
 	
 OpenTuna_FAT-170.c:
 	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/170.bin OpenTuna_FAT-170.c opentuna_fat170
