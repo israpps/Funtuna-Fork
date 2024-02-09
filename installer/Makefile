@@ -18,78 +18,78 @@ all:
 	
 rebuild: clean all
 # BOOT
-PS2BBL_ELF.s:
-	@bin2s INSTALLER_CONTENTS/BOOT/BOOT.ELF PS2BBL_ELF.s PS2BBL_ELF
+PS2BBL_ELF.c:
+	@bin2c INSTALLER_CONTENTS/BOOT/BOOT.ELF PS2BBL_ELF.c PS2BBL_ELF
 
-boot_icn.s:
-	@bin2s INSTALLER_CONTENTS/BOOT/PS2BBL.icn boot_icn.s boot_icn
+boot_icn.c:
+	@bin2c INSTALLER_CONTENTS/BOOT/PS2BBL.icn boot_icn.c boot_icn
 
-boot_sys.s:
-	@bin2s INSTALLER_CONTENTS/BOOT/icon.sys boot_sys.s boot_sys
+boot_sys.c:
+	@bin2c INSTALLER_CONTENTS/BOOT/icon.sys boot_sys.c boot_sys
 
-ule_elf.s:
-	@bin2s INSTALLER_CONTENTS/BOOT/ULE.ELF ule_elf.s ule_elf
+ule_elf.c:
+	@bin2c INSTALLER_CONTENTS/BOOT/ULE.ELF ule_elf.c ule_elf
 	
 # /BOOT
 
 #CONFIG
-PS2BBL_CFG.s:
-	@bin2s INSTALLER_CONTENTS/PS2BBL/CONFIG.INI PS2BBL_CFG.s PS2BBL_CFG
+PS2BBL_CFG.c:
+	@bin2c INSTALLER_CONTENTS/PS2BBL/CONFIG.INI PS2BBL_CFG.c PS2BBL_CFG
 	
-PS2BBL_icn.s:
-	@bin2s INSTALLER_CONTENTS/PS2BBL/PS2BBL.icn PS2BBL_icn.s PS2BBL_icn
+PS2BBL_icn.c:
+	@bin2c INSTALLER_CONTENTS/PS2BBL/PS2BBL.icn PS2BBL_icn.c PS2BBL_icn
 
-PS2BBL_sys.s:
-	@bin2s INSTALLER_CONTENTS/PS2BBL/icon.sys PS2BBL_sys.s PS2BBL_sys
+PS2BBL_sys.c:
+	@bin2c INSTALLER_CONTENTS/PS2BBL/icon.sys PS2BBL_sys.c PS2BBL_sys
 # / CONFIG
 
 # APPS
-apps_icn.s:
-	@bin2s INSTALLER_CONTENTS/APPS/APPS.icn apps_icn.s apps_icn
+apps_icn.c:
+	@bin2c INSTALLER_CONTENTS/APPS/APPS.icn apps_icn.c apps_icn
 
-apps_sys.s:
-	@bin2s INSTALLER_CONTENTS/APPS/icon.sys apps_sys.s apps_sys
+apps_sys.c:
+	@bin2c INSTALLER_CONTENTS/APPS/icon.sys apps_sys.c apps_sys
 	
-opl_elf.s:
-	@bin2s INSTALLER_CONTENTS/APPS/OPNPS2LD.ELF opl_elf.s opl_elf
+opl_elf.c:
+	@bin2c INSTALLER_CONTENTS/APPS/OPNPS2LD.ELF opl_elf.c opl_elf
 # /APPS
 
 # OPL
 
-opl_icn.s:
-	@bin2s INSTALLER_CONTENTS/OPL/opl.icn opl_icn.s opl_icn
+opl_icn.c:
+	@bin2c INSTALLER_CONTENTS/OPL/opl.icn opl_icn.c opl_icn
 	
-opl_sys.s:
-	@bin2s INSTALLER_CONTENTS/OPL/icon.sys opl_sys.s opl_sys
+opl_sys.c:
+	@bin2c INSTALLER_CONTENTS/OPL/icon.sys opl_sys.c opl_sys
 	
-opl_cfg.s:
-	@bin2s INSTALLER_CONTENTS/OPL/conf_opl.cfg opl_cfg.s opl_cfg
+opl_cfg.c:
+	@bin2c INSTALLER_CONTENTS/OPL/conf_opl.cfg opl_cfg.c opl_cfg
 	
-opl_cfg1.s:
-	@bin2s INSTALLER_CONTENTS/OPL/conf_opl1.cfg opl_cfg1.s opl_cfg1
+opl_cfg1.c:
+	@bin2c INSTALLER_CONTENTS/OPL/conf_opl1.cfg opl_cfg1.c opl_cfg1
 	
-opl_dualshock.s:
-	@bin2s INSTALLER_CONTENTS/OPL/conf_game.cfg opl_dualshock.s opl_dualshock
+opl_dualshock.c:
+	@bin2c INSTALLER_CONTENTS/OPL/conf_game.cfg opl_dualshock.c opl_dualshock
 	
 # /OPL
 
 
 # EXPLOIT
-exploit_bin.s:
-	@bin2s INSTALLER_CONTENTS/ENTRYPOINT/exploit.bin exploit_bin.s exploit_bin
+exploit_bin.c:
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/exploit.bin exploit_bin.c exploit_bin
 	
-OpenTuna_SLIMS.s:
-	@bin2s INSTALLER_CONTENTS/ENTRYPOINT/slims.bin OpenTuna_SLIMS.s opentuna_slims
+OpenTuna_SLIMS.c:
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/slims.bin OpenTuna_SLIMS.c opentuna_slims
 	
-OpenTuna_FAT-110-120-150-160.s:
-	@bin2s INSTALLER_CONTENTS/ENTRYPOINT/fats.bin OpenTuna_FAT-110-120-150-160.s opentuna_fats
+OpenTuna_FAT-110-120-150-160.c:
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/fats.bin OpenTuna_FAT-110-120-150-160.s opentuna_fats
 	
-OpenTuna_FAT-170.s:
-	@bin2s INSTALLER_CONTENTS/ENTRYPOINT/170.bin OpenTuna_FAT-170.s opentuna_fat170
+OpenTuna_FAT-170.c:
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/170.bin OpenTuna_FAT-170.c opentuna_fat170
 
 
-exploit_sys.s:
-	@bin2s INSTALLER_CONTENTS/ENTRYPOINT/exploit.sys exploit_sys.s exploit_sys
+exploit_sys.c:
+	@bin2c INSTALLER_CONTENTS/ENTRYPOINT/exploit.sys exploit_sys.c exploit_sys
 # /EXPLOIT
 clean:
 	@echo cleaning...
