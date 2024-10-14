@@ -308,7 +308,7 @@ static int install(int mcport, int icon_variant)
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:OPENTUNA", mcport);
 		DeleteFolder(temp_path);
-	sprintf(temp_path,"mc%u:PS2BBL", mcport);
+	sprintf(temp_path,"mc%u:SYS-CONF", mcport);
 		DeleteFolder(temp_path);
 	sprintf(temp_path,"mc%u:BXEXEC-OPENTUNA", mcport);
 		DeleteFolder(temp_path);
@@ -347,26 +347,18 @@ static int install(int mcport, int icon_variant)
 	if (file_exists("mc1:/FORTUNA/icon.sys"))         {return FORTUNA_FOUND;}
 	}
 	//FOLDERS
+#define MCMKDIR(F) scr_printf("\t\t" F "\n"); ret = mcMkDir(mcport, 0, F); mcSync(0, NULL, &ret);
 	scr_setfontcolor(0x00ffff);
 	scr_printf("\tCreating Folders...\n");
 	scr_setfontcolor(0xffffff);
-	scr_printf("\t\tBOOT\n");
-		ret = mcMkDir(mcport, 0, "BOOT");
-		mcSync(0, NULL, &ret);
-	scr_printf("\t\tAPPS\n");
-		ret = mcMkDir(mcport, 0, "APPS");
-		mcSync(0, NULL, &ret);
-	scr_printf("\t\tPS2BBL\n");
-		ret = mcMkDir(mcport, 0, "PS2BBL");
-		mcSync(0, NULL, &ret);
-	scr_printf("\t\tOPL\n");
-		ret = mcMkDir(mcport, 0, "OPL");
-		mcSync(0, NULL, &ret);
+	MCMKDIR("BOOT");
+	MCMKDIR("APPS");
+	MCMKDIR("SYS-CONF");
+	MCMKDIR("OPL");
 	if (icon_variant != UNSUPPORTED){
-	scr_printf("\t\tBXEXEC-OPENTUNA\n");
-		ret = mcMkDir(mcport, 0, "BXEXEC-OPENTUNA");
-		mcSync(0, NULL, &ret);	
+		MCMKDIR("BXEXEC-OPENTUNA");
 	}
+
 	///FOLDERS
 	scr_setfontcolor(0x00ffff);
 	scr_printf("\tWriting Files\n");
@@ -432,11 +424,11 @@ static int install(int mcport, int icon_variant)
 		if (retorno < 0) {return 6;}
 
 	scr_printf("\t\tPS2BBL Configuration\n");
-		retorno = write_embed(&PS2BBL_CFG, size_PS2BBL_CFG, "PS2BBL", "CONFIG.INI",mcport);
+		retorno = write_embed(&PS2BBL_CFG, size_PS2BBL_CFG, "SYS-CONF", "PS2BBL.INI",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&PS2BBL_icn, size_PS2BBL_icn, "PS2BBL", "PS2BBL.icn",mcport);
+		retorno = write_embed(&PS2BBL_icn, size_PS2BBL_icn, "SYS-CONF", "PS2BBL.icn",mcport);
 		if (retorno < 0) {return 6;}
-		retorno = write_embed(&PS2BBL_sys, size_PS2BBL_sys, "PS2BBL", "icon.sys",mcport);
+		retorno = write_embed(&PS2BBL_sys, size_PS2BBL_sys, "SYS-CONF", "icon.sys",mcport);
 		if (retorno < 0) {return 6;}
 
 	scr_printf("\t\tuLaunchELF\n");
@@ -625,11 +617,11 @@ void inst_err(void)
 	scr_printf("\n\n\n\t\tInstallation Failed!\n\n\tPress start to quit\n");
 	scr_setfontcolor(0xffffff);
 }
-
+#include <sio.h>
 int main(int argc, char *argv[])
 {
 	init_scr();
-	printf("PS2BBL+OpenTuna Installer starts!\n");
+	sio_puts("PS2BBL+OpenTuna Installer starts!\n");
 	int fdn, icontype;
 	unsigned long int ROM_VERSION;
 	char romver[5];
